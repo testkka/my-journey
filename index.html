@@ -1,16 +1,16 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="description" content="Nexus · 可验证互联网，由数学定义。Building a future of mathematical truth.">
-<meta property="og:title" content="Nexus · 可验证互联网">
+<meta name="description" content="Nexus · Verifiable Internet, defined by mathematics. Building a future of mathematical truth.">
+<meta property="og:title" content="Nexus · Verifiable Internet">
 <meta property="og:description" content="Building a future of mathematical truth · nexus.xyz">
 <meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nexus · 可验证互联网</title>
+<title>Nexus · Verifiable Internet</title>
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -163,6 +163,15 @@ footer{text-align:center;padding:48px 24px;color:var(--muted);font-size:.75rem;l
 body{top:0!important}
 .goog-te-gadget{display:none!important}
 .skiptranslate iframe{display:none!important}
+
+/* ── English font size tuning ── */
+.hero-h1{font-size:clamp(2rem,5.5vw,4.5rem);letter-spacing:-0.5px;line-height:1.08}
+.hero-sub{font-size:1rem;max-width:440px;line-height:1.75}
+.tl-card-title{font-size:1.05rem;line-height:1.35}
+.tl-card-desc{font-size:.88rem;line-height:1.82}
+.sec-title{font-size:clamp(1.6rem,3vw,2.7rem)}
+.stat-label{font-size:.6rem;letter-spacing:1.8px}
+.nav-links a{font-size:.72rem;letter-spacing:1.2px}
 </style>
 </head>
 <body>
@@ -170,12 +179,12 @@ body{top:0!important}
   <div class="nav-logo">Nexuslabs <span></span></div>
 
   <div style="display:flex;align-items:center;gap:12px;">
-    <a href="https://nexus.xyz" target="_blank" rel="noopener" id="nexus-btn">关于Nexus</a>
-    <a href="https://discord.com/invite/nexus-xyz" target="_blank" rel="noopener" id="discord-btn">加入Discord</a>
-    <button id="lang-btn" onclick="toggleLang()" aria-label="Switch Language"><span>🌐</span><span id="lang-label">EN</span></button>
-    <button id="music-btn" onclick="toggleMusic()" title="Violet – Connor Price" aria-label="音乐开/关">
+    <a href="https://nexus.xyz" target="_blank" rel="noopener" id="nexus-btn">About Nexus</a>
+    <a href="https://discord.com/invite/nexus-xyz" target="_blank" rel="noopener" id="discord-btn">Join Discord</a>
+    <button id="lang-btn" onclick="toggleLang()" aria-label="Switch Language"><span>🌐</span><span id="lang-label">中文</span></button>
+    <button id="music-btn" onclick="toggleMusic()" title="Violet – Connor Price" aria-label="Music On/Off">
     <span id="music-icon">🎵</span>
-    <span id="music-label">音乐</span>
+    <span id="music-label">Music</span>
   </button>
   </div>
 </nav>
@@ -194,9 +203,9 @@ body{top:0!important}
   <div id="hero-mask"></div>
   <div class="hero-content">
     <div class="hero-eyebrow">NEXUS · VERIFIABLE INTERNET</div>
-    <h1 class="hero-h1">可验证互联网<br>由数学定义</h1>
+    <h1 class="hero-h1">Verifiable Internet<br>Defined by Math</h1>
     <p class="hero-sub">Building a future of mathematical truth<br>@danielmarinq · nexus.xyz</p>
-    <div class="hero-stats"><div class="stat-item"><div class="stat-num">3.2M</div><div class="stat-label">账户</div></div><div class="stat-item"><div class="stat-num">10.1M</div><div class="stat-label">节点</div></div><div class="stat-item"><div class="stat-num">$25M</div><div class="stat-label">Series A</div></div></div>
+    <div class="hero-stats"><div class="stat-item"><div class="stat-num">3.2M</div><div class="stat-label">Accounts</div></div><div class="stat-item"><div class="stat-num">10.1M</div><div class="stat-label">Nodes</div></div><div class="stat-item"><div class="stat-num">$25M</div><div class="stat-label">Series A</div></div></div>
     </div>
   </div>
   <div class="scroll-cue">
@@ -206,20 +215,20 @@ body{top:0!important}
 </section>
 <section id="timeline-section">
   <p class="sec-eyebrow">NEXUS · TIMELINE</p>
-  <h2 class="sec-title">从斯坦福到可验证互联网</h2>
+  <h2 class="sec-title">From Stanford to Verifiable Internet</h2>
   <div id="tl-wrap"><div id="tl-inner"></div></div>
   <div id="tl-nav">
-    <button id="tl-prev" aria-label="上一张" onclick="tlNav(-1)">
+    <button id="tl-prev" aria-label="Previous" onclick="tlNav(-1)">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
     </button>
     <span id="tl-counter"></span>
-    <button id="tl-next" aria-label="下一张" onclick="tlNav(1)">
+    <button id="tl-next" aria-label="Next" onclick="tlNav(1)">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
     </button>
   </div>
   <div class="drag-hint">
     <svg width="14" height="10" viewBox="0 0 20 14" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 7h18M13 1l6 6-6 6"/></svg>
-    ↑ 上滑向左 · ↓ 下滑向右 · SCROLL TO NAVIGATE
+    ← Drag to navigate · SCROLL TO BROWSE →
     <svg width="14" height="10" viewBox="0 0 20 14" fill="none" stroke="currentColor" stroke-width="1.8" style="transform:scaleX(-1)"><path d="M1 7h18M13 1l6 6-6 6"/></svg>
   </div>
 </section>
@@ -477,60 +486,60 @@ const CITY_DATA = [[114.169, 22.319, 2222], [3.379, 6.524, 1508], [121.474, 31.2
 </script>
 
 <script>
-// ══ 水平时间线 ══
+// ══ Timeline ══
 const TL=[
   {
     year: "2018 – 2019",
-    title: "Daniel Marin · 奥林匹克少年",
+    title: "Daniel Marin · The Olympiad Years",
     tag: "FOUNDER",
-    desc: "连续两届荣获国际物理奥林匹克竞赛（IPhO）铜牌，展露出超凡的科学天赋。这段经历深刻塑造了他对数学极限的敬畏——\"用数学证明一切\"的信念从这里萌芽。",
+    desc: "Won back-to-back bronze medals at the International Physics Olympiad (IPhO), revealing extraordinary scientific talent. These years forged a deep reverence for mathematical rigor — the seed of a belief: prove everything with math.",
     img: "https://cdn.jsdelivr.net/gh/testkka/my-journey@main/images/tl-0-1775747380338.png"
   },
   {
     year: "2020 – 2022",
-    title: "斯坦福密码学实验室",
+    title: "Stanford Cryptography Lab",
     tag: "STANFORD",
-    desc: "就读于斯坦福大学计算机科学系，在斯坦福密码学实验室以本科生身份开始研究零知识虚拟机（zkVM）。与几位志同道合的工程师共同探索：能否让任意计算在数学上变得可验证？这是 Nexus 最初的技术起源。",
+    desc: "Studying Computer Science at Stanford, Daniel began researching zero-knowledge virtual machines (zkVM) as an undergrad at the Stanford Cryptography Lab. Together with like-minded engineers, they asked: can arbitrary computation be made mathematically verifiable? This is the technical origin of Nexus.",
     img: "https://cdn.jsdelivr.net/gh/testkka/my-journey@main/images/tl-1-1775771276933.jpg"
   },
   {
     year: "2022",
-    title: "播下第一粒种子",
+    title: "Planting the First Seed",
     tag: "SEED · $2M",
-    desc: "Daniel Marin 联合创立 Nexus Labs，获 Dragonfly 领投 $2M 种子轮融资，正式开启构建\"可验证互联网\"的征程。核心信念：不依赖信任，只依赖数学证明。",
+    desc: "Daniel Marin co-founded Nexus Labs, raising a $2M seed round led by Dragonfly to begin building the Verifiable Internet. Core belief: no trust required — only mathematical proof.",
     img: "https://cdn.jsdelivr.net/gh/testkka/my-journey@main/images/tl-2-1775771286384.png"
   },
   {
     year: "2024 · JAN",
-    title: "zkVM 1.0 白皮书发布",
+    title: "zkVM 1.0 Whitepaper Released",
     tag: "WHITEPAPER",
-    desc: "Nexus zkVM 1.0 白皮书正式发布，系统阐述可验证互联网的核心架构：用通用零知识证明让网络上的任意计算结果都能被数学验证，而无需信任任何中间方。",
+    desc: "The Nexus zkVM 1.0 whitepaper was officially published, laying out the core architecture of the Verifiable Internet: using universal zero-knowledge proofs to cryptographically verify any computation on the network — no intermediary trust required.",
     img: "https://cdn.jsdelivr.net/gh/testkka/my-journey@main/images/tl-3-1775771292039.png"
   },
   {
     year: "2024 · APR",
-    title: "ETH Denver · zkVM 首秀",
+    title: "ETH Denver · zkVM Debut",
     tag: "LAUNCH",
-    desc: "在 ETH Denver 正式发布 Nexus zkVM——一台可为任意程序生成密码学证明的通用零知识虚拟机。以\"民主化以太坊执行层\"为愿景，震惊加密社区，引发全球开发者关注。",
+    desc: "Nexus zkVM launched at ETH Denver — a universal zero-knowledge virtual machine that generates cryptographic proofs for any program. Positioned as 'democratizing the Ethereum execution layer,' it stunned the crypto community and sparked global developer interest.",
     img: "https://cdn.jsdelivr.net/gh/testkka/my-journey@main/images/tl-4-1775770846165.ico"
   },
   {
     year: "2024 · JUL",
-    title: "$25M Series A 融资",
+    title: "$25M Series A",
     tag: "SERIES A",
-    desc: "获 Lightspeed 与 Pantera 共同领投的 2500 万美元 A 轮融资，Dragonfly、Faction、Blockchain Builders Fund 参投。Nexus 正式进入全球化扩张阶段，矢志将零知识证明带入互联网规模。"
+    desc: "Raised $25M in Series A funding co-led by Lightspeed and Pantera, with participation from Dragonfly, Faction, and Blockchain Builders Fund. Nexus entered its global expansion phase, committed to bringing zero-knowledge proofs to internet scale."
   },
   {
     year: "2024 · DEC",
-    title: "全球首个开放证明网络上线",
+    title: "World's First Open Prover Network",
     tag: "PROVER NETWORK",
-    desc: "全球首个开放证明网络（Open Prover Network）正式启动，任何人都可贡献算力参与证明；Testnet I 同步开启。同月，Daniel Marin 荣登 Forbes 30 Under 30（2025年）榜单。"
+    desc: "The world's first Open Prover Network launched, allowing anyone to contribute compute power to the proving process; Testnet I opened simultaneously. That same month, Daniel Marin was named to Forbes 30 Under 30 (2025)."
   },
   {
     year: "2025",
-    title: "迈向主网 · 可验证金融 Layer 1",
+    title: "Toward Mainnet · Verifiable Finance Layer 1",
     tag: "MAINNET",
-    desc: "历经 4 轮测试网，全球累计 320 万认证账户、1010 万节点贡献算力。Devnet 完成后 Testnet III 开启，主网冲刺倒计时。Nexus 以 zkVM + GPU 证明网络 + 可验证金融 Layer 1 的完整形态，重新定义下一代互联网基础设施。"
+    desc: "After 4 testnets, Nexus has 3.2M verified accounts and 10.1M nodes contributing compute. Testnet III launches after Devnet, with mainnet on the horizon. Nexus redefines next-gen internet infrastructure: zkVM + GPU Prover Network + Verifiable Finance Layer 1."
   },
   {
     year: "888888888",
@@ -741,12 +750,12 @@ const TL=[
       audio.pause();
       isPlaying = false;
       btn.classList.remove('playing');
-      label.textContent = '音乐';
+      label.textContent = 'Music';
     } else {
       audio.play().catch(function(e){ console.warn('play failed:', e); });
       isPlaying = true;
       btn.classList.add('playing');
-      label.textContent = '暂停';
+      label.textContent = 'Pause';
     }
   }
 
@@ -1047,29 +1056,29 @@ const TL=[
 <script type="text/javascript">
 function googleTranslateElementInit() {
   new google.translate.TranslateElement({
-    pageLanguage: 'zh-CN',
+    pageLanguage: 'en',
     includedLanguages: 'en,zh-CN',
     autoDisplay: false
   }, 'google_translate_element');
 }
 
-var _isEN = false;
+var _isZH = false;
 
 function toggleLang() {
-  _isEN = !_isEN;
+  _isZH = !_isZH;
   var btn = document.getElementById('lang-btn');
   var label = document.getElementById('lang-label');
 
-  if (_isEN) {
-    // Switch to English via Google Translate
-    doGoogleTranslate('en');
-    btn.classList.add('active');
-    label.textContent = '中文';
-  } else {
-    // Restore to Chinese
+  if (_isZH) {
+    // Translate page to Chinese
     doGoogleTranslate('zh-CN');
-    btn.classList.remove('active');
+    btn.classList.add('active');
     label.textContent = 'EN';
+  } else {
+    // Restore to English
+    doGoogleTranslate('en');
+    btn.classList.remove('active');
+    label.textContent = '中文';
   }
 }
 
