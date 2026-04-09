@@ -314,7 +314,7 @@ async function loadContent(){
   try {
     const data = await ghGet('index.html');
     currentSHA  = data.sha;
-    currentHTML = atob(data.content.replace(/\s/g,''));
+    currentHTML = b64ToUtf8(data.content.replace(/\s/g,''));
     parseAndRender();
     setStatus('ok','已连接');
     toast('内容加载成功 ✓');
@@ -485,7 +485,22 @@ function handleImgUpload(idx, input){
   reader.readAsDataURL(file);
 }
 
-// ─── Collect Form Data ────────────────────────────────────
+
+  // ─── UTF-8 safe base64 ────────────────────────────────────
+  function b64ToUtf8(b64){
+    const binary = atob(b64);
+    const bytes = new Uint8Array(binary.length);
+    for(let i=0;i<binary.length;i++) bytes[i]=binary.charCodeAt(i);
+    return new TextDecoder('utf-8').decode(bytes);
+  }
+  function utf8ToB64(str){
+    const bytes = new TextEncoder().encode(str);
+    let binary = '';
+    bytes.forEach(b => binary += String.fromCharCode(b));
+    return btoa(binary);
+  }
+
+// // ─── Collect Form Data ────────────────────────────────────
 function collectData(){
   // Nav brand
   const navBrand = document.getElementById('navBrand').value;
@@ -598,7 +613,7 @@ async function pushToGitHub(){
       let existingSHA = null;
       try { const e = await ghGet(upload.filename); existingSHA = e.sha; } catch(e){}
       const res = await ghPut(upload.filename, upload.base64, existingSHA, `upload: 时间线图片 ${upload.filename}`);
-      const rawUrl = `https://raw.githubusercontent.com/${repo()}/${branch()}/${upload.filename}`;
+      const rawUrl = `https://cdn.jsdelivr.net/gh/${repo()}@${branch()}/${upload.filename}`;
       imgMap['__PENDING__'] = rawUrl;
       // Update the hidden input
       const hiddenInput = document.getElementById('tlImgSrc'+idx);
@@ -612,7 +627,7 @@ async function pushToGitHub(){
     const newHTML = rebuildHTML(data, imgMap);
 
     // 3. Push index.html
-    const b64 = btoa(unescape(encodeURIComponent(newHTML)));
+    const b64 = utf8ToB64(newHTML);
     const res = await ghPut('index.html', b64, currentSHA, '✏️ 后台管理更新内容');
     currentSHA  = res.content.sha;
     currentHTML = newHTML;
