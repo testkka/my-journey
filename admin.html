@@ -12,52 +12,31 @@
     --red:#ef4444;--yellow:#f59e0b
   }
   body{background:var(--bg);color:var(--text);font-family:"Inter",-apple-system,sans-serif;min-height:100vh}
-  
-  /* Header */
   .header{background:var(--panel);border-bottom:1px solid var(--border);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
   .header-brand{font-size:1rem;font-weight:700;letter-spacing:2px}
   .header-brand span{color:var(--accent)}
   .header-actions{display:flex;gap:10px;align-items:center}
-  
-  /* Status */
   .status-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px}
-  .status-ok{background:var(--green)}
-  .status-err{background:var(--red)}
-  .status-loading{background:var(--yellow);animation:pulse 1s infinite}
+  .status-ok{background:var(--green)}.status-err{background:var(--red)}.status-loading{background:var(--yellow);animation:pulse 1s infinite}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-  
-  /* Buttons */
   .btn{padding:8px 18px;border-radius:8px;border:none;cursor:pointer;font-size:.85rem;font-weight:600;transition:all .2s}
-  .btn-primary{background:var(--accent);color:#fff}
-  .btn-primary:hover{background:#2563eb}
+  .btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:#2563eb}
   .btn-primary:disabled{background:#1e3a5f;color:var(--muted);cursor:not-allowed}
-  .btn-success{background:var(--green);color:#fff}
-  .btn-success:hover{background:#16a34a}
+  .btn-success{background:var(--green);color:#fff}.btn-success:hover{background:#16a34a}
   .btn-success:disabled{background:#14532d;color:var(--muted);cursor:not-allowed}
-  .btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border)}
-  .btn-ghost:hover{border-color:var(--accent);color:var(--text)}
-  .btn-danger{background:transparent;color:var(--red);border:1px solid #3f1515}
-  .btn-danger:hover{background:#3f1515}
+  .btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border)}.btn-ghost:hover{border-color:var(--accent);color:var(--text)}
+  .btn-danger{background:transparent;color:var(--red);border:1px solid #3f1515}.btn-danger:hover{background:#3f1515}
+  .btn-warn{background:transparent;color:var(--yellow);border:1px solid #4a3800}.btn-warn:hover{background:#4a3800}
   .btn-sm{padding:5px 12px;font-size:.78rem}
-  
-  /* Layout */
   .container{max-width:960px;margin:0 auto;padding:32px 24px}
-  
-  /* Auth Card */
   .auth-card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:32px;margin-bottom:28px}
   .auth-card h2{font-size:1rem;font-weight:700;margin-bottom:20px;color:var(--accent);letter-spacing:1px}
   .auth-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
   .field{display:flex;flex-direction:column;gap:6px}
   .field label{font-size:.78rem;color:var(--muted);letter-spacing:1px;font-weight:600}
-  .field input,.field textarea,.field select{
-    background:#0d0d18;border:1px solid var(--border);border-radius:8px;
-    padding:10px 14px;color:var(--text);font-size:.88rem;font-family:inherit;
-    transition:border-color .2s;outline:none;width:100%
-  }
+  .field input,.field textarea,.field select{background:#0d0d18;border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);font-size:.88rem;font-family:inherit;transition:border-color .2s;outline:none;width:100%}
   .field input:focus,.field textarea:focus{border-color:var(--accent)}
   .field textarea{resize:vertical;line-height:1.6}
-  
-  /* Section */
   .section{background:var(--panel);border:1px solid var(--border);border-radius:14px;margin-bottom:20px;overflow:hidden}
   .section-header{padding:18px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
   .section-header:hover{background:rgba(255,255,255,.02)}
@@ -66,54 +45,71 @@
   .section-toggle{color:var(--muted);transition:transform .2s;font-size:1.1rem}
   .section-body{padding:24px}
   .section-body.collapsed{display:none}
-  
-  /* Grid */
   .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
   .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
-  .gap-16{gap:16px}
-  
-  /* Timeline item card */
-  .tl-editor{background:#0d0d18;border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:14px;position:relative}
+  .tl-editor{background:#0d0d18;border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:14px;position:relative;transition:border-color .2s}
+  .tl-editor.drag-over{border-color:var(--accent);background:rgba(59,130,246,.05)}
   .tl-editor-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
   .tl-editor-num{font-size:.7rem;color:var(--accent);font-weight:700;letter-spacing:2px;background:rgba(59,130,246,.1);padding:3px 10px;border-radius:20px}
+  .drag-handle{cursor:grab;color:var(--muted);font-size:1.1rem;padding:0 8px;user-select:none}.drag-handle:active{cursor:grabbing}
   .tl-img-preview{width:100%;max-height:140px;object-fit:cover;border-radius:6px;margin-bottom:10px;display:none}
   .tl-img-preview.show{display:block}
   .img-upload-area{border:2px dashed var(--border);border-radius:8px;padding:16px;text-align:center;cursor:pointer;transition:all .2s;font-size:.8rem;color:var(--muted)}
   .img-upload-area:hover{border-color:var(--accent);color:var(--accent)}
   .img-upload-area input{display:none}
   .img-upload-area.has-img{border-style:solid;border-color:var(--green)}
-  
-  /* Toast */
   .toast{position:fixed;bottom:28px;right:28px;background:#1e1e2e;border:1px solid var(--border);border-radius:10px;padding:14px 20px;font-size:.85rem;display:flex;align-items:center;gap:10px;box-shadow:0 8px 32px rgba(0,0,0,.5);z-index:999;opacity:0;transform:translateY(10px);transition:all .3s;pointer-events:none}
   .toast.show{opacity:1;transform:translateY(0)}
-  .toast.success .toast-icon{color:var(--green)}
-  .toast.error .toast-icon{color:var(--red)}
-  .toast.loading .toast-icon{color:var(--yellow)}
-  
-  /* Diff indicator */
-  .changed{border-color:var(--yellow) !important}
+  .toast.success .toast-icon{color:var(--green)}.toast.error .toast-icon{color:var(--red)}.toast.loading .toast-icon{color:var(--yellow)}
   .push-bar{position:fixed;bottom:0;left:0;right:0;background:#0f172a;border-top:1px solid var(--border);padding:14px 32px;display:flex;align-items:center;justify-content:space-between;z-index:100;transform:translateY(100%);transition:transform .3s}
   .push-bar.show{transform:translateY(0)}
   .push-bar-msg{font-size:.85rem;color:var(--yellow)}
-  
-  /* Loading overlay */
-  .loading-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;z-index:200;display:none}
+  .loading-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:200}
   .loading-overlay.show{display:flex}
   .loading-spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite}
   @keyframes spin{to{transform:rotate(360deg)}}
-  
   .help-text{font-size:.73rem;color:var(--muted);margin-top:4px}
   .divider{border:none;border-top:1px solid var(--border);margin:16px 0}
   .add-btn{width:100%;padding:12px;border:2px dashed var(--border);background:transparent;color:var(--muted);border-radius:8px;cursor:pointer;font-size:.85rem;transition:all .2s}
   .add-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+  /* History Panel */
+  .history-modal{position:fixed;inset:0;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;z-index:300;padding:20px}
+  .history-modal.show{display:flex}
+  .history-box{background:var(--panel);border:1px solid var(--border);border-radius:16px;width:100%;max-width:680px;max-height:80vh;display:flex;flex-direction:column;overflow:hidden}
+  .history-header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+  .history-header h3{font-size:.95rem;font-weight:700;color:var(--text)}
+  .history-list{overflow-y:auto;flex:1}
+  .history-item{padding:16px 24px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:16px;transition:background .15s}
+  .history-item:hover{background:rgba(255,255,255,.03)}
+  .history-item:last-child{border-bottom:none}
+  .history-sha{font-family:monospace;font-size:.72rem;color:var(--accent);background:rgba(59,130,246,.1);padding:2px 8px;border-radius:4px;flex-shrink:0;margin-top:2px}
+  .history-info{flex:1;min-width:0}
+  .history-msg{font-size:.85rem;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .history-meta{font-size:.73rem;color:var(--muted);margin-top:3px}
+  .history-restore-btn{flex-shrink:0;padding:5px 14px;border-radius:6px;border:1px solid var(--accent);background:transparent;color:var(--accent);font-size:.78rem;font-weight:600;cursor:pointer;transition:all .2s}
+  .history-restore-btn:hover{background:var(--accent);color:#fff}
+  .history-empty{padding:40px;text-align:center;color:var(--muted);font-size:.85rem}
+  .history-loading{padding:40px;text-align:center;color:var(--muted);font-size:.85rem}
 
   @media(max-width:640px){.auth-grid,.grid-2,.grid-3{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 
-<div class="loading-overlay" id="loadingOverlay">
-  <div class="loading-spinner"></div>
+<div class="loading-overlay" id="loadingOverlay"><div class="loading-spinner"></div></div>
+
+<!-- History Modal -->
+<div class="history-modal" id="historyModal">
+  <div class="history-box">
+    <div class="history-header">
+      <h3>🕐 历史版本</h3>
+      <button class="btn btn-ghost btn-sm" onclick="closeHistory()">✕ 关闭</button>
+    </div>
+    <div class="history-list" id="historyList">
+      <div class="history-loading">加载中…</div>
+    </div>
+  </div>
 </div>
 
 <div class="header">
@@ -123,13 +119,13 @@
       <span class="status-dot" id="statusDot"></span>
       <span id="statusText">未连接</span>
     </span>
+    <button class="btn btn-ghost btn-sm" onclick="openHistory()">🕐 历史版本</button>
     <button class="btn btn-ghost btn-sm" onclick="loadContent()">🔄 重新加载</button>
     <button class="btn btn-success" id="pushBtn" onclick="pushToGitHub()" disabled>🚀 推送到 GitHub</button>
   </div>
 </div>
 
 <div class="container">
-  <!-- Auth -->
   <div class="auth-card">
     <h2>⚙ GITHUB 连接配置</h2>
     <div class="auth-grid">
@@ -152,13 +148,9 @@
     </div>
   </div>
 
-  <!-- Page Settings -->
   <div class="section" id="sec-page">
     <div class="section-header" onclick="toggleSection('page')">
-      <div>
-        <div class="section-title">🌐 页面设置</div>
-        <div class="section-subtitle">导航、Hero 区域、统计数据、页脚</div>
-      </div>
+      <div><div class="section-title">🌐 页面设置</div><div class="section-subtitle">导航、Hero 区域、统计数据、页脚</div></div>
       <span class="section-toggle" id="toggle-page">▲</span>
     </div>
     <div class="section-body" id="body-page">
@@ -184,10 +176,13 @@
         </div>
       </div>
       <hr class="divider">
-      <div class="section-title" style="font-size:.78rem;margin-bottom:12px">统计数据</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <div class="section-title" style="font-size:.78rem">统计数据</div>
+        <button class="btn btn-ghost btn-sm" onclick="addStat()">＋ 添加</button>
+      </div>
       <div class="grid-3" id="statsEditor"></div>
       <hr class="divider">
-      <div class="field">
+      <div class="field" style="margin-bottom:16px">
         <label>时间线区域标语</label>
         <input type="text" id="tlEyebrow" oninput="markChanged()">
       </div>
@@ -199,13 +194,9 @@
     </div>
   </div>
 
-  <!-- Timeline -->
   <div class="section" id="sec-timeline">
     <div class="section-header" onclick="toggleSection('timeline')">
-      <div>
-        <div class="section-title">🗓 时间线管理</div>
-        <div class="section-subtitle">编辑每个时间节点的内容与图片</div>
-      </div>
+      <div><div class="section-title">🗓 时间线管理</div><div class="section-subtitle">编辑每个时间节点 · 拖拽手柄可排序</div></div>
       <span class="section-toggle" id="toggle-timeline">▲</span>
     </div>
     <div class="section-body" id="body-timeline">
@@ -215,7 +206,6 @@
   </div>
 </div>
 
-<!-- Push Bar -->
 <div class="push-bar" id="pushBar">
   <span class="push-bar-msg">⚠ 有未保存的修改</span>
   <div style="display:flex;gap:10px">
@@ -224,7 +214,6 @@
   </div>
 </div>
 
-<!-- Toast -->
 <div class="toast" id="toast">
   <span class="toast-icon" id="toastIcon">✓</span>
   <span id="toastMsg">操作成功</span>
@@ -235,7 +224,9 @@
 let currentHTML = '';
 let currentSHA  = '';
 let hasChanges  = false;
-let imageUploads = {}; // key: tlIndex, value: {filename, base64}
+let imageUploads = {};
+let tlUidCounter = 0; // always-increasing uid for tl items, avoids id collisions
+let statCount = 0;
 
 // ─── Auth ────────────────────────────────────────────────
 function saveAuth(){
@@ -249,27 +240,22 @@ function loadAuth(){
   document.getElementById('ghBranch').value = localStorage.getItem('gh_branch') || 'main';
 }
 
-// ─── Helpers ─────────────────────────────────────────────
 const token  = () => document.getElementById('ghToken').value.trim();
 const repo   = () => document.getElementById('ghRepo').value.trim();
 const branch = () => document.getElementById('ghBranch').value.trim();
 
 function setStatus(type, text){
-  const dot  = document.getElementById('statusDot');
-  const span = document.getElementById('statusText');
-  dot.className = 'status-dot status-' + type;
-  span.textContent = text;
+  document.getElementById('statusDot').className = 'status-dot status-' + type;
+  document.getElementById('statusText').textContent = text;
 }
-
 function showLoading(v){ document.getElementById('loadingOverlay').classList.toggle('show', v) }
 
 function toast(msg, type='success'){
-  const el   = document.getElementById('toast');
-  const icon = document.getElementById('toastIcon');
+  const el = document.getElementById('toast');
   document.getElementById('toastMsg').textContent = msg;
-  icon.textContent = type==='success'?'✓': type==='error'?'✗':'⏳';
+  document.getElementById('toastIcon').textContent = type==='success'?'✓': type==='error'?'✗':'⏳';
   el.className = `toast ${type} show`;
-  setTimeout(()=>el.classList.remove('show'), 3000);
+  setTimeout(()=>el.classList.remove('show'), 3200);
 }
 
 function markChanged(){
@@ -279,15 +265,35 @@ function markChanged(){
 }
 
 function toggleSection(id){
-  const body   = document.getElementById('body-'+id);
+  const body = document.getElementById('body-'+id);
   const toggle = document.getElementById('toggle-'+id);
-  const collapsed = body.classList.toggle('collapsed');
-  toggle.textContent = collapsed ? '▼' : '▲';
+  toggle.textContent = body.classList.toggle('collapsed') ? '▼' : '▲';
 }
 
+// ─── Unsaved changes warning ──────────────────────────────
+window.addEventListener('beforeunload', e => {
+  if(hasChanges){ e.preventDefault(); e.returnValue = ''; }
+});
+
 // ─── GitHub API ───────────────────────────────────────────
-async function ghGet(path){
-  const r = await fetch(`https://api.github.com/repos/${repo()}/contents/${path}?ref=${branch()}`, {
+async function ghGet(path, params=''){
+  const r = await fetch(`https://api.github.com/repos/${repo()}/contents/${path}?ref=${branch()}${params}`, {
+    headers:{ Authorization:`token ${token()}`, Accept:'application/vnd.github.v3+json' }
+  });
+  if(!r.ok) throw new Error(`GitHub API ${r.status}: ${await r.text()}`);
+  return r.json();
+}
+
+async function ghGetCommits(path, perPage=20){
+  const r = await fetch(`https://api.github.com/repos/${repo()}/commits?path=${path}&sha=${branch()}&per_page=${perPage}`, {
+    headers:{ Authorization:`token ${token()}`, Accept:'application/vnd.github.v3+json' }
+  });
+  if(!r.ok) throw new Error(`GitHub API ${r.status}: ${await r.text()}`);
+  return r.json();
+}
+
+async function ghGetFileAtCommit(path, commitSha){
+  const r = await fetch(`https://api.github.com/repos/${repo()}/contents/${path}?ref=${commitSha}`, {
     headers:{ Authorization:`token ${token()}`, Accept:'application/vnd.github.v3+json' }
   });
   if(!r.ok) throw new Error(`GitHub API ${r.status}: ${await r.text()}`);
@@ -324,220 +330,294 @@ async function loadContent(){
   } catch(e){
     setStatus('err','连接失败');
     toast('加载失败: '+e.message, 'error');
-    console.error(e);
   }
   showLoading(false);
 }
 
-// ─── Parse HTML → Forms ────────────────────────────────────
-function parseAndRender(){
-  const html = currentHTML;
-
-  // Nav brand
-  const navBrand = html.match(/<div class="nav-logo">([^<]+)<span>([^<]+)<\/span><\/div>/);
-  if(navBrand) document.getElementById('navBrand').value = navBrand[1].trim() + navBrand[2].trim();
-
-  // Nav links
-  // 仅解析 .nav-links 容器内的链接，排除固定按钮
-  const _navLinksMatch = html.match(/<div class="nav-links">([\s\S]*?)<\/div>/);
-  const navLinks = _navLinksMatch
-    ? [..._navLinksMatch[1].matchAll(/<a href="([^"]+)">([^<]+)<\/a>/g)].map(m=>`${m[2]}|${m[1]}`).join('\n')
-    : '';
-  document.getElementById('navLinks').value = navLinks;
-
-  // Hero eyebrow
-  const eyebrow = html.match(/class="hero-eyebrow">([^<]+)<\/div>/);
-  if(eyebrow) document.getElementById('heroEyebrow').value = eyebrow[1];
-
-  // Hero sub
-  const heroSub = html.match(/class="hero-sub">([^<]+)<\/p>/);
-  if(heroSub) document.getElementById('heroSub').value = heroSub[1].replace(/<br>/g,'\n');
-
-  // Stats
-  const stats = [...html.matchAll(/<div class="stat-item"><div class="stat-num">([^<]+)<\/div><div class="stat-label">([^<]+)<\/div><\/div>/g)];
-  renderStats(stats.map(m=>({num:m[1],label:m[2]})));
-
-  // TL eyebrow
-  const tlEye = html.match(/class="sec-eyebrow">([^<]+)<\/p>/);
-  if(tlEye) document.getElementById('tlEyebrow').value = tlEye[1];
-
-  // Footer
-  const footer = html.match(/<footer><p>([^<]+)<\/p><\/footer>/);
-  if(footer) document.getElementById('footerText').value = footer[1];
-
-  // Timeline
-  const tlMatch = html.match(/const TL=(\[[\s\S]*?\]);\s*\(function/);
-  if(tlMatch){
-    try {
-      const tlData = (new Function('return '+tlMatch[1]))();
-      renderTLItems(tlData);
-    } catch(e){ console.error('TL parse error', e); }
+// ─── History ──────────────────────────────────────────────
+async function openHistory(){
+  if(!token()){ toast('请先填写 GitHub Token', 'error'); return; }
+  document.getElementById('historyModal').classList.add('show');
+  document.getElementById('historyList').innerHTML = '<div class="history-loading">⏳ 加载历史版本…</div>';
+  try {
+    const commits = await ghGetCommits('index.html', 30);
+    if(!commits.length){
+      document.getElementById('historyList').innerHTML = '<div class="history-empty">暂无历史记录</div>';
+      return;
+    }
+    document.getElementById('historyList').innerHTML = commits.map((c,i) => {
+      const sha = c.sha.slice(0,7);
+      const msg = c.commit.message.replace(/</g,'&lt;');
+      const author = c.commit.author.name;
+      const date = new Date(c.commit.author.date).toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});
+      const isCurrent = c.sha === currentSHA;
+      return `<div class="history-item">
+        <span class="history-sha">${sha}</span>
+        <div class="history-info">
+          <div class="history-msg">${msg}</div>
+          <div class="history-meta">${author} · ${date}${isCurrent?' · <span style="color:var(--green)">当前版本</span>':''}</div>
+        </div>
+        ${isCurrent
+          ? `<span style="font-size:.75rem;color:var(--green);padding:5px 14px">✓ 当前</span>`
+          : `<button class="history-restore-btn" onclick="restoreVersion('${c.sha}','${sha}: ${c.commit.message.replace(/'/g,"\\'")}')">恢复</button>`}
+      </div>`;
+    }).join('');
+  } catch(e){
+    document.getElementById('historyList').innerHTML = `<div class="history-empty">加载失败: ${e.message}</div>`;
   }
 }
 
-// ─── Render Stats Editor ──────────────────────────────────
+function closeHistory(){
+  document.getElementById('historyModal').classList.remove('show');
+}
+
+async function restoreVersion(fullSha, label){
+  if(!confirm(`确定恢复到版本 "${label}"？\n当前内容将被覆盖，此操作将产生一条新的提交记录。`)) return;
+  closeHistory();
+  showLoading(true);
+  setStatus('loading','恢复中…');
+  try {
+    // Fetch file content at that commit
+    const fileData = await ghGetFileAtCommit('index.html', fullSha);
+    const restoredContent = b64ToUtf8(fileData.content.replace(/\s/g,''));
+    const b64 = utf8ToB64(restoredContent);
+
+    // Get current SHA to push over it
+    const cur = await ghGet('index.html');
+    const res = await ghPut('index.html', b64, cur.sha, `⏪ 恢复到版本 ${fullSha.slice(0,7)}`);
+    currentSHA  = res.content.sha;
+    currentHTML = restoredContent;
+    parseAndRender();
+    hasChanges = false;
+    document.getElementById('pushBar').classList.remove('show');
+    document.getElementById('pushBtn').disabled = false;
+    setStatus('ok','已恢复');
+    toast(`🎉 已成功恢复到版本 ${fullSha.slice(0,7)}`);
+  } catch(e){
+    setStatus('err','恢复失败');
+    toast('恢复失败: '+e.message, 'error');
+  }
+  showLoading(false);
+}
+
+// Close modal on backdrop click
+document.getElementById('historyModal').addEventListener('click', e => {
+  if(e.target === e.currentTarget) closeHistory();
+});
+
+// ─── Parse HTML → Forms ────────────────────────────────────
+function parseAndRender(){
+  const html = currentHTML;
+  tlUidCounter = 0;
+
+  const navBrand = html.match(/<div class="nav-logo">([^<]+)<span>([^<]+)<\/span><\/div>/);
+  if(navBrand) document.getElementById('navBrand').value = (navBrand[1].trim() + ' ' + navBrand[2].trim()).trim();
+
+  const navLinksMatch = html.match(/<div class="nav-links">([\s\S]*?)<\/div>/);
+  const navLinks = navLinksMatch
+    ? [...navLinksMatch[1].matchAll(/<a href="([^"]+)">([^<]+)<\/a>/g)].map(m=>`${m[2]}|${m[1]}`).join('\n')
+    : '';
+  document.getElementById('navLinks').value = navLinks;
+
+  const eyebrow = html.match(/class="hero-eyebrow">([^<]+)<\/div>/);
+  if(eyebrow) document.getElementById('heroEyebrow').value = eyebrow[1];
+
+  const heroSub = html.match(/class="hero-sub">([^<]+)<\/p>/);
+  if(heroSub) document.getElementById('heroSub').value = heroSub[1].replace(/<br>/g,'\n');
+
+  const stats = [...html.matchAll(/<div class="stat-item"><div class="stat-num">([^<]+)<\/div><div class="stat-label">([^<]+)<\/div><\/div>/g)];
+  renderStats(stats.map(m=>({num:m[1],label:m[2]})));
+
+  const tlEye = html.match(/class="sec-eyebrow">([^<]+)<\/p>/);
+  if(tlEye) document.getElementById('tlEyebrow').value = tlEye[1];
+
+  const footer = html.match(/<footer><p>([^<]+)<\/p><\/footer>/);
+  if(footer) document.getElementById('footerText').value = footer[1];
+
+  const tlMatch = html.match(/const TL=(\[[\s\S]*?\]);\s*\(function/);
+  if(tlMatch){
+    try { renderTLItems((new Function('return '+tlMatch[1]))()); }
+    catch(e){ console.error('TL parse error', e); }
+  }
+}
+
+// ─── Stats Editor ─────────────────────────────────────────
 function renderStats(stats){
+  statCount = 0;
   const container = document.getElementById('statsEditor');
   container.innerHTML = '';
-  (stats.length ? stats : [{num:'',label:''}]).forEach((s,i)=>{
-    container.innerHTML += `
-      <div style="background:#0d0d18;border:1px solid var(--border);border-radius:8px;padding:14px">
-        <div class="field" style="margin-bottom:8px">
-          <label>数值 ${i+1}</label>
-          <input type="text" id="statNum${i}" value="${s.num||''}" oninput="markChanged()">
-        </div>
-        <div class="field">
-          <label>标签</label>
-          <input type="text" id="statLabel${i}" value="${s.label||''}" oninput="markChanged()">
-        </div>
-      </div>`;
-  });
+  (stats.length ? stats : [{num:'',label:''}]).forEach(s => addStatHTML(s));
 }
 
-// ─── Render Timeline Editor ───────────────────────────────
+function addStatHTML(s={num:'',label:''}){
+  const i = statCount++;
+  const container = document.getElementById('statsEditor');
+  const div = document.createElement('div');
+  div.id = `statItem${i}`;
+  div.style.cssText = 'background:#0d0d18;border:1px solid var(--border);border-radius:8px;padding:14px;position:relative';
+  div.innerHTML = `
+    <button onclick="removeStat(${i})" style="position:absolute;top:8px;right:8px;background:transparent;border:none;color:var(--muted);cursor:pointer;font-size:.9rem">✕</button>
+    <div class="field" style="margin-bottom:8px"><label>数值 ${i+1}</label><input type="text" id="statNum${i}" value="${escHtml(s.num||'')}" oninput="markChanged()"></div>
+    <div class="field"><label>标签</label><input type="text" id="statLabel${i}" value="${escHtml(s.label||'')}" oninput="markChanged()"></div>`;
+  container.appendChild(div);
+  markChanged && hasChanges && markChanged();
+}
+
+function addStat(){ addStatHTML(); markChanged(); }
+function removeStat(i){ const el = document.getElementById('statItem'+i); if(el){ el.remove(); markChanged(); } }
+
+// ─── Timeline Editor ──────────────────────────────────────
 function renderTLItems(items){
+  tlUidCounter = 0;
+  imageUploads = {};
   const container = document.getElementById('tlItemsEditor');
   container.innerHTML = '';
-  items.forEach((item,i) => addTLItemHTML(container, item, i));
+  items.forEach(item => addTLItemHTML(container, item, tlUidCounter++));
+  initDragSort();
 }
 
-function addTLItemHTML(container, item, idx){
+function addTLItemHTML(container, item, uid){
   const div = document.createElement('div');
   div.className = 'tl-editor';
-  div.id = `tl-${idx}`;
+  div.id = `tl-${uid}`;
+  div.draggable = true;
   div.innerHTML = `
     <div class="tl-editor-header">
-      <span class="tl-editor-num">节点 ${idx+1}</span>
-      <button class="btn btn-danger btn-sm" onclick="removeTLItem(${idx})">删除</button>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="drag-handle" title="拖拽排序">⠿</span>
+        <span class="tl-editor-num">节点</span>
+      </div>
+      <button class="btn btn-danger btn-sm" onclick="removeTLItem('${uid}')">删除</button>
     </div>
     <div class="grid-2" style="margin-bottom:12px">
-      <div class="field">
-        <label>年份 / 日期</label>
-        <input type="text" id="tlYear${idx}" value="${escHtml(item.year||'')}" oninput="markChanged()">
-      </div>
-      <div class="field">
-        <label>标签 (Tag)</label>
-        <input type="text" id="tlTag${idx}" value="${escHtml(item.tag||'')}" oninput="markChanged()">
-      </div>
+      <div class="field"><label>年份 / 日期</label><input type="text" id="tlYear${uid}" value="${escHtml(item.year||'')}" oninput="markChanged()"></div>
+      <div class="field"><label>标签 (Tag)</label><input type="text" id="tlTag${uid}" value="${escHtml(item.tag||'')}" oninput="markChanged()"></div>
     </div>
-    <div class="field" style="margin-bottom:12px">
-      <label>标题</label>
-      <input type="text" id="tlTitle${idx}" value="${escHtml(item.title||'')}" oninput="markChanged()">
-    </div>
-    <div class="field" style="margin-bottom:12px">
-      <label>描述</label>
-      <textarea id="tlDesc${idx}" rows="3" oninput="markChanged()">${escHtml(item.desc||'')}</textarea>
-    </div>
-    <div class="field">
-      <label>图片</label>
-      ${item.img ? `<img class="tl-img-preview show" id="tlImgPreview${idx}" src="${item.img}" alt="">` : `<img class="tl-img-preview" id="tlImgPreview${idx}" src="" alt="">`}
-      <div class="img-upload-area ${item.img?'has-img':''}" id="tlImgArea${idx}" onclick="document.getElementById('tlImgFile${idx}').click()">
-        <input type="file" id="tlImgFile${idx}" accept="image/*" onchange="handleImgUpload(${idx},this)">
+    <div class="field" style="margin-bottom:12px"><label>标题</label><input type="text" id="tlTitle${uid}" value="${escHtml(item.title||'')}" oninput="markChanged()"></div>
+    <div class="field" style="margin-bottom:12px"><label>描述</label><textarea id="tlDesc${uid}" rows="3" oninput="markChanged()">${escHtml(item.desc||'')}</textarea></div>
+    <div class="field"><label>图片</label>
+      <img class="tl-img-preview ${item.img?'show':''}" id="tlImgPreview${uid}" src="${item.img||''}" alt="">
+      <div class="img-upload-area ${item.img?'has-img':''}" id="tlImgArea${uid}" onclick="document.getElementById('tlImgFile${uid}').click()">
+        <input type="file" id="tlImgFile${uid}" accept="image/*" onchange="handleImgUpload('${uid}',this)">
         ${item.img
           ? `<span style="color:var(--green)">✓ 已有图片 · 点击重新选择</span><br><span style="font-size:.72rem;opacity:.6">${item.img}</span>`
           : `📷 点击选择图片<br><span style="font-size:.72rem">支持 JPG / PNG / GIF · 自动上传到仓库 images/</span>`}
       </div>
-      ${item.img ? `<button class="btn btn-danger btn-sm" style="margin-top:6px" onclick="clearImg(${idx})">× 移除图片</button>` : ''}
-      <input type="hidden" id="tlImgSrc${idx}" value="${escHtml(item.img||'')}">
+      ${item.img ? `<button class="btn btn-danger btn-sm" style="margin-top:6px" onclick="clearImg('${uid}')">× 移除图片</button>` : ''}
+      <input type="hidden" id="tlImgSrc${uid}" value="${escHtml(item.img||'')}">
     </div>`;
   container.appendChild(div);
 }
 
-let tlCount = 0;
 function addTLItem(){
   const container = document.getElementById('tlItemsEditor');
-  const count = container.querySelectorAll('.tl-editor').length;
-  tlCount = count;
-  addTLItemHTML(container, {year:'',title:'',tag:'',desc:'',img:''}, count);
+  const uid = tlUidCounter++;
+  addTLItemHTML(container, {year:'',title:'',tag:'',desc:'',img:''}, uid);
+  initDragSort();
   markChanged();
 }
 
-function removeTLItem(idx){
-  const el = document.getElementById(`tl-${idx}`);
+function removeTLItem(uid){
+  const el = document.getElementById(`tl-${uid}`);
   if(el){ el.remove(); markChanged(); }
 }
 
-function clearImg(idx){
-  document.getElementById('tlImgSrc'+idx).value = '';
-  document.getElementById('tlImgPreview'+idx).src = '';
-  document.getElementById('tlImgPreview'+idx).classList.remove('show');
-  document.getElementById('tlImgArea'+idx).className = 'img-upload-area';
-  document.getElementById('tlImgArea'+idx).innerHTML = `<input type="file" id="tlImgFile${idx}" accept="image/*" onchange="handleImgUpload(${idx},this)">📷 点击选择图片<br><span style="font-size:.72rem">支持 JPG / PNG / GIF</span>`;
-  delete imageUploads[idx];
+function clearImg(uid){
+  document.getElementById('tlImgSrc'+uid).value = '';
+  const preview = document.getElementById('tlImgPreview'+uid);
+  preview.src = ''; preview.classList.remove('show');
+  document.getElementById('tlImgArea'+uid).className = 'img-upload-area';
+  document.getElementById('tlImgArea'+uid).innerHTML = `<input type="file" id="tlImgFile${uid}" accept="image/*" onchange="handleImgUpload('${uid}',this)">📷 点击选择图片<br><span style="font-size:.72rem">支持 JPG / PNG / GIF</span>`;
+  delete imageUploads[uid];
   markChanged();
 }
 
-// ─── Image Upload Handler ─────────────────────────────────
-function handleImgUpload(idx, input){
+// ─── Drag-to-reorder timeline items ──────────────────────
+let dragSrc = null;
+function initDragSort(){
+  const container = document.getElementById('tlItemsEditor');
+  container.querySelectorAll('.tl-editor').forEach(el => {
+    el.addEventListener('dragstart', e => { dragSrc = el; el.style.opacity='.4'; e.dataTransfer.effectAllowed='move'; });
+    el.addEventListener('dragend',   e => { el.style.opacity=''; container.querySelectorAll('.tl-editor').forEach(x=>x.classList.remove('drag-over')); });
+    el.addEventListener('dragover',  e => { e.preventDefault(); e.dataTransfer.dropEffect='move'; });
+    el.addEventListener('dragenter', e => { if(el!==dragSrc) el.classList.add('drag-over'); });
+    el.addEventListener('dragleave', e => { el.classList.remove('drag-over'); });
+    el.addEventListener('drop',      e => {
+      e.preventDefault();
+      if(dragSrc && dragSrc !== el){
+        const els = [...container.querySelectorAll('.tl-editor')];
+        const fromIdx = els.indexOf(dragSrc);
+        const toIdx   = els.indexOf(el);
+        if(fromIdx < toIdx) el.after(dragSrc); else el.before(dragSrc);
+        markChanged();
+      }
+      el.classList.remove('drag-over');
+    });
+  });
+}
+
+// ─── Image Upload ─────────────────────────────────────────
+function handleImgUpload(uid, input){
   const file = input.files[0];
   if(!file) return;
   const ext = file.name.split('.').pop().toLowerCase();
-  const filename = `images/tl-${idx}-${Date.now()}.${ext}`;
+  const filename = `images/tl-${uid}-${Date.now()}.${ext}`;
   const reader = new FileReader();
   reader.onload = e => {
     const b64 = e.target.result.split(',')[1];
-    imageUploads[idx] = { filename, base64: b64, mimeType: file.type };
-    // Preview
-    const preview = document.getElementById('tlImgPreview'+idx);
-    preview.src = e.target.result;
-    preview.classList.add('show');
-    document.getElementById('tlImgArea'+idx).className = 'img-upload-area has-img';
-    document.getElementById('tlImgArea'+idx).innerHTML = `<input type="file" id="tlImgFile${idx}" accept="image/*" onchange="handleImgUpload(${idx},this)"><span style="color:var(--yellow)">⏳ 待上传: ${file.name}</span>`;
-    document.getElementById('tlImgSrc'+idx).value = '__PENDING__'+idx;
+    imageUploads[uid] = { filename, base64: b64, mimeType: file.type };
+    const preview = document.getElementById('tlImgPreview'+uid);
+    preview.src = e.target.result; preview.classList.add('show');
+    document.getElementById('tlImgArea'+uid).className = 'img-upload-area has-img';
+    document.getElementById('tlImgArea'+uid).innerHTML = `<input type="file" id="tlImgFile${uid}" accept="image/*" onchange="handleImgUpload('${uid}',this)"><span style="color:var(--yellow)">⏳ 待上传: ${file.name}</span>`;
+    document.getElementById('tlImgSrc'+uid).value = '__PENDING__'+uid;
     markChanged();
   };
   reader.readAsDataURL(file);
 }
 
+// ─── UTF-8 safe base64 ───────────────────────────────────
+function b64ToUtf8(b64){
+  const binary = atob(b64);
+  const bytes = new Uint8Array(binary.length);
+  for(let i=0;i<binary.length;i++) bytes[i]=binary.charCodeAt(i);
+  return new TextDecoder('utf-8').decode(bytes);
+}
+function utf8ToB64(str){
+  const bytes = new TextEncoder().encode(str);
+  let binary = '';
+  bytes.forEach(b => binary += String.fromCharCode(b));
+  return btoa(binary);
+}
 
-  // ─── UTF-8 safe base64 ────────────────────────────────────
-  function b64ToUtf8(b64){
-    const binary = atob(b64);
-    const bytes = new Uint8Array(binary.length);
-    for(let i=0;i<binary.length;i++) bytes[i]=binary.charCodeAt(i);
-    return new TextDecoder('utf-8').decode(bytes);
-  }
-  function utf8ToB64(str){
-    const bytes = new TextEncoder().encode(str);
-    let binary = '';
-    bytes.forEach(b => binary += String.fromCharCode(b));
-    return btoa(binary);
-  }
-
-// // ─── Collect Form Data ────────────────────────────────────
+// ─── Collect Form Data ────────────────────────────────────
 function collectData(){
-  // Nav brand
   const navBrand = document.getElementById('navBrand').value;
   const navLinkRaw = document.getElementById('navLinks').value.trim().split('\n').filter(Boolean);
-
-  // Hero
   const heroEyebrow = document.getElementById('heroEyebrow').value;
   const heroSub = document.getElementById('heroSub').value.replace(/\n/g,'<br>');
+  const tlEyebrow = document.getElementById('tlEyebrow').value;
+  const footerText = document.getElementById('footerText').value;
 
-  // Stats
-  const statsEls = document.getElementById('statsEditor').querySelectorAll('[id^=statNum]');
+  // Stats: collect all remaining statItem divs
   const stats = [];
-  statsEls.forEach((_,i)=>{
+  document.getElementById('statsEditor').querySelectorAll('[id^="statItem"]').forEach(div => {
+    const i = div.id.replace('statItem','');
     const num   = document.getElementById('statNum'+i)?.value || '';
     const label = document.getElementById('statLabel'+i)?.value || '';
     if(num||label) stats.push({num,label});
   });
 
-  // TL eyebrow & footer
-  const tlEyebrow = document.getElementById('tlEyebrow').value;
-  const footerText = document.getElementById('footerText').value;
-
-  // Timeline items
-  const tlEls = document.getElementById('tlItemsEditor').querySelectorAll('.tl-editor');
+  // Timeline items (in current DOM order)
   const tlItems = [];
-  tlEls.forEach((el,i) => {
-    const idx = parseInt(el.id.split('-')[1]);
+  document.getElementById('tlItemsEditor').querySelectorAll('.tl-editor').forEach(el => {
+    const uid = el.id.split('-')[1];
     tlItems.push({
-      year:  document.getElementById('tlYear'+idx)?.value || '',
-      title: document.getElementById('tlTitle'+idx)?.value || '',
-      tag:   document.getElementById('tlTag'+idx)?.value || '',
-      desc:  document.getElementById('tlDesc'+idx)?.value || '',
-      img:   document.getElementById('tlImgSrc'+idx)?.value || '',
+      year:  document.getElementById('tlYear'+uid)?.value || '',
+      title: document.getElementById('tlTitle'+uid)?.value || '',
+      tag:   document.getElementById('tlTag'+uid)?.value || '',
+      desc:  document.getElementById('tlDesc'+uid)?.value || '',
+      img:   document.getElementById('tlImgSrc'+uid)?.value || '',
     });
   });
 
@@ -548,16 +628,11 @@ function collectData(){
 function rebuildHTML(data, imgMap){
   let html = currentHTML;
 
-  // Nav brand
-  html = html.replace(
-    /<div class="nav-logo">[^<]*<span>[^<]*<\/span><\/div>/,
-    `<div class="nav-logo">${escHtmlInner(data.navBrand.slice(0,-4))} <span>${escHtmlInner(data.navBrand.slice(-4).trim())}</span></div>`
-  );
-  // Simpler nav brand replacement
-  const nb = data.navBrand;
-  const spaceIdx = nb.indexOf(' ');
-  const part1 = spaceIdx>0 ? nb.slice(0,spaceIdx) : nb;
-  const part2 = spaceIdx>0 ? nb.slice(spaceIdx+1) : '';
+  // Nav brand: split on first space
+  const nb = data.navBrand.trim();
+  const sp = nb.indexOf(' ');
+  const part1 = sp > 0 ? nb.slice(0, sp) : nb;
+  const part2 = sp > 0 ? nb.slice(sp+1)  : '';
   html = html.replace(
     /<div class="nav-logo">[^<]*<span>[^<]*<\/span><\/div>/,
     `<div class="nav-logo">${part1} <span>${part2}</span></div>`
@@ -576,22 +651,21 @@ function rebuildHTML(data, imgMap){
   // Hero sub
   html = html.replace(/(class="hero-sub">)[^<]+(<\/p>)/, `$1${data.heroSub}$2`);
 
-  // Stats
+  // Stats (depth-aware replacement)
   const newStats = data.stats.map(s=>
     `<div class="stat-item"><div class="stat-num">${s.num}</div><div class="stat-label">${s.label}</div></div>`
   ).join('');
-  // 用深度计数法精确替换整个 hero-stats 容器（避免非贪婪正则提前截断）
-  html = (function(h) {
+  html = (function(h){
     const open = '<div class="hero-stats">';
     const si = h.indexOf(open);
-    if (si === -1) return h;
-    let depth = 0, i = si;
-    while (i < h.length) {
-      if (h.startsWith('<div', i)) { depth++; i += 4; }
-      else if (h.startsWith('</div>', i)) { depth--; if (!depth) { i += 6; break; } else i += 6; }
+    if(si===-1) return h;
+    let depth=0, i=si;
+    while(i<h.length){
+      if(h.startsWith('<div',i)){depth++;i+=4;}
+      else if(h.startsWith('</div>',i)){depth--;if(!depth){i+=6;break;}else i+=6;}
       else i++;
     }
-    return h.slice(0, si) + open + newStats + '</div>' + h.slice(i);
+    return h.slice(0,si)+open+newStats+'</div>'+h.slice(i);
   })(html);
 
   // TL eyebrow
@@ -605,7 +679,6 @@ function rebuildHTML(data, imgMap){
     const img = imgMap[item.img] || (item.img.startsWith('__PENDING__') ? '' : item.img);
     return `  {\n    year: ${JSON.stringify(item.year)},\n    title: ${JSON.stringify(item.title)},\n    tag: ${JSON.stringify(item.tag)},\n    desc: ${JSON.stringify(item.desc)}${img ? `,\n    img: ${JSON.stringify(img)}` : ''}\n  }`;
   }).join(',\n');
-
   html = html.replace(/const TL=\[[\s\S]*?\];(\s*\(function)/, `const TL=[\n${tlJS}\n];$1`);
 
   return html;
@@ -616,28 +689,26 @@ async function pushToGitHub(){
   if(!token()){ toast('请先填写 GitHub Token', 'error'); return; }
   showLoading(true);
   setStatus('loading','推送中…');
-
   try {
-    const data = collectData();
-    const imgMap = {}; // pending key → final URL
+    const imgMap = {};
 
-    // 1. Upload pending images first
-    for(const [idx, upload] of Object.entries(imageUploads)){
-      toast(`上传图片 ${parseInt(idx)+1}…`, 'loading');
+    // 1. Upload pending images
+    for(const [uid, upload] of Object.entries(imageUploads)){
+      toast(`上传图片…`, 'loading');
       let existingSHA = null;
       try { const e = await ghGet(upload.filename); existingSHA = e.sha; } catch(e){}
-      const res = await ghPut(upload.filename, upload.base64, existingSHA, `upload: 时间线图片 ${upload.filename}`);
+      await ghPut(upload.filename, upload.base64, existingSHA, `upload: 时间线图片 ${upload.filename}`);
       const rawUrl = `https://cdn.jsdelivr.net/gh/${repo()}@${branch()}/${upload.filename}`;
-      imgMap['__PENDING__'+idx] = rawUrl;
-      // Update the hidden input
-      const hiddenInput = document.getElementById('tlImgSrc'+idx);
+      imgMap['__PENDING__'+uid] = rawUrl;
+      const hiddenInput = document.getElementById('tlImgSrc'+uid);
       if(hiddenInput) hiddenInput.value = rawUrl;
-      const area = document.getElementById('tlImgArea'+idx);
-      if(area) area.innerHTML = `<input type="file" id="tlImgFile${idx}" accept="image/*" onchange="handleImgUpload(${idx},this)"><span style="color:var(--green)">✓ 已上传: ${upload.filename}</span>`;
+      const area = document.getElementById('tlImgArea'+uid);
+      if(area) area.innerHTML = `<input type="file" id="tlImgFile${uid}" accept="image/*" onchange="handleImgUpload('${uid}',this)"><span style="color:var(--green)">✓ 已上传: ${upload.filename}</span>`;
     }
     imageUploads = {};
 
-    // 2. Rebuild HTML
+    // 2. Collect data & rebuild
+    const data = collectData();
     const newHTML = rebuildHTML(data, imgMap);
 
     // 3. Push index.html
@@ -651,7 +722,6 @@ async function pushToGitHub(){
     document.getElementById('pushBtn').disabled = true;
     setStatus('ok','已同步');
     toast('🎉 推送成功！GitHub Pages 将在约 1 分钟内更新');
-
   } catch(e){
     setStatus('err','推送失败');
     toast('推送失败: '+e.message, 'error');
@@ -664,13 +734,10 @@ async function pushToGitHub(){
 function reloadAndDiscard(){
   if(confirm('确定放弃所有未保存的修改？')) loadContent();
 }
-
 function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') }
-function escHtmlInner(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') }
 
 // ─── Init ─────────────────────────────────────────────────
 loadAuth();
-// Auto-load if token exists
 if(localStorage.getItem('gh_token')) loadContent();
 </script>
 <script>document.addEventListener("contextmenu",function(e){if(e.target.tagName==="IMG"){e.preventDefault();}});</script>
