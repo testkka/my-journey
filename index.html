@@ -172,6 +172,9 @@ body{top:0!important}
 .sec-title{font-size:clamp(1.6rem,3vw,2.7rem)}
 .stat-label{font-size:.6rem;letter-spacing:1.8px}
 .nav-links a{font-size:.72rem;letter-spacing:1.2px}
+
+/* ── Second Timeline Section ── */
+#timeline-section-2{padding:100px 0 120px;overflow:hidden;background:#000;border-top:1px solid rgba(255,255,255,.06)}
 </style>
 </head>
 <body>
@@ -223,6 +226,26 @@ body{top:0!important}
     </button>
     <span id="tl-counter"></span>
     <button id="tl-next" aria-label="Next" onclick="tlNav(1)">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+    </button>
+  </div>
+  <div class="drag-hint">
+    <svg width="14" height="10" viewBox="0 0 20 14" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 7h18M13 1l6 6-6 6"/></svg>
+    ← Drag to navigate · SCROLL TO BROWSE →
+    <svg width="14" height="10" viewBox="0 0 20 14" fill="none" stroke="currentColor" stroke-width="1.8" style="transform:scaleX(-1)"><path d="M1 7h18M13 1l6 6-6 6"/></svg>
+  </div>
+</section>
+
+<section id="timeline-section-2">
+  <p class="sec-eyebrow" id="tl2-eyebrow">NEXUS · JOURNEY</p>
+  <h2 class="sec-title" id="tl2-title">My Personal Journey</h2>
+  <div id="tl2-wrap"><div id="tl2-inner"></div></div>
+  <div id="tl2-nav">
+    <button id="tl2-prev" aria-label="Previous" onclick="tl2Nav(-1)">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <span id="tl2-counter"></span>
+    <button id="tl2-next" aria-label="Next" onclick="tl2Nav(1)">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
     </button>
   </div>
@@ -1049,6 +1072,189 @@ const TL=[
   requestAnimationFrame(frame);
 })();
 
+</script>
+
+
+<script>
+// ══ Second Timeline Data ══
+const TL2=[
+  {
+    year: "2020",
+    title: "The Beginning",
+    tag: "CHAPTER 1",
+    desc: "Every great journey starts with a single step. Add your story here — edit the content from the admin panel to personalize this timeline with your own milestones."
+  },
+  {
+    year: "2021",
+    title: "First Milestone",
+    tag: "MILESTONE",
+    desc: "Describe a key achievement or turning point. This timeline uses the same drag-to-scroll format as the one above, keeping the visual experience consistent."
+  },
+  {
+    year: "2022",
+    title: "Growing Fast",
+    tag: "GROWTH",
+    desc: "Add more cards to tell your story. Each card supports a year label, title, tag, description, and an optional image — just like the Nexus timeline above."
+  },
+  {
+    year: "2023",
+    title: "New Horizons",
+    tag: "EXPLORE",
+    desc: "What happened next? Add your milestones, projects, partnerships, or personal achievements here. Edit from the admin panel to keep things up to date."
+  },
+  {
+    year: "2024",
+    title: "Building Together",
+    tag: "COMMUNITY",
+    desc: "Collaboration, community, and shared vision. Document the people, events, and moments that shaped this chapter of the journey."
+  },
+  {
+    year: "2025",
+    title: "Looking Ahead",
+    tag: "FUTURE",
+    desc: "The journey continues. What's next? Add your upcoming goals, planned launches, or future milestones to complete the story."
+  }
+];
+
+// Render TL2
+(function(){
+  const s = document.getElementById('tl2-inner');
+  TL2.forEach(i => {
+    const el = document.createElement('div');
+    el.className = 'tl-item' + (i.img ? ' has-img' : '');
+    const cardCls = i.img ? 'tl-card has-img-card' : 'tl-card';
+    const inner = i.img
+      ? `<div class="tl-img-wrap"><img class="tl-card-img" src="${i.img}" alt="" loading="lazy"></div><div class="tl-card-body"><div class="tl-card-title">${i.title}</div>${i.tag ? `<span class="tl-tag">${i.tag}</span>` : ''}<div class="tl-card-desc">${i.desc}</div></div>`
+      : `<div class="tl-card-title">${i.title}</div>${i.tag ? `<span class="tl-tag">${i.tag}</span>` : ''}<div class="tl-card-desc">${i.desc}</div>`;
+    el.innerHTML = `<div class="tl-year">${i.year}</div><div class="tl-dot"></div><div class="${cardCls}">${inner}</div>`;
+    s.appendChild(el);
+  });
+  document.querySelectorAll('#tl2-inner .tl-item').forEach(e => e.classList.add('visible'));
+})();
+
+// ── TL2 Scroll Engine (independent from TL1) ──
+(function(){
+  const w     = document.getElementById('tl2-wrap');
+  const inner = document.getElementById('tl2-inner');
+  let currentIndex2 = 0;
+  let currentX2 = 0, targetX2 = 0;
+  let isDragging2 = false;
+
+  const items2 = () => Array.from(inner.querySelectorAll('.tl-item'));
+
+  function clamp2(v, lo, hi){ return Math.max(lo, Math.min(hi, v)); }
+
+  function setupPadding2(){
+    const pad = Math.max(0, w.clientWidth / 2 - 280);
+    inner.style.paddingLeft  = pad + 'px';
+    inner.style.paddingRight = pad + 'px';
+  }
+
+  function maxScroll2(){
+    return Math.max(0, inner.scrollWidth - w.clientWidth);
+  }
+
+  function setPos2(x){
+    inner.style.transform = `translateX(${-x}px)`;
+  }
+
+  function goToIndex2(i){
+    const list = items2();
+    if(!list.length) return;
+    currentIndex2 = clamp2(i, 0, list.length - 1);
+    const el = list[currentIndex2];
+    targetX2 = clamp2(el.offsetLeft + el.offsetWidth / 2 - w.clientWidth / 2, 0, maxScroll2());
+    list.forEach((el, idx) => {
+      el.classList.toggle('tl-active', idx === currentIndex2);
+    });
+    updateNav2();
+  }
+
+  function updateNav2(){
+    const list = items2();
+    const prev = document.getElementById('tl2-prev');
+    const next = document.getElementById('tl2-next');
+    const counter = document.getElementById('tl2-counter');
+    if(prev) prev.disabled = currentIndex2 <= 0;
+    if(next) next.disabled = currentIndex2 >= list.length - 1;
+    if(counter) counter.textContent = `${currentIndex2 + 1} / ${list.length}`;
+  }
+
+  window.tl2Nav = function(dir){
+    goToIndex2(currentIndex2 + dir);
+  };
+
+  // Animation loop
+  let lastTime2 = performance.now();
+  function loop2(ts){
+    requestAnimationFrame(loop2);
+    const dt = Math.min(ts - lastTime2, 64);
+    lastTime2 = ts;
+    if(!isDragging2){
+      const factor = 1 - Math.exp(-dt / 160);
+      currentX2 += (targetX2 - currentX2) * factor;
+      if(Math.abs(currentX2 - targetX2) < 0.3) currentX2 = targetX2;
+      setPos2(currentX2);
+    }
+  }
+  requestAnimationFrame(loop2);
+
+  // Wheel
+  let lastWheelTime2 = 0;
+  w.addEventListener('wheel', e => {
+    e.preventDefault();
+    const now = Date.now();
+    if(now - lastWheelTime2 < 750) return;
+    lastWheelTime2 = now;
+    const delta = Math.abs(e.deltaY) >= Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
+    if(delta > 0) goToIndex2(currentIndex2 + 1);
+    else goToIndex2(currentIndex2 - 1);
+  }, {passive:false});
+
+  // Drag
+  let _lastDragX2 = 0, _lastDragTime2 = 0, _dragVelocity2 = 0;
+  const DRAG_SENS2 = 0.85;
+
+  function startDrag2(clientX){ isDragging2 = true; _lastDragX2 = clientX; _lastDragTime2 = Date.now(); _dragVelocity2 = 0; }
+  function moveDrag2(clientX){
+    if(!isDragging2) return;
+    const now = Date.now(); const dt = now - _lastDragTime2;
+    const delta = (_lastDragX2 - clientX) * DRAG_SENS2;
+    if(dt > 0) _dragVelocity2 = (_lastDragX2 - clientX) / dt;
+    _lastDragX2 = clientX; _lastDragTime2 = now;
+    targetX2 = clamp2(targetX2 + delta, 0, maxScroll2());
+    currentX2 = targetX2; setPos2(currentX2);
+  }
+  function endDrag2(){
+    if(!isDragging2) return;
+    isDragging2 = false;
+    const momentum = _dragVelocity2 * DRAG_SENS2 * 180;
+    targetX2 = clamp2(targetX2 + momentum, 0, maxScroll2());
+    const list = items2();
+    let best = 0, bestDist = Infinity;
+    list.forEach((el, i) => {
+      const cx = clamp2(el.offsetLeft + el.offsetWidth / 2 - w.clientWidth / 2, 0, maxScroll2());
+      if(Math.abs(cx - targetX2) < bestDist){ bestDist = Math.abs(cx - targetX2); best = i; }
+    });
+    goToIndex2(best);
+  }
+
+  w.addEventListener('mousedown', e => { e.preventDefault(); startDrag2(e.clientX); });
+  w.addEventListener('dragstart', e => e.preventDefault());
+  window.addEventListener('mousemove', e => moveDrag2(e.clientX));
+  window.addEventListener('mouseup', endDrag2);
+  w.addEventListener('touchstart', e => startDrag2(e.touches[0].clientX), {passive:true});
+  w.addEventListener('touchmove', e => { if(!isDragging2) return; e.preventDefault(); moveDrag2(e.touches[0].clientX); }, {passive:false});
+  window.addEventListener('touchend', endDrag2);
+
+  window.addEventListener('resize', () => {
+    setupPadding2(); goToIndex2(currentIndex2); currentX2 = targetX2; setPos2(currentX2);
+  });
+
+  setTimeout(() => {
+    setupPadding2(); goToIndex2(0); currentX2 = targetX2; setPos2(currentX2); updateNav2();
+  }, 150);
+})();
 </script>
 
 <!-- Google Translate -->
