@@ -42,14 +42,14 @@ nav{position:fixed;top:0;left:0;right:0;z-index:300;display:flex;align-items:cen
 #timeline-section{padding:160px 0 120px;overflow:hidden;background:#000}
 .sec-eyebrow{text-align:center;font-size:.65rem;letter-spacing:5px;text-transform:uppercase;color:var(--tl);margin-bottom:12px}
 .sec-title{text-align:center;font-size:clamp(1.8rem,3.5vw,3rem);font-weight:900;margin-bottom:56px;background:linear-gradient(135deg,#fff,#a8c8ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-#tl-wrap{position:relative;cursor:grab;user-select:none;overflow:hidden;padding:16px 0 40px}
-#tl-wrap:active{cursor:grabbing}
+#tl-wrap,#tl2-wrap{position:relative;cursor:grab;user-select:none;overflow:hidden;padding:16px 0 40px}
+#tl-wrap:active,#tl2-wrap:active{cursor:grabbing}
 /* 两侧渐隐遮罩，参考 bianrensheng.io */
-#tl-wrap::before,#tl-wrap::after{content:'';position:absolute;top:0;bottom:0;width:120px;z-index:5;pointer-events:none}
-#tl-wrap::before{left:0;background:linear-gradient(to right,#000 0%,transparent 100%)}
-#tl-wrap::after{right:0;background:linear-gradient(to left,#000 0%,transparent 100%)}
+#tl-wrap::before,#tl-wrap::after,#tl2-wrap::before,#tl2-wrap::after{content:'';position:absolute;top:0;bottom:0;width:120px;z-index:5;pointer-events:none}
+#tl-wrap::before,#tl2-wrap::before{left:0;background:linear-gradient(to right,#000 0%,transparent 100%)}
+#tl-wrap::after,#tl2-wrap::after{right:0;background:linear-gradient(to left,#000 0%,transparent 100%)}
 @keyframes tlshine{0%{left:-40%}100%{left:130%}}
-#tl-inner{display:flex;align-items:flex-start;padding:0;will-change:transform;transition:none}
+#tl-inner,#tl2-inner{display:flex;align-items:flex-start;padding:0;will-change:transform;transition:none}
 /* 非激活卡片轻微降低透明度，突出当前卡片（参考 bianrensheng.io）*/
 .tl-item.visible:not(.tl-active){opacity:0.5;transform:scale(0.97)}
 .tl-item.tl-active{opacity:1 !important;transform:scale(1) !important}
