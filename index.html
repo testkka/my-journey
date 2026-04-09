@@ -567,41 +567,43 @@ const TL=[
     return best;
   }
 
-  // ── RAF 平滑循环（动态阻尼：拖拽快速跟手，松手慢速缓动）──
+  // ── RAF 平滑循环（松手后丝滑缓动）──
   let lastTime = performance.now();
   function loop(ts){
     requestAnimationFrame(loop);
     const dt = Math.min(ts - lastTime, 64);
     lastTime = ts;
-    // 拖拽中：时间常数 18ms = 极快跟手（几乎1:1但有轻微平滑）
-    // 松手后：时间常数 150ms = 丝滑缓动，约450ms 完成
-    const timeConst = isDragging ? 18 : 150;
-    const factor = 1 - Math.exp(-dt / timeConst);
-    currentX += (targetX - currentX) * factor;
-    if(!isDragging && Math.abs(currentX - targetX) < 0.3) currentX = targetX;
-    setPos(currentX);
+    // 松手后时间常数 160ms ≈ 500ms 完成 95%，丝滑
+    if(!isDragging){
+      const factor = 1 - Math.exp(-dt / 160);
+      currentX += (targetX - currentX) * factor;
+      if(Math.abs(currentX - targetX) < 0.3) currentX = targetX;
+      setPos(currentX);
+    }
   }
   requestAnimationFrame(loop);
 
-  // ── 滚轮：上下滚动切换索引（下=右/上=左）──
+  // ── 滚轮：节流 750ms，每次只跳一卡，避免滚太快 ──
   let lastWheelTime = 0;
   w.addEventListener('wheel', e => {
     e.preventDefault();
     const now = Date.now();
-    if(now - lastWheelTime < 350) return; // throttle
+    if(now - lastWheelTime < 750) return;
     lastWheelTime = now;
     const delta = Math.abs(e.deltaY) >= Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
     if(delta > 0) goToIndex(currentIndex + 1);
     else if(delta < 0) goToIndex(currentIndex - 1);
   }, {passive:false});
 
-  // ── 拖拽（带惯性动量 + 阻尼平滑）──
-  let isDragging = false, dragStartX = 0;
+  // ── 拖拽（增量式 · 两方向均可 · 带惯性）──
+  // 关键改进：用"增量 delta"而非"绝对锚点"计算位移
+  // 彻底解决锚点漂移导致的单向失效问题
+  let isDragging = false;
   let _lastDragX = 0, _lastDragTime = 0, _dragVelocity = 0;
+  const DRAG_SENS = 0.72; // 灵敏度 0.72 = 稍慢于 1:1，手感自然
 
   function startDrag(clientX) {
     isDragging = true;
-    dragStartX = clientX + currentX;
     _lastDragX = clientX;
     _lastDragTime = Date.now();
     _dragVelocity = 0;
@@ -611,18 +613,30 @@ const TL=[
     if(!isDragging) return;
     const now = Date.now();
     const dt = now - _lastDragTime;
-    if(dt > 0) _dragVelocity = (_lastDragX - clientX) / dt; // px/ms
+    const delta = (_lastDragX - clientX) * DRAG_SENS; // 向左拖 delta>0 = 前进；向右拖 delta<0 = 后退
+    if(dt > 0) _dragVelocity = (_lastDragX - clientX) / dt; // px/ms 原始速度
     _lastDragX = clientX;
     _lastDragTime = now;
-    targetX = clamp(dragStartX - clientX, 0, maxScroll());
+    // 直接跟手，无惯性lag，两方向均正常
+    targetX = clamp(targetX + delta, 0, maxScroll());
+    currentX = targetX;
+    setPos(currentX);
   }
   function endDrag() {
     if(!isDragging) return;
     isDragging = false;
-    // 施加惯性：速度 × 动量系数，让松手后继续滑行
-    const momentum = _dragVelocity * 220;
-    targetX = clamp(currentX + momentum, 0, maxScroll());
-    snapToNearest();
+    // 惯性：松手后按最后速度滑行，再 snap 到最近卡片
+    const momentum = _dragVelocity * DRAG_SENS * 180;
+    targetX = clamp(targetX + momentum, 0, maxScroll());
+    // snap 用 targetX 找最近卡片（比 currentX 更准）
+    const list = items();
+    let best = 0, bestDist = Infinity;
+    list.forEach((el, i) => {
+      const cx = clamp(el.offsetLeft, 0, maxScroll());
+      const dist = Math.abs(cx - targetX);
+      if(dist < bestDist){ bestDist = dist; best = i; }
+    });
+    goToIndex(best);
   }
 
   // 阻止容器内图片/文字触发原生拖拽
@@ -631,11 +645,9 @@ const TL=[
   window.addEventListener('mousemove', e => moveDrag(e.clientX));
   window.addEventListener('mouseup', endDrag);
 
-  // ── 触摸 ──
-  let touchStartX = 0;
+  // ── 触摸（同样增量式）──
   w.addEventListener('touchstart', e => {
     startDrag(e.touches[0].clientX);
-    touchStartX = e.touches[0].clientX + currentX;
   }, {passive:true});
   window.addEventListener('touchmove', e => {
     if(!isDragging) return;
