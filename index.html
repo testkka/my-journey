@@ -870,19 +870,14 @@ const TL=[
     const dt = Math.min(ts-last, 50); last=ts;
     ctx.clearRect(0,0,W,H);
 
-    // 坐标 — 根据截图精确标定
-    // 左手掌心: 8% 宽, 42% 高
-    // 右手掌心: 92% 宽, 42% 高
-    // 地球中心: 50% 宽, 42% 高
-    // 根据截图红线精确标定:
-    // 左手掌: 15%宽, 70%高  右手掌: 85%宽, 70%高
-    // 地球: 左边缘33%, 右边缘67%, 高度67%
-    const lx = W*0.150, ly = H*0.700;
-    const rx = W*0.850, ry = H*0.700;
-    // 左闪电终点→地球左边缘, 右闪电终点→地球右边缘
-    const glx = W*0.330, gly = H*0.670;  // globe left edge
-    const grx = W*0.670, gry = H*0.670;  // globe right edge
-    const gx  = W*0.500, gy  = H*0.670;  // globe center (for glow)
+    // 坐标 — 根据两张截图精确标定
+    // 图2原图: 左手(12%,62%) 右手(88%,62%)
+    // 红线方向: 斜向下打向地球左右侧 (35%,68%) (65%,68%)
+    const lx  = W*0.120, ly  = H*0.620;  // 左手掌心
+    const rx  = W*0.880, ry  = H*0.620;  // 右手掌心
+    const glx = W*0.355, gly = H*0.675;  // 地球左侧目标
+    const grx = W*0.645, gry = H*0.675;  // 地球右侧目标
+    const gx  = W*0.500, gy  = H*0.660;  // 地球中心 (仅辉光)
 
     // 闪烁逻辑
     flickerT += dt;
@@ -897,12 +892,12 @@ const TL=[
     drawGlow(gx,gy,36,'140,210,255',0.40*flicker);
     drawGlow(gx,gy,15,'220,240,255',0.80*flicker);
 
-    // 左闪电 (左手 → 地球)
+    // 左闪电 (左手 → 地球左侧)  斜向下
     const lpts = lightning(lx,ly,glx,gly, H*0.10, 6);
     drawLightning(lpts, flicker);
     if(Math.random()<0.6) drawBranch(lpts, flicker);
 
-    // 右闪电 (右手 → 地球)
+    // 右闪电 (右手 → 地球右侧)  斜向下
     const rpts = lightning(rx,ry,grx,gry, H*0.10, 6);
     drawLightning(rpts, flicker);
     if(Math.random()<0.6) drawBranch(rpts, flicker);
