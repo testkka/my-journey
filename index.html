@@ -72,8 +72,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:300;display:flex;align-items:cen
 #tl-prev:hover,#tl-next:hover{border-color:rgba(255,255,255,.4);background:rgba(255,255,255,.1)}
 #tl-prev:disabled,#tl-next:disabled{opacity:0.25;cursor:default}
 #tl-counter{font-size:.7rem;letter-spacing:2px;color:rgba(255,255,255,.45);min-width:60px;text-align:center}
-footer{text-align:center;padding:48px 24px;color:var(--muted);font-size:.75rem;letter-spacing:1.5px;background:#000;position:relative}
-.footer-bottom-line{position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(to right,transparent 0,rgba(255,255,255,.12) 60px,rgba(255,255,255,.12) calc(100% - 60px),transparent 100%);overflow:hidden}.footer-bottom-line::after{content:'';position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(to right,transparent,rgba(255,255,255,.55),transparent);animation:tlshine 3s ease-in-out infinite;animation-delay:1.5s}
+footer{text-align:center;padding:48px 24px;color:var(--muted);font-size:.75rem;letter-spacing:1.5px;background:#000;position:relative}footer::before{content:"";display:block;position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent 0,rgba(255,255,255,.1) 60px,rgba(255,255,255,.1) calc(100% - 60px),transparent 100%);overflow:hidden}footer::after{content:"";position:absolute;top:-1px;left:-60%;width:40%;height:3px;background:linear-gradient(to right,transparent,rgba(255,255,255,.55),transparent);animation:footerMeteor 3s ease-in-out infinite}@keyframes footerMeteor{0%{left:-40%}100%{left:130%}}
+
 @media(max-width:640px){nav{padding:14px 20px}.nav-links{gap:18px}#nexus-btn,#discord-btn{display:none}#music-label{display:none}.hero-stats{flex-wrap:wrap;border-radius:10px}.tl-item{width:calc(90vw)}.tl-card{width:100%}#tl-inner{padding:0}}
 
 #person-wrap{
@@ -212,7 +212,7 @@ footer{text-align:center;padding:48px 24px;color:var(--muted);font-size:.75rem;l
     <svg width="14" height="10" viewBox="0 0 20 14" fill="none" stroke="currentColor" stroke-width="1.8" style="transform:scaleX(-1)"><path d="M1 7h18M13 1l6 6-6 6"/></svg>
   </div>
 </section>
-<footer><p>© 2026 · Nexus Labs · nexus.xyz</p><div class="footer-bottom-line"></div></footer>
+<footer><p>© 2026 · Nexus Labs · nexus.xyz</p></footer>
 
 <script src="https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
