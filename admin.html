@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nexus · 后台管理</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#0a0a0f;--panel:#12121a;--border:#1e1e2e;--accent:#3b82f6;
+    --accent2:#6366f1;--text:#e2e8f0;--muted:#64748b;--green:#22c55e;
+    --red:#ef4444;--yellow:#f59e0b
+  }
+  body{background:var(--bg);color:var(--text);font-family:"Inter",-apple-system,sans-serif;min-height:100vh}
+  
+  /* Header */
+  .header{background:var(--panel);border-bottom:1px solid var(--border);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+  .header-brand{font-size:1rem;font-weight:700;letter-spacing:2px}
+  .header-brand span{color:var(--accent)}
+  .header-actions{display:flex;gap:10px;align-items:center}
+  
+  /* Status */
+  .status-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px}
+  .status-ok{background:var(--green)}
+  .status-err{background:var(--red)}
+  .status-loading{background:var(--yellow);animation:pulse 1s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+  
+  /* Buttons */
+  .btn{padding:8px 18px;border-radius:8px;border:none;cursor:pointer;font-size:.85rem;font-weight:600;transition:all .2s}
+  .btn-primary{background:var(--accent);color:#fff}
+  .btn-primary:hover{background:#2563eb}
+  .btn-primary:disabled{background:#1e3a5f;color:var(--muted);cursor:not-allowed}
+  .btn-success{background:var(--green);color:#fff}
+  .btn-success:hover{background:#16a34a}
+  .btn-success:disabled{background:#14532d;color:var(--muted);cursor:not-allowed}
+  .btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border)}
+  .btn-ghost:hover{border-color:var(--accent);color:var(--text)}
+  .btn-danger{background:transparent;color:var(--red);border:1px solid #3f1515}
+  .btn-danger:hover{background:#3f1515}
+  .btn-sm{padding:5px 12px;font-size:.78rem}
+  
+  /* Layout */
+  .container{max-width:960px;margin:0 auto;padding:32px 24px}
+  
+  /* Auth Card */
+  .auth-card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:32px;margin-bottom:28px}
+  .auth-card h2{font-size:1rem;font-weight:700;margin-bottom:20px;color:var(--accent);letter-spacing:1px}
+  .auth-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .field{display:flex;flex-direction:column;gap:6px}
+  .field label{font-size:.78rem;color:var(--muted);letter-spacing:1px;font-weight:600}
+  .field input,.field textarea,.field select{
+    background:#0d0d18;border:1px solid var(--border);border-radius:8px;
+    padding:10px 14px;color:var(--text);font-size:.88rem;font-family:inherit;
+    transition:border-color .2s;outline:none;width:100%
+  }
+  .field input:focus,.field textarea:focus{border-color:var(--accent)}
+  .field textarea{resize:vertical;line-height:1.6}
+  
+  /* Section */
+  .section{background:var(--panel);border:1px solid var(--border);border-radius:14px;margin-bottom:20px;overflow:hidden}
+  .section-header{padding:18px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
+  .section-header:hover{background:rgba(255,255,255,.02)}
+  .section-title{font-size:.85rem;font-weight:700;letter-spacing:1.5px;color:var(--accent)}
+  .section-subtitle{font-size:.75rem;color:var(--muted);margin-top:2px}
+  .section-toggle{color:var(--muted);transition:transform .2s;font-size:1.1rem}
+  .section-body{padding:24px}
+  .section-body.collapsed{display:none}
+  
+  /* Grid */
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+  .gap-16{gap:16px}
+  
+  /* Timeline item card */
+  .tl-editor{background:#0d0d18;border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:14px;position:relative}
+  .tl-editor-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+  .tl-editor-num{font-size:.7rem;color:var(--accent);font-weight:700;letter-spacing:2px;background:rgba(59,130,246,.1);padding:3px 10px;border-radius:20px}
+  .tl-img-preview{width:100%;max-height:140px;object-fit:cover;border-radius:6px;margin-bottom:10px;display:none}
+  .tl-img-preview.show{display:block}
+  .img-upload-area{border:2px dashed var(--border);border-radius:8px;padding:16px;text-align:center;cursor:pointer;transition:all .2s;font-size:.8rem;color:var(--muted)}
+  .img-upload-area:hover{border-color:var(--accent);color:var(--accent)}
+  .img-upload-area input{display:none}
+  .img-upload-area.has-img{border-style:solid;border-color:var(--green)}
+  
+  /* Toast */
+  .toast{position:fixed;bottom:28px;right:28px;background:#1e1e2e;border:1px solid var(--border);border-radius:10px;padding:14px 20px;font-size:.85rem;display:flex;align-items:center;gap:10px;box-shadow:0 8px 32px rgba(0,0,0,.5);z-index:999;opacity:0;transform:translateY(10px);transition:all .3s;pointer-events:none}
+  .toast.show{opacity:1;transform:translateY(0)}
+  .toast.success .toast-icon{color:var(--green)}
+  .toast.error .toast-icon{color:var(--red)}
+  .toast.loading .toast-icon{color:var(--yellow)}
+  
+  /* Diff indicator */
+  .changed{border-color:var(--yellow) !important}
+  .push-bar{position:fixed;bottom:0;left:0;right:0;background:#0f172a;border-top:1px solid var(--border);padding:14px 32px;display:flex;align-items:center;justify-content:space-between;z-index:100;transform:translateY(100%);transition:transform .3s}
+  .push-bar.show{transform:translateY(0)}
+  .push-bar-msg{font-size:.85rem;color:var(--yellow)}
+  
+  /* Loading overlay */
+  .loading-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;z-index:200;display:none}
+  .loading-overlay.show{display:flex}
+  .loading-spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  
+  .help-text{font-size:.73rem;color:var(--muted);margin-top:4px}
+  .divider{border:none;border-top:1px solid var(--border);margin:16px 0}
+  .add-btn{width:100%;padding:12px;border:2px dashed var(--border);background:transparent;color:var(--muted);border-radius:8px;cursor:pointer;font-size:.85rem;transition:all .2s}
+  .add-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+  @media(max-width:640px){.auth-grid,.grid-2,.grid-3{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-spinner"></div>
+</div>
+
+<div class="header">
+  <div class="header-brand">NEXUS <span>ADMIN</span></div>
+  <div class="header-actions">
+    <span id="statusIndicator" style="font-size:.8rem;color:var(--muted);display:flex;align-items:center">
+      <span class="status-dot" id="statusDot"></span>
+      <span id="statusText">未连接</span>
+    </span>
+    <button class="btn btn-ghost btn-sm" onclick="loadContent()">🔄 重新加载</button>
+    <button class="btn btn-success" id="pushBtn" onclick="pushToGitHub()" disabled>🚀 推送到 GitHub</button>
+  </div>
+</div>
+
+<div class="container">
+  <!-- Auth -->
+  <div class="auth-card">
+    <h2>⚙ GITHUB 连接配置</h2>
+    <div class="auth-grid">
+      <div class="field">
+        <label>GitHub Personal Access Token</label>
+        <input type="password" id="ghToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" oninput="saveAuth()">
+        <div class="help-text">需要 repo 权限 · 保存在本地浏览器，不会上传</div>
+      </div>
+      <div class="field">
+        <label>仓库 (owner/repo)</label>
+        <input type="text" id="ghRepo" value="testkka/my-journey" oninput="saveAuth()">
+      </div>
+      <div class="field">
+        <label>分支</label>
+        <input type="text" id="ghBranch" value="main" oninput="saveAuth()">
+      </div>
+      <div class="field" style="justify-content:flex-end;padding-top:22px">
+        <button class="btn btn-primary" onclick="loadContent()">连接并加载内容</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Page Settings -->
+  <div class="section" id="sec-page">
+    <div class="section-header" onclick="toggleSection('page')">
+      <div>
+        <div class="section-title">🌐 页面设置</div>
+        <div class="section-subtitle">导航、Hero 区域、统计数据、页脚</div>
+      </div>
+      <span class="section-toggle" id="toggle-page">▲</span>
+    </div>
+    <div class="section-body" id="body-page">
+      <div class="grid-2" style="margin-bottom:16px">
+        <div class="field">
+          <label>导航品牌名</label>
+          <input type="text" id="navBrand" oninput="markChanged()">
+        </div>
+        <div class="field">
+          <label>导航链接（每行一条，格式: 文字|#锚点）</label>
+          <textarea id="navLinks" rows="2" oninput="markChanged()"></textarea>
+        </div>
+      </div>
+      <hr class="divider">
+      <div class="grid-2" style="margin-bottom:16px">
+        <div class="field">
+          <label>Hero 标语 (Eyebrow)</label>
+          <input type="text" id="heroEyebrow" oninput="markChanged()">
+        </div>
+        <div class="field">
+          <label>Hero 副标题</label>
+          <textarea id="heroSub" rows="2" oninput="markChanged()"></textarea>
+        </div>
+      </div>
+      <hr class="divider">
+      <div class="section-title" style="font-size:.78rem;margin-bottom:12px">统计数据</div>
+      <div class="grid-3" id="statsEditor"></div>
+      <hr class="divider">
+      <div class="field">
+        <label>时间线区域标语</label>
+        <input type="text" id="tlEyebrow" oninput="markChanged()">
+      </div>
+      <hr class="divider">
+      <div class="field">
+        <label>页脚文字</label>
+        <input type="text" id="footerText" oninput="markChanged()">
+      </div>
+    </div>
+  </div>
+
+  <!-- Timeline -->
+  <div class="section" id="sec-timeline">
+    <div class="section-header" onclick="toggleSection('timeline')">
+      <div>
+        <div class="section-title">🗓 时间线管理</div>
+        <div class="section-subtitle">编辑每个时间节点的内容与图片</div>
+      </div>
+      <span class="section-toggle" id="toggle-timeline">▲</span>
+    </div>
+    <div class="section-body" id="body-timeline">
+      <div id="tlItemsEditor"></div>
+      <button class="add-btn" onclick="addTLItem()">＋ 添加时间节点</button>
+    </div>
+  </div>
+</div>
+
+<!-- Push Bar -->
+<div class="push-bar" id="pushBar">
+  <span class="push-bar-msg">⚠ 有未保存的修改</span>
+  <div style="display:flex;gap:10px">
+    <button class="btn btn-ghost btn-sm" onclick="reloadAndDiscard()">放弃修改</button>
+    <button class="btn btn-success" onclick="pushToGitHub()">🚀 推送到 GitHub</button>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  <span class="toast-icon" id="toastIcon">✓</span>
+  <span id="toastMsg">操作成功</span>
+</div>
+
+<script>
+// ─── State ───────────────────────────────────────────────
+let currentHTML = '';
+let currentSHA  = '';
+let hasChanges  = false;
+let imageUploads = {}; // key: tlIndex, value: {filename, base64}
+
+// ─── Auth ────────────────────────────────────────────────
+function saveAuth(){
+  localStorage.setItem('gh_token', document.getElementById('ghToken').value);
+  localStorage.setItem('gh_repo',  document.getElementById('ghRepo').value);
+  localStorage.setItem('gh_branch',document.getElementById('ghBranch').value);
+}
+function loadAuth(){
+  document.getElementById('ghToken').value  = localStorage.getItem('gh_token')  || '';
+  document.getElementById('ghRepo').value   = localStorage.getItem('gh_repo')   || 'testkka/my-journey';
+  document.getElementById('ghBranch').value = localStorage.getItem('gh_branch') || 'main';
+}
+
+// ─── Helpers ─────────────────────────────────────────────
+const token  = () => document.getElementById('ghToken').value.trim();
+const repo   = () => document.getElementById('ghRepo').value.trim();
+const branch = () => document.getElementById('ghBranch').value.trim();
+
+function setStatus(type, text){
+  const dot  = document.getElementById('statusDot');
+  const span = document.getElementById('statusText');
+  dot.className = 'status-dot status-' + type;
+  span.textContent = text;
+}
+
+function showLoading(v){ document.getElementById('loadingOverlay').classList.toggle('show', v) }
+
+function toast(msg, type='success'){
+  const el   = document.getElementById('toast');
+  const icon = document.getElementById('toastIcon');
+  document.getElementById('toastMsg').textContent = msg;
+  icon.textContent = type==='success'?'✓': type==='error'?'✗':'⏳';
+  el.className = `toast ${type} show`;
+  setTimeout(()=>el.classList.remove('show'), 3000);
+}
+
+function markChanged(){
+  hasChanges = true;
+  document.getElementById('pushBar').classList.add('show');
+  document.getElementById('pushBtn').disabled = false;
+}
+
+function toggleSection(id){
+  const body   = document.getElementById('body-'+id);
+  const toggle = document.getElementById('toggle-'+id);
+  const collapsed = body.classList.toggle('collapsed');
+  toggle.textContent = collapsed ? '▼' : '▲';
+}
+
+// ─── GitHub API ───────────────────────────────────────────
+async function ghGet(path){
+  const r = await fetch(`https://api.github.com/repos/${repo()}/contents/${path}?ref=${branch()}`, {
+    headers:{ Authorization:`token ${token()}`, Accept:'application/vnd.github.v3+json' }
+  });
+  if(!r.ok) throw new Error(`GitHub API ${r.status}: ${await r.text()}`);
+  return r.json();
+}
+
+async function ghPut(path, content_b64, sha, message){
+  const body = { message, content: content_b64, branch: branch() };
+  if(sha) body.sha = sha;
+  const r = await fetch(`https://api.github.com/repos/${repo()}/contents/${path}`, {
+    method:'PUT',
+    headers:{ Authorization:`token ${token()}`, 'Content-Type':'application/json', Accept:'application/vnd.github.v3+json' },
+    body: JSON.stringify(body)
+  });
+  if(!r.ok) throw new Error(`GitHub API ${r.status}: ${await r.text()}`);
+  return r.json();
+}
+
+// ─── Load Content ─────────────────────────────────────────
+async function loadContent(){
+  if(!token()){ toast('请先填写 GitHub Token', 'error'); return; }
+  showLoading(true);
+  setStatus('loading','加载中…');
+  try {
+    const data = await ghGet('index.html');
+    currentSHA  = data.sha;
+    currentHTML = atob(data.content.replace(/\s/g,''));
+    parseAndRender();
+    setStatus('ok','已连接');
+    toast('内容加载成功 ✓');
+    document.getElementById('pushBtn').disabled = false;
+    hasChanges = false;
+    document.getElementById('pushBar').classList.remove('show');
+  } catch(e){
+    setStatus('err','连接失败');
+    toast('加载失败: '+e.message, 'error');
+    console.error(e);
+  }
+  showLoading(false);
+}
+
+// ─── Parse HTML → Forms ────────────────────────────────────
+function parseAndRender(){
+  const html = currentHTML;
+
+  // Nav brand
+  const navBrand = html.match(/<div class="nav-logo">([^<]+)<span>([^<]+)<\/span><\/div>/);
+  if(navBrand) document.getElementById('navBrand').value = navBrand[1].trim() + navBrand[2].trim();
+
+  // Nav links
+  const navLinks = [...html.matchAll(/<a href="([^"]+)">([^<]+)<\/a>/g)].map(m=>`${m[2]}|${m[1]}`).join('\n');
+  document.getElementById('navLinks').value = navLinks;
+
+  // Hero eyebrow
+  const eyebrow = html.match(/class="hero-eyebrow">([^<]+)<\/div>/);
+  if(eyebrow) document.getElementById('heroEyebrow').value = eyebrow[1];
+
+  // Hero sub
+  const heroSub = html.match(/class="hero-sub">([^<]+)<\/p>/);
+  if(heroSub) document.getElementById('heroSub').value = heroSub[1].replace(/<br>/g,'\n');
+
+  // Stats
+  const stats = [...html.matchAll(/<div class="stat-item"><div class="stat-num">([^<]+)<\/div><div class="stat-label">([^<]+)<\/div><\/div>/g)];
+  renderStats(stats.map(m=>({num:m[1],label:m[2]})));
+
+  // TL eyebrow
+  const tlEye = html.match(/class="sec-eyebrow">([^<]+)<\/p>/);
+  if(tlEye) document.getElementById('tlEyebrow').value = tlEye[1];
+
+  // Footer
+  const footer = html.match(/<footer><p>([^<]+)<\/p><\/footer>/);
+  if(footer) document.getElementById('footerText').value = footer[1];
+
+  // Timeline
+  const tlMatch = html.match(/const TL=(\[[\s\S]*?\]);\s*\(function/);
+  if(tlMatch){
+    try {
+      const tlData = (new Function('return '+tlMatch[1]))();
+      renderTLItems(tlData);
+    } catch(e){ console.error('TL parse error', e); }
+  }
+}
+
+// ─── Render Stats Editor ──────────────────────────────────
+function renderStats(stats){
+  const container = document.getElementById('statsEditor');
+  container.innerHTML = '';
+  (stats.length ? stats : [{num:'',label:''}]).forEach((s,i)=>{
+    container.innerHTML += `
+      <div style="background:#0d0d18;border:1px solid var(--border);border-radius:8px;padding:14px">
+        <div class="field" style="margin-bottom:8px">
+          <label>数值 ${i+1}</label>
+          <input type="text" id="statNum${i}" value="${s.num||''}" oninput="markChanged()">
+        </div>
+        <div class="field">
+          <label>标签</label>
+          <input type="text" id="statLabel${i}" value="${s.label||''}" oninput="markChanged()">
+        </div>
+      </div>`;
+  });
+}
+
+// ─── Render Timeline Editor ───────────────────────────────
+function renderTLItems(items){
+  const container = document.getElementById('tlItemsEditor');
+  container.innerHTML = '';
+  items.forEach((item,i) => addTLItemHTML(container, item, i));
+}
+
+function addTLItemHTML(container, item, idx){
+  const div = document.createElement('div');
+  div.className = 'tl-editor';
+  div.id = `tl-${idx}`;
+  div.innerHTML = `
+    <div class="tl-editor-header">
+      <span class="tl-editor-num">节点 ${idx+1}</span>
+      <button class="btn btn-danger btn-sm" onclick="removeTLItem(${idx})">删除</button>
+    </div>
+    <div class="grid-2" style="margin-bottom:12px">
+      <div class="field">
+        <label>年份 / 日期</label>
+        <input type="text" id="tlYear${idx}" value="${escHtml(item.year||'')}" oninput="markChanged()">
+      </div>
+      <div class="field">
+        <label>标签 (Tag)</label>
+        <input type="text" id="tlTag${idx}" value="${escHtml(item.tag||'')}" oninput="markChanged()">
+      </div>
+    </div>
+    <div class="field" style="margin-bottom:12px">
+      <label>标题</label>
+      <input type="text" id="tlTitle${idx}" value="${escHtml(item.title||'')}" oninput="markChanged()">
+    </div>
+    <div class="field" style="margin-bottom:12px">
+      <label>描述</label>
+      <textarea id="tlDesc${idx}" rows="3" oninput="markChanged()">${escHtml(item.desc||'')}</textarea>
+    </div>
+    <div class="field">
+      <label>图片</label>
+      ${item.img ? `<img class="tl-img-preview show" id="tlImgPreview${idx}" src="${item.img}" alt="">` : `<img class="tl-img-preview" id="tlImgPreview${idx}" src="" alt="">`}
+      <div class="img-upload-area ${item.img?'has-img':''}" id="tlImgArea${idx}" onclick="document.getElementById('tlImgFile${idx}').click()">
+        <input type="file" id="tlImgFile${idx}" accept="image/*" onchange="handleImgUpload(${idx},this)">
+        ${item.img
+          ? `<span style="color:var(--green)">✓ 已有图片 · 点击重新选择</span><br><span style="font-size:.72rem;opacity:.6">${item.img}</span>`
+          : `📷 点击选择图片<br><span style="font-size:.72rem">支持 JPG / PNG / GIF · 自动上传到仓库 images/</span>`}
+      </div>
+      ${item.img ? `<button class="btn btn-danger btn-sm" style="margin-top:6px" onclick="clearImg(${idx})">× 移除图片</button>` : ''}
+      <input type="hidden" id="tlImgSrc${idx}" value="${escHtml(item.img||'')}">
+    </div>`;
+  container.appendChild(div);
+}
+
+let tlCount = 0;
+function addTLItem(){
+  const container = document.getElementById('tlItemsEditor');
+  const count = container.querySelectorAll('.tl-editor').length;
+  tlCount = count;
+  addTLItemHTML(container, {year:'',title:'',tag:'',desc:'',img:''}, count);
+  markChanged();
+}
+
+function removeTLItem(idx){
+  const el = document.getElementById(`tl-${idx}`);
+  if(el){ el.remove(); markChanged(); }
+}
+
+function clearImg(idx){
+  document.getElementById('tlImgSrc'+idx).value = '';
+  document.getElementById('tlImgPreview'+idx).src = '';
+  document.getElementById('tlImgPreview'+idx).classList.remove('show');
+  document.getElementById('tlImgArea'+idx).className = 'img-upload-area';
+  document.getElementById('tlImgArea'+idx).innerHTML = `<input type="file" id="tlImgFile${idx}" accept="image/*" onchange="handleImgUpload(${idx},this)">📷 点击选择图片<br><span style="font-size:.72rem">支持 JPG / PNG / GIF</span>`;
+  delete imageUploads[idx];
+  markChanged();
+}
+
+// ─── Image Upload Handler ─────────────────────────────────
+function handleImgUpload(idx, input){
+  const file = input.files[0];
+  if(!file) return;
+  const ext = file.name.split('.').pop().toLowerCase();
+  const filename = `images/tl-${idx}-${Date.now()}.${ext}`;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const b64 = e.target.result.split(',')[1];
+    imageUploads[idx] = { filename, base64: b64, mimeType: file.type };
+    // Preview
+    const preview = document.getElementById('tlImgPreview'+idx);
+    preview.src = e.target.result;
+    preview.classList.add('show');
+    document.getElementById('tlImgArea'+idx).className = 'img-upload-area has-img';
+    document.getElementById('tlImgArea'+idx).innerHTML = `<input type="file" id="tlImgFile${idx}" accept="image/*" onchange="handleImgUpload(${idx},this)"><span style="color:var(--yellow)">⏳ 待上传: ${file.name}</span>`;
+    document.getElementById('tlImgSrc'+idx).value = '__PENDING__';
+    markChanged();
+  };
+  reader.readAsDataURL(file);
+}
+
+// ─── Collect Form Data ────────────────────────────────────
+function collectData(){
+  // Nav brand
+  const navBrand = document.getElementById('navBrand').value;
+  const navLinkRaw = document.getElementById('navLinks').value.trim().split('\n').filter(Boolean);
+
+  // Hero
+  const heroEyebrow = document.getElementById('heroEyebrow').value;
+  const heroSub = document.getElementById('heroSub').value.replace(/\n/g,'<br>');
+
+  // Stats
+  const statsEls = document.getElementById('statsEditor').querySelectorAll('[id^=statNum]');
+  const stats = [];
+  statsEls.forEach((_,i)=>{
+    const num   = document.getElementById('statNum'+i)?.value || '';
+    const label = document.getElementById('statLabel'+i)?.value || '';
+    if(num||label) stats.push({num,label});
+  });
+
+  // TL eyebrow & footer
+  const tlEyebrow = document.getElementById('tlEyebrow').value;
+  const footerText = document.getElementById('footerText').value;
+
+  // Timeline items
+  const tlEls = document.getElementById('tlItemsEditor').querySelectorAll('.tl-editor');
+  const tlItems = [];
+  tlEls.forEach((el,i) => {
+    const idx = parseInt(el.id.split('-')[1]);
+    tlItems.push({
+      year:  document.getElementById('tlYear'+idx)?.value || '',
+      title: document.getElementById('tlTitle'+idx)?.value || '',
+      tag:   document.getElementById('tlTag'+idx)?.value || '',
+      desc:  document.getElementById('tlDesc'+idx)?.value || '',
+      img:   document.getElementById('tlImgSrc'+idx)?.value || '',
+    });
+  });
+
+  return { navBrand, navLinkRaw, heroEyebrow, heroSub, stats, tlEyebrow, footerText, tlItems };
+}
+
+// ─── Rebuild HTML ─────────────────────────────────────────
+function rebuildHTML(data, imgMap){
+  let html = currentHTML;
+
+  // Nav brand
+  html = html.replace(
+    /<div class="nav-logo">[^<]*<span>[^<]*<\/span><\/div>/,
+    `<div class="nav-logo">${escHtmlInner(data.navBrand.slice(0,-4))} <span>${escHtmlInner(data.navBrand.slice(-4).trim())}</span></div>`
+  );
+  // Simpler nav brand replacement
+  const nb = data.navBrand;
+  const spaceIdx = nb.indexOf(' ');
+  const part1 = spaceIdx>0 ? nb.slice(0,spaceIdx) : nb;
+  const part2 = spaceIdx>0 ? nb.slice(spaceIdx+1) : '';
+  html = html.replace(
+    /<div class="nav-logo">[^<]*<span>[^<]*<\/span><\/div>/,
+    `<div class="nav-logo">${part1} <span>${part2}</span></div>`
+  );
+
+  // Nav links
+  const newLinks = data.navLinkRaw.map(l=>{
+    const [text, href='#'] = l.split('|');
+    return `<a href="${href.trim()}">${text.trim()}</a>`;
+  }).join('');
+  html = html.replace(/<div class="nav-links">[\s\S]*?<\/div>/, `<div class="nav-links">${newLinks}</div>`);
+
+  // Hero eyebrow
+  html = html.replace(/(class="hero-eyebrow">)[^<]+(<\/div>)/, `$1${data.heroEyebrow}$2`);
+
+  // Hero sub
+  html = html.replace(/(class="hero-sub">)[^<]+(<\/p>)/, `$1${data.heroSub}$2`);
+
+  // Stats
+  const newStats = data.stats.map(s=>
+    `<div class="stat-item"><div class="stat-num">${s.num}</div><div class="stat-label">${s.label}</div></div>`
+  ).join('');
+  html = html.replace(/<div class="hero-stats">[\s\S]*?<\/div>\s*<\/div>/, match => {
+    return `<div class="hero-stats">${newStats}</div>\n    </div>`;
+  });
+
+  // TL eyebrow
+  html = html.replace(/(class="sec-eyebrow">)[^<]+(<\/p>)/, `$1${data.tlEyebrow}$2`);
+
+  // Footer
+  html = html.replace(/<footer><p>[^<]+<\/p><\/footer>/, `<footer><p>${data.footerText}</p></footer>`);
+
+  // Timeline TL array
+  const tlJS = data.tlItems.map(item => {
+    const img = imgMap[item.img] || (item.img === '__PENDING__' ? '' : item.img);
+    return `  {\n    year: ${JSON.stringify(item.year)},\n    title: ${JSON.stringify(item.title)},\n    tag: ${JSON.stringify(item.tag)},\n    desc: ${JSON.stringify(item.desc)}${img ? `,\n    img: ${JSON.stringify(img)}` : ''}\n  }`;
+  }).join(',\n');
+
+  html = html.replace(/const TL=\[[\s\S]*?\];(\s*\(function)/, `const TL=[\n${tlJS}\n];$1`);
+
+  return html;
+}
+
+// ─── Push to GitHub ───────────────────────────────────────
+async function pushToGitHub(){
+  if(!token()){ toast('请先填写 GitHub Token', 'error'); return; }
+  showLoading(true);
+  setStatus('loading','推送中…');
+
+  try {
+    const data = collectData();
+    const imgMap = {}; // pending key → final URL
+
+    // 1. Upload pending images first
+    for(const [idx, upload] of Object.entries(imageUploads)){
+      toast(`上传图片 ${parseInt(idx)+1}…`, 'loading');
+      let existingSHA = null;
+      try { const e = await ghGet(upload.filename); existingSHA = e.sha; } catch(e){}
+      const res = await ghPut(upload.filename, upload.base64, existingSHA, `upload: 时间线图片 ${upload.filename}`);
+      const rawUrl = `https://raw.githubusercontent.com/${repo()}/${branch()}/${upload.filename}`;
+      imgMap['__PENDING__'] = rawUrl;
+      // Update the hidden input
+      const hiddenInput = document.getElementById('tlImgSrc'+idx);
+      if(hiddenInput) hiddenInput.value = rawUrl;
+      const area = document.getElementById('tlImgArea'+idx);
+      if(area) area.innerHTML = `<input type="file" id="tlImgFile${idx}" accept="image/*" onchange="handleImgUpload(${idx},this)"><span style="color:var(--green)">✓ 已上传: ${upload.filename}</span>`;
+    }
+    imageUploads = {};
+
+    // 2. Rebuild HTML
+    const newHTML = rebuildHTML(data, imgMap);
+
+    // 3. Push index.html
+    const b64 = btoa(unescape(encodeURIComponent(newHTML)));
+    const res = await ghPut('index.html', b64, currentSHA, '✏️ 后台管理更新内容');
+    currentSHA  = res.content.sha;
+    currentHTML = newHTML;
+
+    hasChanges = false;
+    document.getElementById('pushBar').classList.remove('show');
+    document.getElementById('pushBtn').disabled = true;
+    setStatus('ok','已同步');
+    toast('🎉 推送成功！GitHub Pages 将在约 1 分钟内更新');
+
+  } catch(e){
+    setStatus('err','推送失败');
+    toast('推送失败: '+e.message, 'error');
+    console.error(e);
+  }
+  showLoading(false);
+}
+
+// ─── Misc ─────────────────────────────────────────────────
+function reloadAndDiscard(){
+  if(confirm('确定放弃所有未保存的修改？')) loadContent();
+}
+
+function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') }
+function escHtmlInner(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') }
+
+// ─── Init ─────────────────────────────────────────────────
+loadAuth();
+// Auto-load if token exists
+if(localStorage.getItem('gh_token')) loadContent();
+</script>
+</body>
+</html>
