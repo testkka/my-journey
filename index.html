@@ -128,7 +128,7 @@ footer{text-align:center;padding:48px 24px;border-top:1px solid var(--border);co
 </head>
 <body>
 <nav>
-  <div class="nav-logo">NEXUS <span>LABS</span></div>
+  <div class="nav-logo">Nexus测试1 <span></span></div>
   <div class="nav-links"><a href="#hero">首页</a><a href="#timeline-section">时间线</a></div>
   <button id="music-btn" onclick="toggleMusic()" title="Violet – Connor Price" aria-label="音乐开/关">
     <span id="music-icon">🎵</span>
@@ -152,8 +152,8 @@ footer{text-align:center;padding:48px 24px;border-top:1px solid var(--border);co
     <div class="hero-eyebrow">NEXUS · VERIFIABLE INTERNET</div>
     <h1 class="hero-h1">可验证互联网<br>由数学定义</h1>
     <p class="hero-sub">Building a future of mathematical truth<br>@danielmarinq · nexus.xyz</p>
-    <div class="hero-stats">
-      <div class="stat-item"><div class="stat-num">3.2M</div><div class="stat-label">账户</div></div>
+    <div class="hero-stats"><div class="stat-item"><div class="stat-num">3.2M</div><div class="stat-label">账户</div></div><div class="stat-item"><div class="stat-num">10.1M</div><div class="stat-label">节点</div></div><div class="stat-item"><div class="stat-num">$25M</div><div class="stat-label">Series A</div></div></div>
+    </div>
       <div class="stat-item"><div class="stat-num">10.1M</div><div class="stat-label">节点</div></div>
       <div class="stat-item"><div class="stat-num">$25M</div><div class="stat-label">Series A</div></div>
     </div>
@@ -173,7 +173,7 @@ footer{text-align:center;padding:48px 24px;border-top:1px solid var(--border);co
     <svg width="14" height="10" viewBox="0 0 20 14" fill="none" stroke="currentColor" stroke-width="1.8" style="transform:scaleX(-1)"><path d="M1 7h18M13 1l6 6-6 6"/></svg>
   </div>
 </section>
-<footer><p>© 2025 · Nexus Labs · nexus.xyz</p></footer>
+<footer><p>© 2026 · Nexus Labs · nexus.xyz</p></footer>
 
 <script src="https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
@@ -424,56 +424,55 @@ const CITY_DATA = [[114.169, 22.319, 2222], [3.379, 6.524, 1508], [121.474, 31.2
 <script>
 // ══ 水平时间线 ══
 const TL=[
-  // ── Part I · Daniel Marin ──
   {
-    year: '2018 – 2019',
-    title: 'Daniel Marin · 奥林匹克少年',
-    tag: 'FOUNDER',
-    desc: '连续两届荣获国际物理奥林匹克竞赛（IPhO）铜牌，展露出超凡的科学天赋。这段经历深刻塑造了他对数学极限的敬畏——"用数学证明一切"的信念从这里萌芽。'
+    year: "2018 – 2019",
+    title: "Daniel Marin · 奥林匹克少年",
+    tag: "FOUNDER",
+    desc: "连续两届荣获国际物理奥林匹克竞赛（IPhO）铜牌，展露出超凡的科学天赋。这段经历深刻塑造了他对数学极限的敬畏——\"用数学证明一切\"的信念从这里萌芽。",
+    img: "https://cdn.jsdelivr.net/gh/testkka/my-journey@main/images/tl-0-1775747380338.png"
   },
   {
-    year: '2020 – 2022',
-    title: '斯坦福密码学实验室',
-    tag: 'STANFORD',
-    desc: '就读于斯坦福大学计算机科学系，在斯坦福密码学实验室以本科生身份开始研究零知识虚拟机（zkVM）。与几位志同道合的工程师共同探索：能否让任意计算在数学上变得可验证？这是 Nexus 最初的技术起源。'
+    year: "2020 – 2022",
+    title: "斯坦福密码学实验室",
+    tag: "STANFORD",
+    desc: "就读于斯坦福大学计算机科学系，在斯坦福密码学实验室以本科生身份开始研究零知识虚拟机（zkVM）。与几位志同道合的工程师共同探索：能否让任意计算在数学上变得可验证？这是 Nexus 最初的技术起源。"
   },
   {
-    year: '2022',
-    title: '播下第一粒种子',
-    tag: 'SEED · $2M',
-    desc: 'Daniel Marin 联合创立 Nexus Labs，获 Dragonfly 领投 $2M 种子轮融资，正式开启构建"可验证互联网"的征程。核心信念：不依赖信任，只依赖数学证明。'
-  },
-  // ── Part II · Nexus Project ──
-  {
-    year: '2024 · JAN',
-    title: 'zkVM 1.0 白皮书发布',
-    tag: 'WHITEPAPER',
-    desc: 'Nexus zkVM 1.0 白皮书正式发布，系统阐述可验证互联网的核心架构：用通用零知识证明让网络上的任意计算结果都能被数学验证，而无需信任任何中间方。'
+    year: "2022",
+    title: "播下第一粒种子",
+    tag: "SEED · $2M",
+    desc: "Daniel Marin 联合创立 Nexus Labs，获 Dragonfly 领投 $2M 种子轮融资，正式开启构建\"可验证互联网\"的征程。核心信念：不依赖信任，只依赖数学证明。"
   },
   {
-    year: '2024 · APR',
-    title: 'ETH Denver · zkVM 首秀',
-    tag: 'LAUNCH',
-    desc: '在 ETH Denver 正式发布 Nexus zkVM——一台可为任意程序生成密码学证明的通用零知识虚拟机。以"民主化以太坊执行层"为愿景，震惊加密社区，引发全球开发者关注。'
+    year: "2024 · JAN",
+    title: "zkVM 1.0 白皮书发布",
+    tag: "WHITEPAPER",
+    desc: "Nexus zkVM 1.0 白皮书正式发布，系统阐述可验证互联网的核心架构：用通用零知识证明让网络上的任意计算结果都能被数学验证，而无需信任任何中间方。"
   },
   {
-    year: '2024 · JUL',
-    title: '$25M Series A 融资',
-    tag: 'SERIES A',
-    desc: '获 Lightspeed 与 Pantera 共同领投的 2500 万美元 A 轮融资，Dragonfly、Faction、Blockchain Builders Fund 参投。Nexus 正式进入全球化扩张阶段，矢志将零知识证明带入互联网规模。'
+    year: "2024 · APR",
+    title: "ETH Denver · zkVM 首秀",
+    tag: "LAUNCH",
+    desc: "在 ETH Denver 正式发布 Nexus zkVM——一台可为任意程序生成密码学证明的通用零知识虚拟机。以\"民主化以太坊执行层\"为愿景，震惊加密社区，引发全球开发者关注。"
   },
   {
-    year: '2024 · DEC',
-    title: '全球首个开放证明网络上线',
-    tag: 'PROVER NETWORK',
-    desc: '全球首个开放证明网络（Open Prover Network）正式启动，任何人都可贡献算力参与证明；Testnet I 同步开启。同月，Daniel Marin 荣登 Forbes 30 Under 30（2025年）榜单。'
+    year: "2024 · JUL",
+    title: "$25M Series A 融资",
+    tag: "SERIES A",
+    desc: "获 Lightspeed 与 Pantera 共同领投的 2500 万美元 A 轮融资，Dragonfly、Faction、Blockchain Builders Fund 参投。Nexus 正式进入全球化扩张阶段，矢志将零知识证明带入互联网规模。"
   },
   {
-    year: '2025',
-    title: '迈向主网 · 可验证金融 Layer 1',
-    tag: 'MAINNET',
-    desc: '历经 4 轮测试网，全球累计 320 万认证账户、1010 万节点贡献算力。Devnet 完成后 Testnet III 开启，主网冲刺倒计时。Nexus 以 zkVM + GPU 证明网络 + 可验证金融 Layer 1 的完整形态，重新定义下一代互联网基础设施。'
+    year: "2024 · DEC",
+    title: "全球首个开放证明网络上线",
+    tag: "PROVER NETWORK",
+    desc: "全球首个开放证明网络（Open Prover Network）正式启动，任何人都可贡献算力参与证明；Testnet I 同步开启。同月，Daniel Marin 荣登 Forbes 30 Under 30（2025年）榜单。"
   },
+  {
+    year: "2025",
+    title: "迈向主网 · 可验证金融 Layer 1",
+    tag: "MAINNET",
+    desc: "历经 4 轮测试网，全球累计 320 万认证账户、1010 万节点贡献算力。Devnet 完成后 Testnet III 开启，主网冲刺倒计时。Nexus 以 zkVM + GPU 证明网络 + 可验证金融 Layer 1 的完整形态，重新定义下一代互联网基础设施。"
+  }
 ];
 (function(){
   const s=document.getElementById('tl-inner');
