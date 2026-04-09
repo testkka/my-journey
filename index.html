@@ -872,13 +872,13 @@ const TL=[
 
     // 坐标 — 根据两张截图精确标定
     // 图2原图: 左手(12%,62%) 右手(88%,62%)
-    // 红线方向: 斜向下打向地球左右侧 (35%,68%) (65%,68%)
-    // 根据截图精确测量手掌心位置
-    const lx  = W*0.220, ly  = H*0.565;  // 左手掌心
-    const rx  = W*0.780, ry  = H*0.565;  // 右手掌心
-    const glx = W*0.385, gly = H*0.570;  // 地球左侧边缘
-    const grx = W*0.615, gry = H*0.570;  // 地球右侧边缘
-    const gx  = W*0.500, gy  = H*0.565;  // 地球中心 (辉光)
+    // 掌心坐标 (根据截图): 左掌(22%,57%) 右掌(78%,57%)
+    // 闪电短一点: 从掌心向地球方向延伸约10%宽
+    const lx  = W*0.215, ly  = H*0.565;  // 左掌心 (起点)
+    const rx  = W*0.785, ry  = H*0.565;  // 右掌心 (起点)
+    const glx = W*0.325, gly = H*0.565;  // 左闪电终点 (短, 靠近掌心)
+    const grx = W*0.675, gry = H*0.565;  // 右闪电终点 (短, 靠近掌心)
+    const gx  = W*0.500, gy  = H*0.560;  // 地球中心 (辉光)
 
     // 闪烁逻辑
     flickerT += dt;
@@ -894,12 +894,12 @@ const TL=[
     drawGlow(gx,gy,15,'220,240,255',0.80*flicker);
 
     // 左闪电 (左手 → 地球左侧)  斜向下
-    const lpts = lightning(lx,ly,glx,gly, H*0.10, 6);
+    const lpts = lightning(lx,ly,glx,gly, H*0.07, 5);
     drawLightning(lpts, flicker);
     if(Math.random()<0.6) drawBranch(lpts, flicker);
 
     // 右闪电 (右手 → 地球右侧)  斜向下
-    const rpts = lightning(rx,ry,grx,gry, H*0.10, 6);
+    const rpts = lightning(rx,ry,grx,gry, H*0.07, 5);
     drawLightning(rpts, flicker);
     if(Math.random()<0.6) drawBranch(rpts, flicker);
 
