@@ -105,7 +105,9 @@ footer{text-align:center;padding:48px 24px;border-top:1px solid var(--border);co
 #music-btn.playing #music-icon{display:inline-block;animation:spin-slow 3s linear infinite}
 @keyframes spin-slow{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
 
-/* ── 手部光线特效 ── */
+
+
+/* ── 手部能量光线 ── */
 #beam-canvas{
   position:absolute;
   inset:0;
@@ -620,125 +622,133 @@ const TL=[
     }
   }
 
-// ── 手部光线特效 ──
+
+
+
+// ── 手部能量光线特效 ──
 (function(){
   const bc = document.getElementById('beam-canvas');
   const ctx = bc.getContext('2d');
+  let W=0, H=0;
 
   function resize(){
-    bc.width  = bc.offsetWidth  * devicePixelRatio;
-    bc.height = bc.offsetHeight * devicePixelRatio;
-    ctx.scale(devicePixelRatio, devicePixelRatio);
+    W = bc.offsetWidth;
+    H = bc.offsetHeight;
+    bc.width  = W;
+    bc.height = H;
   }
-  window.addEventListener('resize', ()=>{ resize(); });
+  window.addEventListener('resize', resize);
   resize();
 
-  // 粒子系统
-  const PARTICLE_COUNT = 28;
-  function mkParticles(side){
-    return Array.from({length: PARTICLE_COUNT}, (_,i)=>({
-      t: i / PARTICLE_COUNT + Math.random() * 0.1,
-      speed: 0.003 + Math.random() * 0.003,
-      size: 1 + Math.random() * 2.5,
-      alpha: 0.4 + Math.random() * 0.6,
-      side
+  // ── 粒子 ──
+  function mkParts(n){
+    return Array.from({length:n},(_,i)=>({
+      t:     i/n,
+      speed: 0.004 + Math.random()*0.003,
+      r:     1.2 + Math.random()*2.2,
+      life:  0.3 + Math.random()*0.7
     }));
   }
+  const LP = mkParts(32), RP = mkParts(32);
 
-  const leftP  = mkParticles('left');
-  const rightP = mkParticles('right');
+  // 手部光晕脉冲
+  let pulse = 0;
 
-  function getPoints(){
-    const W = bc.offsetWidth;
-    const H = bc.offsetHeight;
-    // 左手位置 — 根据图像估算 (约15%宽, 58%高)
-    const lx = W * 0.155, ly = H * 0.585;
-    // 右手位置 — 对称 (约85%宽, 58%高)
-    const rx = W * 0.845, ry = H * 0.585;
-    // 地球中心
-    const gx = W * 0.50,  gy = H * 0.435;
-    return { lx, ly, rx, ry, gx, gy };
+  function hand(){
+    // 左右手在 person-wrap 图片里的大致位置
+    // 根据截图: 左手≈(18%,53%) 右手≈(82%,53%)
+    const lx = W*0.185, ly = H*0.535;
+    const rx = W*0.815, ry = H*0.535;
+    // 地球中心: globe-wrap占满hero,球心在 y=-0.90 THREE.js空间
+    // 映射到屏幕约(50%,52%)
+    const gx = W*0.500, gy = H*0.520;
+    return {lx,ly,rx,ry,gx,gy};
   }
 
-  let t = 0;
-  function drawBeam(x1,y1,x2,y2,color1,color2){
-    const g = ctx.createLinearGradient(x1,y1,x2,y2);
-    g.addColorStop(0,   color1);
-    g.addColorStop(0.5, color2);
-    g.addColorStop(1,   'rgba(80,160,255,0.85)');
-    ctx.save();
-    ctx.beginPath();
-    ctx.moveTo(x1,y1);
-    ctx.lineTo(x2,y2);
-    ctx.strokeStyle = g;
-    ctx.lineWidth   = 2.5;
-    ctx.shadowColor = '#60a5fa';
-    ctx.shadowBlur  = 28;
-    ctx.globalAlpha = 0.75;
-    ctx.stroke();
-    // 二次辉光
-    ctx.lineWidth   = 6;
-    ctx.globalAlpha = 0.18;
-    ctx.stroke();
-    ctx.restore();
+  function drawGlow(x,y,r,col,a){
+    const g = ctx.createRadialGradient(x,y,0,x,y,r);
+    g.addColorStop(0, col.replace('A', String(a)));
+    g.addColorStop(0.4, col.replace('A', String(a*0.4)));
+    g.addColorStop(1, col.replace('A','0'));
+    ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2);
+    ctx.fillStyle=g; ctx.fill();
   }
 
-  function drawParticles(particles, sx, sy, ex, ey){
-    particles.forEach(p => {
-      p.t += p.speed;
-      if(p.t > 1) p.t -= 1;
-      const t = p.t;
-      const x = sx + (ex-sx)*t;
-      const y = sy + (ey-sy)*t;
-      const alpha = p.alpha * Math.sin(Math.PI * t);
+  function drawBeam(x1,y1,x2,y2){
+    // 5 layers: outer → inner
+    const layers = [
+      {w:14, a:0.04, c:'rgba(100,180,255,A)'},
+      {w: 8, a:0.10, c:'rgba(120,190,255,A)'},
+      {w: 4, a:0.25, c:'rgba(150,210,255,A)'},
+      {w: 2, a:0.55, c:'rgba(180,225,255,A)'},
+      {w: 1, a:0.90, c:'rgba(220,240,255,A)'},
+    ];
+    layers.forEach(l=>{
       ctx.save();
       ctx.beginPath();
-      ctx.arc(x, y, p.size, 0, Math.PI*2);
-      const g = ctx.createRadialGradient(x,y,0,x,y,p.size*3);
-      g.addColorStop(0,   `rgba(180,220,255,${alpha})`);
-      g.addColorStop(0.5, `rgba(96,165,250,${alpha*0.6})`);
+      ctx.moveTo(x1,y1); ctx.lineTo(x2,y2);
+      ctx.strokeStyle = l.c.replace('A', String(l.a));
+      ctx.lineWidth   = l.w;
+      ctx.shadowColor = '#60c8ff';
+      ctx.shadowBlur  = l.w * 4;
+      ctx.lineCap     = 'round';
+      ctx.stroke();
+      ctx.restore();
+    });
+  }
+
+  function drawParticles(parts, sx,sy, ex,ey, dt){
+    parts.forEach(p=>{
+      p.t += p.speed * dt * 0.06;
+      if(p.t > 1) p.t -= 1;
+      const t  = p.t;
+      const x  = sx + (ex-sx)*t;
+      const y  = sy + (ey-sy)*t;
+      const a  = p.life * Math.sin(Math.PI*t);
+      const rr = p.r * (0.6 + 0.4*Math.sin(Math.PI*t));
+      ctx.save();
+      const g = ctx.createRadialGradient(x,y,0,x,y,rr*3);
+      g.addColorStop(0,   `rgba(210,235,255,${a})`);
+      g.addColorStop(0.5, `rgba(96,165,250,${a*0.5})`);
       g.addColorStop(1,   'rgba(59,130,246,0)');
-      ctx.fillStyle = g;
-      ctx.shadowColor='#a5d8ff';
-      ctx.shadowBlur=12;
+      ctx.beginPath(); ctx.arc(x,y,rr,0,Math.PI*2);
+      ctx.fillStyle=g;
+      ctx.shadowColor='#a0d8ff'; ctx.shadowBlur=10;
       ctx.fill();
       ctx.restore();
     });
   }
 
-  function drawHandGlow(x,y){
-    const g = ctx.createRadialGradient(x,y,0,x,y,38);
-    g.addColorStop(0,   'rgba(148,200,255,0.65)');
-    g.addColorStop(0.4, 'rgba(96,165,250,0.30)');
-    g.addColorStop(1,   'rgba(59,130,246,0)');
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(x,y,38,0,Math.PI*2);
-    ctx.fillStyle = g;
-    ctx.fill();
-    ctx.restore();
-  }
-
-  function frame(){
-    const W = bc.offsetWidth, H = bc.offsetHeight;
+  let last=0;
+  function frame(ts){
+    const dt = ts - last; last=ts;
     ctx.clearRect(0,0,W,H);
-    const {lx,ly,rx,ry,gx,gy} = getPoints();
+    const {lx,ly,rx,ry,gx,gy} = hand();
+    pulse = (pulse + dt*0.002) % (Math.PI*2);
+    const pf = 0.75 + 0.25*Math.sin(pulse);
+
+    // 地球落点辉光
+    drawGlow(gx,gy, 70*pf,  'rgba(80,160,255,A)', 0.20);
+    drawGlow(gx,gy, 32*pf,  'rgba(140,200,255,A)', 0.45);
+    drawGlow(gx,gy, 14,     'rgba(220,240,255,A)', 0.85);
+
+    // 光线
+    drawBeam(lx,ly,gx,gy);
+    drawBeam(rx,ry,gx,gy);
+
+    // 粒子
+    drawParticles(LP, lx,ly, gx,gy, dt);
+    drawParticles(RP, rx,ry, gx,gy, dt);
 
     // 手部光晕
-    drawHandGlow(lx, ly);
-    drawHandGlow(rx, ry);
-
-    // 光线主体
-    drawBeam(lx, ly, gx, gy, 'rgba(100,180,255,0.0)', 'rgba(120,190,255,0.9)');
-    drawBeam(rx, ry, gx, gy, 'rgba(100,180,255,0.0)', 'rgba(120,190,255,0.9)');
-
-    // 流动粒子
-    drawParticles(leftP,  lx, ly, gx, gy);
-    drawParticles(rightP, rx, ry, gx, gy);
+    drawGlow(lx,ly, 50*pf, 'rgba(100,180,255,A)', 0.30);
+    drawGlow(lx,ly, 22,    'rgba(200,230,255,A)', 0.65);
+    drawGlow(rx,ry, 50*pf, 'rgba(100,180,255,A)', 0.30);
+    drawGlow(rx,ry, 22,    'rgba(200,230,255,A)', 0.65);
 
     requestAnimationFrame(frame);
   }
-  frame();
+  requestAnimationFrame(frame);
 })();
 
 </script>
