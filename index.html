@@ -53,7 +53,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:300;display:flex;align-items:cen
 .tl-card-title{font-size:1.15rem;font-weight:700;color:#fff;margin-bottom:8px;line-height:1.3}
 .tl-tag{display:inline-block;font-size:.56rem;letter-spacing:1.5px;text-transform:uppercase;padding:3px 8px;border-radius:20px;border:1px solid rgba(255,255,255,.18);color:var(--tl);background:rgba(255,255,255,.05);margin-bottom:9px}
 .tl-card-desc{font-size:.9rem;color:var(--muted);line-height:1.8}.tl-card-img{width:100%;border-radius:0;margin-bottom:0;object-fit:cover;height:260px;display:block;transition:transform .4s ease}.tl-item:hover .tl-card-img{transform:scale(1.04)}
-.drag-hint{text-align:center;margin-top:24px;font-size:.62rem;letter-spacing:3px;color:var(--muted);text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:10px;animation:fh 3s ease-in-out infinite}
+.drag-hint{text-align:center;margin-top:24px;font-size:.62rem;letter-spacing:3px;color:var(--muted);text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:10px;animation:fh 3s ease-in-out infinite}.hint-line{position:relative;width:60%;max-width:480px;height:1px;margin:10px auto 0;background:rgba(180,140,40,.15);overflow:hidden}.hint-line::after{content:"";position:absolute;top:-2px;left:-25%;width:20%;height:5px;background:linear-gradient(to right,transparent,rgba(255,200,50,.0) 20%,rgba(255,215,60,.85) 65%,rgba(255,245,150,1) 88%,rgba(255,255,255,.5) 100%);border-radius:50%;filter:blur(1px);animation:meteorRight 2.8s linear infinite}@keyframes meteorRight{0%{left:-25%}100%{left:110%}}
 @keyframes fh{0%,100%{opacity:.2}50%{opacity:.6}}
 footer{text-align:center;padding:48px 24px;border-top:1px solid var(--border);color:var(--muted);font-size:.75rem;letter-spacing:1.5px;background:#000}
 @media(max-width:640px){nav{padding:14px 20px}.nav-links{gap:18px}.hero-stats{flex-wrap:wrap;border-radius:10px}.tl-item{width:calc(90vw)}.tl-card{width:100%}#tl-inner{padding:0}}
@@ -172,6 +172,7 @@ footer{text-align:center;padding:48px 24px;border-top:1px solid var(--border);co
     ↑ 上滑向左 · ↓ 下滑向右 · SCROLL TO NAVIGATE
     <svg width="14" height="10" viewBox="0 0 20 14" fill="none" stroke="currentColor" stroke-width="1.8" style="transform:scaleX(-1)"><path d="M1 7h18M13 1l6 6-6 6"/></svg>
   </div>
+  <div class="hint-line"></div>
 </section>
 <footer><p>© 2026 · Nexus Labs · nexus.xyz</p></footer>
 
