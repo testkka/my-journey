@@ -37,9 +37,9 @@ nav{position:fixed;top:0;left:0;right:0;z-index:300;display:flex;align-items:cen
 .sec-title{text-align:center;font-size:clamp(1.8rem,3.5vw,3rem);font-weight:900;margin-bottom:56px;background:linear-gradient(135deg,#fff,#a8c8ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 #tl-wrap{position:relative;cursor:grab;user-select:none;overflow:hidden;padding:16px 0 40px}
 #tl-wrap:active{cursor:grabbing}
-#tl-line{position:absolute;left:0;right:0;height:2px;top:175px;background:linear-gradient(to right,transparent 0,rgba(255,255,255,.12) 60px,rgba(255,255,255,.12) calc(100% - 60px),transparent 100%);overflow:hidden}
-#tl-line::after{content:'';position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(to right,transparent,rgba(255,255,255,.55),transparent);animation:tlshine 3s ease-in-out infinite}
-@keyframes tlshine{0%{left:-40%}100%{left:130%}}
+#tl-line{position:absolute;left:0;right:0;height:2px;top:175px;background:linear-gradient(to right,transparent 0,rgba(180,140,40,.18) 60px,rgba(180,140,40,.18) calc(100% - 60px),transparent 100%);overflow:hidden}
+#tl-line::after{content:'';position:absolute;top:-3px;left:-30%;width:22%;height:8px;background:linear-gradient(to right,transparent,rgba(255,215,60,.0) 30%,rgba(255,215,60,.9) 70%,rgba(255,255,200,1) 90%,rgba(255,255,255,.6) 100%);border-radius:50%;filter:blur(1.5px);animation:tlshine 3.5s linear infinite}
+@keyframes tlshine{0%{left:-30%}100%{left:110%}}
 #tl-inner{display:flex;align-items:flex-start;padding:0 0;will-change:transform}
 .tl-item{flex:0 0 auto;width:560px;display:flex;flex-direction:column;align-items:center;padding:0 20px;opacity:0;transform:translateY(18px);transition:opacity .55s,transform .55s}
 .tl-item.tl-active .tl-dot{transform:scale(1.6);box-shadow:0 0 28px var(--tl-glow)}
@@ -129,7 +129,7 @@ footer{text-align:center;padding:48px 24px;border-top:1px solid var(--border);co
 <body>
 <nav>
   <div class="nav-logo">Nexus测试1 <span></span></div>
-  <div class="nav-links"><a href="#hero">首页</a><a href="#timeline-section">时间线</a></div>
+
   <button id="music-btn" onclick="toggleMusic()" title="Violet – Connor Price" aria-label="音乐开/关">
     <span id="music-icon">🎵</span>
     <span id="music-label">音乐</span>
