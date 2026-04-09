@@ -52,7 +52,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:300;display:flex;align-items:cen
 .tl-item:hover .tl-card{border-color:var(--tl-bh);border-top-color:var(--tl);box-shadow:0 8px 36px rgba(226,232,240,.12);transform:translateY(-4px)}
 .tl-card-title{font-size:.95rem;font-weight:700;color:#fff;margin-bottom:5px;line-height:1.3}
 .tl-tag{display:inline-block;font-size:.56rem;letter-spacing:1.5px;text-transform:uppercase;padding:3px 8px;border-radius:20px;border:1px solid rgba(255,255,255,.18);color:var(--tl);background:rgba(255,255,255,.05);margin-bottom:9px}
-.tl-card-desc{font-size:.8rem;color:var(--muted);line-height:1.7}
+.tl-card-desc{font-size:.8rem;color:var(--muted);line-height:1.7}.tl-card-img{width:100%;border-radius:8px;margin-bottom:12px;object-fit:cover;max-height:160px;display:block}
 .drag-hint{text-align:center;margin-top:24px;font-size:.62rem;letter-spacing:3px;color:var(--muted);text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:10px;animation:fh 3s ease-in-out infinite}
 @keyframes fh{0%,100%{opacity:.2}50%{opacity:.6}}
 footer{text-align:center;padding:48px 24px;border-top:1px solid var(--border);color:var(--muted);font-size:.75rem;letter-spacing:1.5px;background:#000}
@@ -479,7 +479,7 @@ const TL=[
   const s=document.getElementById('tl-inner');
   TL.forEach(i=>{
     const el=document.createElement('div');el.className='tl-item';
-    el.innerHTML=`<div class="tl-year">${i.year}</div><div class="tl-dot"></div><div class="tl-card"><div class="tl-card-title">${i.title}</div>${i.tag?`<span class="tl-tag">${i.tag}</span>`:''}<div class="tl-card-desc">${i.desc}</div></div>`;
+    el.innerHTML=`<div class="tl-year">${i.year}</div><div class="tl-dot"></div><div class="tl-card">${i.img?`<img class="tl-card-img" src="${i.img}" alt="">`:''}<div class="tl-card-title">${i.title}</div>${i.tag?`<span class="tl-tag">${i.tag}</span>`:''}<div class="tl-card-desc">${i.desc}</div></div>`;
     s.appendChild(el);
   });
   const io=new IntersectionObserver(e=>e.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')}),{threshold:.1});
