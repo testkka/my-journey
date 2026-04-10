@@ -191,17 +191,64 @@ body{top:0!important}
 #timeline-section-2{padding:100px 0 120px;overflow:hidden;background:#000;border-top:1px solid rgba(255,255,255,.06)}
 
 /* ── Section Dividers ── */
-.section-divider{padding:56px 24px 0;text-align:center;background:#000;position:relative}
-.divider-inner{display:flex;align-items:center;justify-content:center;gap:20px;margin-bottom:14px}
+.section-divider{padding:56px 24px 0;text-align:center;background:#000;position:relative;overflow:hidden}
+/* scroll-in animation: start invisible + shifted down */
+.section-divider{opacity:0;transform:translateY(32px);transition:opacity .8s ease,transform .8s ease}
+.section-divider.divider-visible{opacity:1;transform:translateY(0)}
+
+/* ── shimmer sweep across the line on reveal ── */
+.divider-line,.divider-line-blue{position:relative;overflow:hidden}
+.divider-line::after,.divider-line-blue::after{
+  content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;
+  background:linear-gradient(to right,transparent,rgba(255,255,255,.9),transparent);
+  animation:none;pointer-events:none
+}
+.section-divider.divider-visible .divider-line::after{animation:shimmer-white .9s ease .3s forwards}
+.section-divider.divider-visible .divider-line-blue::after{animation:shimmer-blue .9s ease .3s forwards}
+@keyframes shimmer-white{0%{left:-60%;opacity:0}20%{opacity:1}100%{left:130%;opacity:0}}
+@keyframes shimmer-blue{
+  0%{left:-60%;opacity:0;background:linear-gradient(to right,transparent,rgba(96,165,250,.95),transparent)}
+  20%{opacity:1}
+  100%{left:130%;opacity:0}
+}
+
+/* ── badge glow pulse on reveal ── */
+.divider-badge{
+  display:flex;align-items:center;gap:10px;padding:8px 22px;
+  border:1px solid rgba(255,255,255,.18);border-radius:40px;
+  background:rgba(255,255,255,.04);backdrop-filter:blur(12px);white-space:nowrap;
+  transition:box-shadow .6s ease .4s,border-color .6s ease .4s
+}
+.section-divider.divider-visible .divider-badge{
+  box-shadow:0 0 28px rgba(255,255,255,.12),0 0 60px rgba(255,255,255,.06);
+  border-color:rgba(255,255,255,.35)
+}
+.divider-badge-blue{border-color:rgba(59,130,246,.35);background:rgba(59,130,246,.07)}
+.section-divider.divider-visible .divider-badge-blue{
+  box-shadow:0 0 28px rgba(59,130,246,.3),0 0 60px rgba(59,130,246,.12);
+  border-color:rgba(96,165,250,.6)
+}
+
+/* ── ambient glow orb behind badge ── */
+.divider-glow{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:320px;height:80px;border-radius:50%;pointer-events:none;
+  opacity:0;transition:opacity 1s ease .2s;filter:blur(32px)
+}
+.divider-glow-white{background:radial-gradient(ellipse,rgba(200,216,240,.18) 0%,transparent 70%)}
+.divider-glow-blue{background:radial-gradient(ellipse,rgba(59,130,246,.22) 0%,transparent 70%)}
+.section-divider.divider-visible .divider-glow{opacity:1}
+
+.divider-inner{display:flex;align-items:center;justify-content:center;gap:20px;margin-bottom:14px;position:relative;z-index:1}
 .divider-line{flex:1;max-width:200px;height:1px;background:linear-gradient(to right,transparent,rgba(255,255,255,.25),transparent)}
 .divider-line-blue{background:linear-gradient(to right,transparent,rgba(59,130,246,.5),transparent)}
-.divider-badge{display:flex;align-items:center;gap:10px;padding:8px 22px;border:1px solid rgba(255,255,255,.18);border-radius:40px;background:rgba(255,255,255,.04);backdrop-filter:blur(12px);white-space:nowrap}
-.divider-badge-blue{border-color:rgba(59,130,246,.35);background:rgba(59,130,246,.07)}
 .divider-icon{font-size:.75rem;color:rgba(255,255,255,.5)}
 .divider-icon-blue{font-size:.8rem;color:rgba(96,165,250,.7)}
 .divider-label{font-size:.65rem;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:rgba(255,255,255,.8)}
 .divider-label-blue{font-size:.65rem;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--blue)}
-.divider-sub{font-size:.72rem;color:rgba(255,255,255,.3);letter-spacing:1.5px;margin:0;padding-bottom:0}
+.divider-sub{font-size:.72rem;color:rgba(255,255,255,.3);letter-spacing:1.5px;margin:0;padding-bottom:0;position:relative;z-index:1;
+  opacity:0;transform:translateY(8px);transition:opacity .6s ease .6s,transform .6s ease .6s}
+.section-divider.divider-visible .divider-sub{opacity:1;transform:translateY(0)}
 .divider-sub-blue{color:rgba(96,165,250,.4)}
 /* ── Section background tint to reinforce split ── */
 #timeline-section{background:linear-gradient(180deg,#000 0%,#080a0e 100%)}
@@ -250,6 +297,7 @@ SCROLL
 </div>
 </section>
 <div class="section-divider divider-person">
+  <div class="divider-glow divider-glow-white"></div>
   <div class="divider-inner">
     <div class="divider-line"></div>
     <div class="divider-badge">
@@ -281,6 +329,7 @@ SCROLL
 </div>
 </section>
 <div class="section-divider divider-nexus">
+  <div class="divider-glow divider-glow-blue"></div>
   <div class="divider-inner">
     <div class="divider-line divider-line-blue"></div>
     <div class="divider-badge divider-badge-blue">
@@ -1277,5 +1326,20 @@ attempt();
 </script>
 <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 <script src="autoplay.js"></script>
+
+// ── Divider scroll-in animation ──
+(function(){
+  const dividers = document.querySelectorAll('.section-divider');
+  if(!dividers.length) return;
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        entry.target.classList.add('divider-visible');
+        io.unobserve(entry.target);
+      }
+    });
+  },{threshold:0.25});
+  dividers.forEach(d=>io.observe(d));
+})();
 </body>
 </html>
