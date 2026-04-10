@@ -272,7 +272,12 @@
               <div class="field"><label>Hero 副标题（如：Building a future of mathematical truth↵Nexus runs on proof，每行一句）</label><textarea id="heroSub" rows="3" oninput="markChanged()" placeholder="Building a future of mathematical truth&#10;Nexus runs on proof"></textarea></div>
             </div>
             <div class="grid-2" style="margin-bottom:14px">
-              <div class="field"><label>Hero 大标题（H1）</label><textarea id="heroH1" rows="2" oninput="markChanged()"></textarea></div>
+              <div class="field"><label>Hero 大标题 · 第一行</label><input type="text" id="heroH1L1" oninput="markChanged()" placeholder="DANIEL MARIN"></div>
+              <div class="field"><label>Hero 大标题 · 第二行</label><input type="text" id="heroH1L2" oninput="markChanged()" placeholder="Empire"></div>
+              <div class="grid-2">
+                <div class="field"><label>第一行字体大小（CSS值）</label><input type="text" id="heroH1Fs1" oninput="markChanged()" placeholder="clamp(2.4rem,6vw,5rem)"><div class="help-text">如：clamp(2.4rem,6vw,5rem) 或 4rem 或 5rem</div></div>
+                <div class="field"><label>第二行字体大小（CSS值）</label><input type="text" id="heroH1Fs2" oninput="markChanged()" placeholder="clamp(1.2rem,3.5vw,2.8rem)"><div class="help-text">如：clamp(1.2rem,3.5vw,2.8rem) 或 2.8rem</div></div>
+              </div>
               <div class="field"><label>时间线区域标题（Section Title）</label><input type="text" id="tlSectionTitle" oninput="markChanged()"></div>
             </div>
             <hr class="divider">
@@ -572,8 +577,25 @@ function parseAndRender(){
   if(eyebrow)document.getElementById('heroEyebrow').value=eyebrow[1];
   const heroSub=html.match(/class="hero-sub">([\s\S]*?)<\/p>/);
   if(heroSub)document.getElementById('heroSub').value=heroSub[1].replace(/<br\s*\/?>/gi,'\n');
-  const heroH1Match=html.match(/class="hero-h1">([\s\S]*?)<\/h1>/);
-  if(heroH1Match)document.getElementById('heroH1').value=heroH1Match[1].replace(/<br>/g,'\n');
+  // Parse two-line H1 with font sizes
+  const heroH1StyleM=html.match(/<h1 class="hero-h1"[^>]*style="([^"]*)"/);
+  const heroH1Style=heroH1StyleM?heroH1StyleM[1]:'';
+  const fs1M=heroH1Style.match(/--h1-fs1:([^;}"]+)/);
+  const fs2M=heroH1Style.match(/--h1-fs2:([^;}"]+)/);
+  if(fs1M)document.getElementById('heroH1Fs1').value=fs1M[1].trim();
+  if(fs2M)document.getElementById('heroH1Fs2').value=fs2M[1].trim();
+  const h1L1M=html.match(/<span class="h1-l1">([^<]*)<\/span>/);
+  const h1L2M=html.match(/<span class="h1-l2">([^<]*)<\/span>/);
+  if(h1L1M)document.getElementById('heroH1L1').value=h1L1M[1];
+  if(h1L2M)document.getElementById('heroH1L2').value=h1L2M[1];
+  // Legacy single-line H1 fallback
+  const heroH1Match=html.match(/class="hero-h1"[^>]*>([\s\S]*?)<\/h1>/);
+  if(heroH1Match&&!h1L1M){
+    const raw=heroH1Match[1].replace(/<[^>]+>/g,'').trim();
+    const parts=raw.split(/\n/);
+    if(document.getElementById('heroH1L1'))document.getElementById('heroH1L1').value=parts[0]||raw;
+    if(document.getElementById('heroH1L2'))document.getElementById('heroH1L2').value=parts[1]||'';
+  }
   const tlSecTitle=html.match(/class="sec-title">([^<]+)<\/h2>/);
   if(tlSecTitle)document.getElementById('tlSectionTitle').value=tlSecTitle[1];
 
@@ -819,7 +841,11 @@ function collectData(){
   const navLinkRaw=document.getElementById('navLinks').value.trim().split('\n').filter(Boolean);
   const heroEyebrow=document.getElementById('heroEyebrow').value;
   const heroSub=document.getElementById('heroSub').value.replace(/\n/g,'<br>');
-  const heroH1=document.getElementById('heroH1').value.replace(/\n/g,'<br>');
+  const heroH1L1=document.getElementById('heroH1L1').value.trim();
+  const heroH1L2=document.getElementById('heroH1L2').value.trim();
+  const heroH1Fs1=document.getElementById('heroH1Fs1').value.trim()||'clamp(2.4rem,6vw,5rem)';
+  const heroH1Fs2=document.getElementById('heroH1Fs2').value.trim()||'clamp(1.2rem,3.5vw,2.8rem)';
+  const heroH1=`<span class="h1-l1">${heroH1L1}</span><span class="h1-l2">${heroH1L2}</span>`;
   const tlSectionTitle=document.getElementById('tlSectionTitle').value;
   const tlEyebrow=document.getElementById('tlEyebrow').value;
   const footerText=document.getElementById('footerText').value;
@@ -842,7 +868,7 @@ function collectData(){
     const uid=el.id.replace('tl2-','');
     tl2Items.push({year:document.getElementById('tl2Year'+uid)?.value||'',title:document.getElementById('tl2Title'+uid)?.value||'',tag:document.getElementById('tl2Tag'+uid)?.value||'',desc:document.getElementById('tl2Desc'+uid)?.value||'',img:document.getElementById('tl2ImgSrc'+uid)?.value||''});
   });
-  return{navBrand,navLinkRaw,heroEyebrow,heroSub,heroH1,tlSectionTitle,stats,tlEyebrow,footerText,tlItems,tl2Eyebrow,tl2TitleVal,tl2Items};
+  return{navBrand,navLinkRaw,heroEyebrow,heroSub,heroH1,heroH1Fs1,heroH1Fs2,tlSectionTitle,stats,tlEyebrow,footerText,tlItems,tl2Eyebrow,tl2TitleVal,tl2Items};
 }
 
 // ── Rebuild HTML ───────────────────────────────────────────────
@@ -854,7 +880,11 @@ function rebuildHTML(data,imgMap){
   const newLinks=data.navLinkRaw.map(l=>{const[text,href='#']=l.split('|');return`<a href="${href.trim()}">${text.trim()}</a>`;}).join('');
   html=html.replace(/<div class="nav-links">[\s\S]*?<\/div>/,`<div class="nav-links">${newLinks}</div>`);
   html=html.replace(/(class="hero-eyebrow">)[^<]+(<\/div>)/,`$1${data.heroEyebrow}$2`);
-  if(data.heroH1)html=html.replace(/(class="hero-h1">)[\s\S]*?(<\/h1>)/,`$1${data.heroH1}$2`);
+  if(data.heroH1){
+    const newStyle=`--h1-fs1:${data.heroH1Fs1};--h1-fs2:${data.heroH1Fs2}`;
+    html=html.replace(/<h1 class="hero-h1"[^>]*>([\s\S]*?)<\/h1>/,
+      `<h1 class="hero-h1" style="${newStyle}">${data.heroH1}</h1>`);
+  }
   html=html.replace(/(class="hero-sub">)[\s\S]*?(<\/p>)/,`$1${data.heroSub}$2`);
   if(data.tlSectionTitle)html=html.replace(/(class="sec-title">)[^<]+(<\/h2>)/,`$1${data.tlSectionTitle}$2`);
   const newStats=data.stats.map(s=>`<div class="stat-item"><div class="stat-num">${s.num}</div><div class="stat-label">${s.label}</div></div>`).join('');
