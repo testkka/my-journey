@@ -404,8 +404,15 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
         <div class="panel-card">
           <div class="panel-section-title">导航栏设置</div>
           <div class="grid-2">
-            <div class="field"><label>品牌名</label><input type="text" id="navBrand" oninput="markChanged()"></div>
             <div class="field"><label>导航链接（每行：文字|#锚点）</label><textarea id="navLinks" rows="4" oninput="markChanged()"></textarea></div>
+          </div>
+        </div>
+        <div class="panel-card">
+          <div class="panel-section-title">Logo 位置调整</div>
+          <div class="grid-2">
+            <div class="field"><label>上下偏移（px，正值向下，负值向上）</label><input type="number" id="logoTop" step="1" oninput="markChanged()" placeholder="0"><div class="help-text">如 4 表示向下 4px，-4 向上</div></div>
+            <div class="field"><label>左右偏移（px，正值向右，负值向左）</label><input type="number" id="logoLeft" step="1" oninput="markChanged()" placeholder="0"><div class="help-text">如 8 表示向右 8px，-8 向左</div></div>
+            <div class="field"><label>Logo 高度（px）</label><input type="number" id="logoHeight" step="1" min="10" max="120" oninput="markChanged()" placeholder="36"></div>
           </div>
         </div>
       </div>
@@ -878,8 +885,7 @@ function parseAndRender(){
   const html=currentHTML;
   tlUidCounter=0;tl2UidCounter=0;
 
-  const navBrand=html.match(/<div class="nav-logo">([^<]+)<span>([^<]+)<\/span><\/div>/);
-  if(navBrand)document.getElementById('navBrand').value=(navBrand[1].trim()+' '+navBrand[2].trim()).trim();
+  const navLogoStyle=html.match(/id="nav-logo-img"[^>]*style="([^"]*)"/);const nlTop=(navLogoStyle&&navLogoStyle[1].match(/top:(-?[\d.]+)px/))||[,0];const nlLeft=(navLogoStyle&&navLogoStyle[1].match(/left:(-?[\d.]+)px/))||[,0];const nlH=(navLogoStyle&&navLogoStyle[1].match(/height:([\d.]+)px/))||[,36];document.getElementById('logoTop').value=nlTop[1];document.getElementById('logoLeft').value=nlLeft[1];document.getElementById('logoHeight').value=nlH[1];
   const navLinksMatch=html.match(/<div class="nav-links">([\s\S]*?)<\/div>/);
   document.getElementById('navLinks').value=navLinksMatch
     ?[...navLinksMatch[1].matchAll(/<a href="([^"]+)">([^<]+)<\/a>/g)].map(m=>`${m[2]}|${m[1]}`).join('\n'):'';
@@ -1119,7 +1125,7 @@ function utf8ToB64(str){const bytes=new TextEncoder().encode(str);let binary='';
 
 // ── Collect Data ───────────────────────────────────────────────
 function collectData(){
-  const navBrand=document.getElementById('navBrand').value;
+  const logoTop=document.getElementById('logoTop').value||0;const logoLeft=document.getElementById('logoLeft').value||0;const logoHeight=document.getElementById('logoHeight').value||36;
   const navLinkRaw=document.getElementById('navLinks').value.trim().split('\n').filter(Boolean);
   const heroEyebrow=document.getElementById('heroEyebrow').value;
   const heroSub=document.getElementById('heroSub').value.replace(/\n/g,'<br>');
@@ -1162,15 +1168,13 @@ function collectData(){
   const tl1PadBot=document.getElementById('tl1PadBot')?.value||'60';
   const tl2PadTop=document.getElementById('tl2PadTop')?.value||'100';
   const tl2PadBot=document.getElementById('tl2PadBot')?.value||'120';
-  return{navBrand,navLinkRaw,heroEyebrow,heroSub,heroH1,heroH1Fs1,heroH1Fs2,tlSectionTitle,stats,tlEyebrow,footerText,tlItems,tl2Eyebrow,tl2TitleVal,tl2Items,dividerLabel,dividerSub,musicTitle,heroTop,heroLeft,personBottom,personLeft,personHeight,tl1PadTop,tl1PadBot,tl2PadTop,tl2PadBot};
+  return{logoTop,logoLeft,logoHeight,navLinkRaw,heroEyebrow,heroSub,heroH1,heroH1Fs1,heroH1Fs2,tlSectionTitle,stats,tlEyebrow,footerText,tlItems,tl2Eyebrow,tl2TitleVal,tl2Items,dividerLabel,dividerSub,musicTitle,heroTop,heroLeft,personBottom,personLeft,personHeight,tl1PadTop,tl1PadBot,tl2PadTop,tl2PadBot};
 }
 
 // ── Rebuild HTML ───────────────────────────────────────────────
 function rebuildHTML(data,imgMap){
   let html=currentHTML;
-  const nb=data.navBrand.trim(),sp=nb.indexOf(' ');
-  const p1=sp>0?nb.slice(0,sp):nb,p2=sp>0?nb.slice(sp+1):'';
-  html=html.replace(/<div class="nav-logo">[^<]*<span>[^<]*<\/span><\/div>/,`<div class="nav-logo">${p1} <span>${p2}</span></div>`);
+  html=html.replace(/(id="nav-logo-img")[^>]*(\/?>)/,`$1 src="https://raw.githubusercontent.com/testkka/my-journey/main/images/nexus-logo.png" alt="Nexus" style="height:${parseInt(data.logoHeight)||36}px;object-fit:contain;position:relative;top:${parseInt(data.logoTop)||0}px;left:${parseInt(data.logoLeft)||0}px;" />`);
   const newLinks=data.navLinkRaw.map(l=>{const[text,href='#']=l.split('|');return`<a href="${href.trim()}">${text.trim()}</a>`;}).join('');
   html=html.replace(/<div class="nav-links">[\s\S]*?<\/div>/,`<div class="nav-links">${newLinks}</div>`);
   html=html.replace(/(class="hero-eyebrow">)[^<]+(<\/div>)/,`$1${data.heroEyebrow}$2`);
