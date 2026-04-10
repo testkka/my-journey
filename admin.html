@@ -254,31 +254,41 @@
           </div>
         </div>
 
-        <div class="section open" id="sec-page">
-          <div class="section-header" onclick="toggleSection('page')">
+        <!-- ① 导航栏 -->
+        <div class="section open" id="sec-nav">
+          <div class="section-header" onclick="toggleSection('nav')">
             <div>
-              <div class="section-title">🌐 页面设置 <span class="chevron">▼</span></div>
-              <div class="section-sub">导航、Hero 区域、统计数据、页脚</div>
+              <div class="section-title">🧭 导航栏 <span class="chevron">▼</span></div>
+              <div class="section-sub">品牌名称与顶部导航链接</div>
             </div>
           </div>
-          <div class="section-body" id="body-page">
-            <div class="grid-2" style="margin-bottom:14px">
-              <div class="field"><label>导航品牌名</label><input type="text" id="navBrand" oninput="markChanged()"></div>
+          <div class="section-body" id="body-nav">
+            <div class="grid-2">
+              <div class="field"><label>品牌名</label><input type="text" id="navBrand" oninput="markChanged()"></div>
               <div class="field"><label>导航链接（每行：文字|#锚点）</label><textarea id="navLinks" rows="3" oninput="markChanged()"></textarea></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ② Hero 区域 -->
+        <div class="section open" id="sec-hero">
+          <div class="section-header" onclick="toggleSection('hero')">
+            <div>
+              <div class="section-title">🦸 Hero 区域 <span class="chevron">▼</span></div>
+              <div class="section-sub">页面顶部大标题、副标题、统计数据</div>
+            </div>
+          </div>
+          <div class="section-body" id="body-hero">
+            <div class="grid-2" style="margin-bottom:14px">
+              <div class="field"><label>顶部标语 (Eyebrow)</label><input type="text" id="heroEyebrow" oninput="markChanged()"></div>
+              <div class="field"><label>副标题（每行一句，换行用回车）</label><textarea id="heroSub" rows="3" oninput="markChanged()" placeholder="Building a future of mathematical truth&#10;Nexus runs on proof"></textarea></div>
             </div>
             <hr class="divider">
             <div class="grid-2" style="margin-bottom:14px">
-              <div class="field"><label>Hero 标语 (Eyebrow)</label><input type="text" id="heroEyebrow" oninput="markChanged()"></div>
-              <div class="field"><label>Hero 副标题（如：Building a future of mathematical truth↵Nexus runs on proof，每行一句）</label><textarea id="heroSub" rows="3" oninput="markChanged()" placeholder="Building a future of mathematical truth&#10;Nexus runs on proof"></textarea></div>
-            </div>
-            <div class="grid-2" style="margin-bottom:14px">
-              <div class="field"><label>Hero 大标题 · 第一行</label><input type="text" id="heroH1L1" oninput="markChanged()" placeholder="DANIEL MARIN"></div>
-              <div class="field"><label>Hero 大标题 · 第二行</label><input type="text" id="heroH1L2" oninput="markChanged()" placeholder="Empire"></div>
-              <div class="grid-2">
-                <div class="field"><label>第一行字体大小（rem）</label><input type="number" id="heroH1Fs1" step="0.1" min="1" max="20" oninput="markChanged()" placeholder="5"><div class="help-text">直接填数字，如 5 表示 5rem</div></div>
-                <div class="field"><label>第二行字体大小（rem）</label><input type="number" id="heroH1Fs2" step="0.1" min="1" max="20" oninput="markChanged()" placeholder="2.8"><div class="help-text">直接填数字，如 2.8 表示 2.8rem</div></div>
-              </div>
-              <div class="field"><label>时间线区域标题（Section Title）</label><input type="text" id="tlSectionTitle" oninput="markChanged()"></div>
+              <div class="field"><label>大标题 · 第一行</label><input type="text" id="heroH1L1" oninput="markChanged()" placeholder="DANIEL MARIN"></div>
+              <div class="field"><label>大标题 · 第二行</label><input type="text" id="heroH1L2" oninput="markChanged()" placeholder="Empire"></div>
+              <div class="field"><label>第一行字体大小（rem）</label><input type="number" id="heroH1Fs1" step="0.1" min="1" max="20" oninput="markChanged()" placeholder="5"><div class="help-text">直接填数字，如 5 表示 5rem</div></div>
+              <div class="field"><label>第二行字体大小（rem）</label><input type="number" id="heroH1Fs2" step="0.1" min="1" max="20" oninput="markChanged()" placeholder="2.8"><div class="help-text">直接填数字，如 2.8 表示 2.8rem</div></div>
             </div>
             <hr class="divider">
             <div class="row-label">
@@ -286,13 +296,26 @@
               <button class="btn btn-ghost btn-sm" onclick="addStat()">＋ 添加</button>
             </div>
             <div class="grid-3" id="statsEditor"></div>
-            <hr class="divider">
-            <div class="field" style="margin-bottom:14px"><label>时间线区域标语 (Eyebrow)</label><input type="text" id="tlEyebrow" oninput="markChanged()"></div>
-            <hr class="divider">
-            <div class="field"><label>页脚文字</label><input type="text" id="footerText" oninput="markChanged()"></div>
           </div>
         </div>
 
+        <!-- ③ 分割线 -->
+        <div class="section open" id="sec-divider">
+          <div class="section-header" onclick="toggleSection('divider')">
+            <div>
+              <div class="section-title">✦ 过渡分割线 <span class="chevron">▼</span></div>
+              <div class="section-sub">Hero 与时间线之间的标题文字</div>
+            </div>
+          </div>
+          <div class="section-body" id="body-divider">
+            <div class="grid-2">
+              <div class="field"><label>中间标题（◈ 两侧文字）</label><input type="text" id="dividerLabel" oninput="markChanged()" placeholder="The Founder"></div>
+              <div class="field"><label>副标题说明文字</label><input type="text" id="dividerSub" oninput="markChanged()" placeholder="A journey from Venezuela to the frontier of cryptography"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ④ 时间线一 -->
         <div class="section open" id="sec-timeline">
           <div class="section-header" onclick="toggleSection('timeline')">
             <div>
@@ -301,11 +324,16 @@
             </div>
           </div>
           <div class="section-body" id="body-timeline">
+            <div class="grid-2" style="margin-bottom:14px">
+              <div class="field"><label>区块标语 (Eyebrow)</label><input type="text" id="tlEyebrow" oninput="markChanged()"></div>
+              <div class="field"><label>区块大标题 (Section Title)</label><input type="text" id="tlSectionTitle" oninput="markChanged()"></div>
+            </div>
             <div id="tlItemsEditor"></div>
             <button class="add-btn" onclick="addTLItem()">＋ 添加时间节点</button>
           </div>
         </div>
 
+        <!-- ⑤ 时间线二 -->
         <div class="section open" id="sec-timeline2">
           <div class="section-header" onclick="toggleSection('timeline2')">
             <div>
@@ -315,11 +343,24 @@
           </div>
           <div class="section-body" id="body-timeline2">
             <div class="grid-2" style="margin-bottom:14px">
-              <div class="field"><label>顶部小标题 (Eyebrow)</label><input type="text" id="tl2Eyebrow" oninput="markChanged()"></div>
-              <div class="field"><label>大标题 (Section Title)</label><input type="text" id="tl2Title" oninput="markChanged()"></div>
+              <div class="field"><label>区块标语 (Eyebrow)</label><input type="text" id="tl2Eyebrow" oninput="markChanged()"></div>
+              <div class="field"><label>区块大标题 (Section Title)</label><input type="text" id="tl2Title" oninput="markChanged()"></div>
             </div>
             <div id="tl2ItemsEditor"></div>
             <button class="add-btn" onclick="addTL2Item()">＋ 添加时间节点</button>
+          </div>
+        </div>
+
+        <!-- ⑥ 页脚 -->
+        <div class="section open" id="sec-footer">
+          <div class="section-header" onclick="toggleSection('footer')">
+            <div>
+              <div class="section-title">📄 页脚 <span class="chevron">▼</span></div>
+              <div class="section-sub">底部版权文字</div>
+            </div>
+          </div>
+          <div class="section-body" id="body-footer">
+            <div class="field"><label>页脚文字</label><input type="text" id="footerText" oninput="markChanged()"></div>
           </div>
         </div>
 
@@ -458,7 +499,7 @@ function markChanged(){
   document.getElementById('pushBtn').disabled=false;
   if(previewOpen) updateLivePreview();
 }
-function toggleSection(id){document.getElementById('sec-'+id).classList.toggle('open');}
+function toggleSection(id){const el=document.getElementById('sec-'+id);if(el)el.classList.toggle('open');}
 window.addEventListener('beforeunload',e=>{if(hasChanges){e.preventDefault();e.returnValue='';}});
 
 // ── GitHub API ─────────────────────────────────────────────────
@@ -624,6 +665,12 @@ function parseAndRender(){
   }
   const tlSecTitle=html.match(/class="sec-title">([^<]+)<\/h2>/);
   if(tlSecTitle)document.getElementById('tlSectionTitle').value=tlSecTitle[1];
+
+  // 分割线
+  const divLabelM=html.match(/class="divider-label">([^<]+)<\/span>/);
+  if(divLabelM)document.getElementById('dividerLabel').value=divLabelM[1];
+  const divSubM=html.match(/class="divider-sub">([^<]+)<\/p>/);
+  if(divSubM)document.getElementById('dividerSub').value=divSubM[1];
 
   const stats=[...html.matchAll(/<div class="stat-item"><div class="stat-num">([^<]+)<\/div><div class="stat-label">([^<]+)<\/div><\/div>/g)];
   renderStats(stats.map(m=>({num:m[1],label:m[2]})));
@@ -894,7 +941,9 @@ function collectData(){
     const uid=el.id.replace('tl2-','');
     tl2Items.push({year:document.getElementById('tl2Year'+uid)?.value||'',title:document.getElementById('tl2Title'+uid)?.value||'',tag:document.getElementById('tl2Tag'+uid)?.value||'',desc:document.getElementById('tl2Desc'+uid)?.value||'',img:document.getElementById('tl2ImgSrc'+uid)?.value||''});
   });
-  return{navBrand,navLinkRaw,heroEyebrow,heroSub,heroH1,heroH1Fs1,heroH1Fs2,tlSectionTitle,stats,tlEyebrow,footerText,tlItems,tl2Eyebrow,tl2TitleVal,tl2Items};
+  const dividerLabel=document.getElementById('dividerLabel')?.value||'';
+  const dividerSub=document.getElementById('dividerSub')?.value||'';
+  return{navBrand,navLinkRaw,heroEyebrow,heroSub,heroH1,heroH1Fs1,heroH1Fs2,tlSectionTitle,stats,tlEyebrow,footerText,tlItems,tl2Eyebrow,tl2TitleVal,tl2Items,dividerLabel,dividerSub};
 }
 
 // ── Rebuild HTML ───────────────────────────────────────────────
@@ -922,6 +971,8 @@ function rebuildHTML(data,imgMap){
   })(html);
   html=html.replace(/(id="tl-eyebrow"[^>]*>)[^<]+(<\/p>)/,`$1${data.tlEyebrow}$2`);
   if(!html.includes('id="tl-eyebrow"'))html=html.replace(/(class="sec-eyebrow"[^>]*>)[^<]+(<\/p>)/,`$1${data.tlEyebrow}$2`);
+  if(data.dividerLabel)html=html.replace(/(class="divider-label">)[^<]+(<\/span>)/,`$1${data.dividerLabel}$2`);
+  if(data.dividerSub)html=html.replace(/(class="divider-sub">)[^<]+(<\/p>)/,`$1${data.dividerSub}$2`);
   html=html.replace(/<footer><p>[^<]+<\/p><\/footer>/,`<footer><p>${data.footerText}</p></footer>`);
   const tlJS=data.tlItems.map(item=>{
     const img=imgMap[item.img]||(item.img.startsWith('__PENDING__')?'':item.img);
