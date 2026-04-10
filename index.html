@@ -70,7 +70,32 @@ linear-gradient(to right,rgba(0,0,0,.78) 0%,transparent 12%,transparent 88%,rgba
 #tl-prev:disabled,#tl-next:disabled,#tl2-prev:disabled,#tl2-next:disabled{opacity:0.25;cursor:default}
 #tl-counter,#tl2-counter{font-size:.7rem;letter-spacing:2px;color:rgba(255,255,255,.45);min-width:60px;text-align:center}
 footer{text-align:center;padding:48px 24px;color:var(--muted);font-size:.75rem;letter-spacing:1.5px;background:#000;position:relative}footer::before{content:"";display:block;position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent 0,rgba(255,255,255,.1) 60px,rgba(255,255,255,.1) calc(100% - 60px),transparent 100%);overflow:hidden}footer::after{content:"";position:absolute;top:-1px;left:-60%;width:40%;height:3px;background:linear-gradient(to right,transparent,rgba(255,255,255,.55),transparent);animation:footerMeteor 3s ease-in-out infinite}@keyframes footerMeteor{0%{left:-40%}100%{left:130%}}
-@media(max-width:640px){nav{padding:14px 20px}.nav-links{gap:18px}#nexus-btn,#discord-btn{display:none}#music-label{display:none}.hero-stats{flex-wrap:wrap;border-radius:10px}.tl-item{width:calc(90vw)}.tl-card{width:100%}#tl-inner{padding:0}}
+@media(max-width:640px){
+/* ── NAV 稳定化：提升为独立合成层，隔离页面其他动画的干扰 ── */
+nav{padding:14px 16px;-webkit-transform:translateZ(0);transform:translateZ(0);-webkit-backface-visibility:hidden;backface-visibility:hidden}
+.nav-links{gap:18px}
+#nexus-btn,#discord-btn{display:none}
+#music-label{display:none}
+/* 移除 backdrop-filter：移动端性能开销大，是 nav 抖动的诱因之一 */
+#lang-btn,#music-btn{backdrop-filter:none;-webkit-backdrop-filter:none;background:rgba(20,20,20,0.85)}
+/* 彻底隐藏 scroll-cue：它的 CSS transform 动画在 iOS Safari 会污染 fixed 元素的合成层 */
+.scroll-cue{display:none!important}
+/* Hero 区域：限制内部动画影响范围 */
+#hero{-webkit-transform:translateZ(0);transform:translateZ(0)}
+/* Hero 数据统计 */
+.hero-stats{flex-wrap:wrap;border-radius:10px}
+/* ── 时间线：touch-action:pan-y 告诉浏览器"垂直滚动由你负责" ── */
+/* JS touchmove 改为 passive，浏览器不等 JS 就直接处理垂直滚动 */
+#tl-wrap,#tl2-wrap{touch-action:pan-y;-ms-touch-action:pan-y;cursor:default}
+.tl-item{width:calc(90vw)}
+.tl-card{width:100%}
+#tl-inner,#tl2-inner{padding:0}
+#timeline-section{padding:100px 0 60px}
+#timeline-section-2{padding:60px 0 60px}
+/* Footer 流星：改用 transform 代替 left，避免触发重排 */
+footer::after{animation:footerMeteor-mobile 3s ease-in-out infinite}
+@keyframes footerMeteor-mobile{0%{transform:translateX(-100%)}100%{transform:translateX(500%)}}
+}
 #person-wrap{
 position:absolute;
 bottom:12vh;
@@ -446,10 +471,8 @@ function handleResize() {
 renderer.setSize(W(), H()); camera.aspect = W()/H(); camera.updateProjectionMatrix();
 }
 window.addEventListener('resize', handleResize);
-if (window.visualViewport) {
-window.visualViewport.addEventListener('resize', handleResize);
-window.visualViewport.addEventListener('scale', handleResize);
-}
+// 移除 visualViewport 监听：在移动端滚动时会频繁触发，引起 canvas resize 重排，
+// 导致 position:fixed 的 nav 发生抖动，普通 window.resize 已足够
 // ── 7. 渲染循环（仅在非拖拽时自动旋转 + 惯性）──
 (function loop(){
 requestAnimationFrame(loop);
@@ -601,10 +624,13 @@ updateNav();
 }, {passive:false});
 // ── 拖拽（增量式 · 两方向均可 · 带惯性）──
 let _lastDragX = 0, _lastDragTime = 0, _dragVelocity = 0;
+let _tlStartY = 0, _tlDirLocked = null; // 方向锁
 const DRAG_SENS = 0.85;
-function startDrag(clientX) {
+function startDrag(clientX, clientY) {
 isDragging = true;
 _lastDragX = clientX;
+_tlStartY = clientY !== undefined ? clientY : 0;
+_tlDirLocked = null; // 每次触摸重置方向锁
 _lastDragTime = Date.now();
 _dragVelocity = 0;
 }
@@ -642,17 +668,24 @@ w.addEventListener('mousedown', e => { e.preventDefault(); startDrag(e.clientX);
 w.addEventListener('dragstart', e => e.preventDefault());
 window.addEventListener('mousemove', e => moveDrag(e.clientX));
 window.addEventListener('mouseup', endDrag);
-// ── 触摸（修复：使用非 passive 监听器，阻止页面垂直滚动）──
+// ── 触摸：CSS touch-action:pan-y 负责垂直滚动，JS 只处理水平滑动 ──
 w.addEventListener('touchstart', e => {
-startDrag(e.touches[0].clientX);
+startDrag(e.touches[0].clientX, e.touches[0].clientY);
 }, {passive:true});
-// ★ Bug Fix: 将 touchmove 绑定到 w 并设为 non-passive，才能 preventDefault()
-//   原来绑定到 window + passive:true 导致移动端根本无法滑动时间线
+// passive:true：浏览器不等 JS，立即处理垂直滚动（依赖 CSS touch-action:pan-y）
+// 方向锁：只有确认是水平手势才移动卡片，垂直手势不干扰页面滚动
 w.addEventListener('touchmove', e => {
 if(!isDragging) return;
-e.preventDefault(); // 阻止页面上下滚动，确保时间线左右滑动生效
-moveDrag(e.touches[0].clientX);
-}, {passive:false});
+const t = e.touches[0];
+if(_tlDirLocked === null){
+const dx = Math.abs(t.clientX - _lastDragX);
+const dy = Math.abs(t.clientY - _tlStartY);
+if(dx < 5 && dy < 5) return; // 还没判断出方向，等等
+_tlDirLocked = dx >= dy ? 'h' : 'v';
+}
+if(_tlDirLocked === 'v'){ isDragging = false; return; } // 垂直：退出，交给浏览器滚
+moveDrag(t.clientX); // 水平：移动卡片
+}, {passive:true}); // ← 关键：passive=true，彻底解除垂直滚动阻塞
 window.addEventListener('touchend', endDrag);
 // ── 窗口 resize 时重算 padding 和位置 ──
 window.addEventListener('resize', () => {
@@ -715,10 +748,7 @@ bc.height = bc.offsetHeight * devicePixelRatio;
 ctx.scale(devicePixelRatio, devicePixelRatio);
 }
 window.addEventListener('resize', ()=>{ resize(); });
-if (window.visualViewport) {
-window.visualViewport.addEventListener('resize', ()=>{ resize(); });
-window.visualViewport.addEventListener('scale', ()=>{ resize(); });
-}
+// 移除 visualViewport 监听（同上：避免移动端滚动时频繁触发 canvas 重排）
 resize();
 // 粒子系统
 const PARTICLE_COUNT = 28;
@@ -1113,7 +1143,8 @@ else goToIndex2(currentIndex2 - 1);
 // Drag
 let _lastDragX2 = 0, _lastDragTime2 = 0, _dragVelocity2 = 0;
 const DRAG_SENS2 = 0.85;
-function startDrag2(clientX){ isDragging2 = true; _lastDragX2 = clientX; _lastDragTime2 = Date.now(); _dragVelocity2 = 0; }
+let _tl2StartY = 0, _tl2DirLocked = null;
+function startDrag2(clientX, clientY){ isDragging2 = true; _lastDragX2 = clientX; _tl2StartY = clientY !== undefined ? clientY : 0; _tl2DirLocked = null; _lastDragTime2 = Date.now(); _dragVelocity2 = 0; }
 function moveDrag2(clientX){
 if(!isDragging2) return;
 const now = Date.now(); const dt = now - _lastDragTime2;
@@ -1140,8 +1171,19 @@ w.addEventListener('mousedown', e => { e.preventDefault(); startDrag2(e.clientX)
 w.addEventListener('dragstart', e => e.preventDefault());
 window.addEventListener('mousemove', e => moveDrag2(e.clientX));
 window.addEventListener('mouseup', endDrag2);
-w.addEventListener('touchstart', e => startDrag2(e.touches[0].clientX), {passive:true});
-w.addEventListener('touchmove', e => { if(!isDragging2) return; e.preventDefault(); moveDrag2(e.touches[0].clientX); }, {passive:false});
+w.addEventListener('touchstart', e => startDrag2(e.touches[0].clientX, e.touches[0].clientY), {passive:true});
+w.addEventListener('touchmove', e => {
+if(!isDragging2) return;
+const t = e.touches[0];
+if(_tl2DirLocked === null){
+const dx = Math.abs(t.clientX - _lastDragX2);
+const dy = Math.abs(t.clientY - _tl2StartY);
+if(dx < 5 && dy < 5) return;
+_tl2DirLocked = dx >= dy ? 'h' : 'v';
+}
+if(_tl2DirLocked === 'v'){ isDragging2 = false; return; }
+moveDrag2(t.clientX);
+}, {passive:true}); // passive:true + touch-action:pan-y = 垂直滚动完全解锁
 window.addEventListener('touchend', endDrag2);
 window.addEventListener('resize', () => {
 setupPadding2(); goToIndex2(currentIndex2); currentX2 = targetX2; setPos2(currentX2);
