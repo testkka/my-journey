@@ -321,7 +321,48 @@
           </div>
         </div>
 
-        <!-- ③ 分割线 -->
+        <!-- ③ 人物图片 -->
+        <div class="section open" id="sec-person">
+          <div class="section-header" onclick="toggleSection('person')">
+            <div>
+              <div class="section-title">🧍 人物图片 <span class="chevron">▼</span></div>
+              <div class="section-sub">背景人物图片的位置与大小</div>
+            </div>
+          </div>
+          <div class="section-body" id="body-person">
+            <div class="grid-3">
+              <div class="field">
+                <label>垂直位置（距底部 vh）</label>
+                <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+                  <input type="range" id="personBottom" min="0" max="50" step="1" value="12" oninput="document.getElementById('personBottomNum').value=this.value;markChanged()" style="flex:1;accent-color:var(--accent)">
+                  <input type="number" id="personBottomNum" min="0" max="50" step="1" value="12" oninput="document.getElementById('personBottom').value=this.value;markChanged()" style="width:54px;padding:5px 7px;border:1.5px solid var(--border);border-radius:6px;background:var(--panel2);color:var(--text);font-size:.82rem;outline:none">
+                  <span style="font-size:.72rem;color:var(--muted)">vh</span>
+                </div>
+                <div class="help-text">数值越大越靠上</div>
+              </div>
+              <div class="field">
+                <label>水平位置（%）</label>
+                <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+                  <input type="range" id="personLeft" min="0" max="100" step="1" value="49" oninput="document.getElementById('personLeftNum').value=this.value;markChanged()" style="flex:1;accent-color:var(--accent)">
+                  <input type="number" id="personLeftNum" min="0" max="100" step="1" value="49" oninput="document.getElementById('personLeft').value=this.value;markChanged()" style="width:54px;padding:5px 7px;border:1.5px solid var(--border);border-radius:6px;background:var(--panel2);color:var(--text);font-size:.82rem;outline:none">
+                  <span style="font-size:.72rem;color:var(--muted)">%</span>
+                </div>
+                <div class="help-text">50 = 水平居中</div>
+              </div>
+              <div class="field">
+                <label>图片高度（vh）</label>
+                <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+                  <input type="range" id="personHeight" min="40" max="130" step="1" value="90" oninput="document.getElementById('personHeightNum').value=this.value;markChanged()" style="flex:1;accent-color:var(--accent)">
+                  <input type="number" id="personHeightNum" min="40" max="130" step="1" value="90" oninput="document.getElementById('personHeight').value=this.value;markChanged()" style="width:54px;padding:5px 7px;border:1.5px solid var(--border);border-radius:6px;background:var(--panel2);color:var(--text);font-size:.82rem;outline:none">
+                  <span style="font-size:.72rem;color:var(--muted)">vh</span>
+                </div>
+                <div class="help-text">数值越大图片越高</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ④ 分割线 -->
         <div class="section open" id="sec-divider">
           <div class="section-header" onclick="toggleSection('divider')">
             <div>
@@ -350,6 +391,24 @@
               <div class="field"><label>区块标语 (Eyebrow)</label><input type="text" id="tlEyebrow" oninput="markChanged()"></div>
               <div class="field"><label>区块大标题 (Section Title)</label><input type="text" id="tlSectionTitle" oninput="markChanged()"></div>
             </div>
+            <div class="grid-2" style="margin-bottom:14px">
+              <div class="field">
+                <label>区块上间距（px）</label>
+                <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+                  <input type="range" id="tl1PadTop" min="0" max="240" step="4" value="100" oninput="document.getElementById('tl1PadTopNum').value=this.value;markChanged()" style="flex:1;accent-color:var(--accent)">
+                  <input type="number" id="tl1PadTopNum" min="0" max="240" step="4" value="100" oninput="document.getElementById('tl1PadTop').value=this.value;markChanged()" style="width:60px;padding:5px 7px;border:1.5px solid var(--border);border-radius:6px;background:var(--panel2);color:var(--text);font-size:.82rem;outline:none">
+                  <span style="font-size:.72rem;color:var(--muted)">px</span>
+                </div>
+              </div>
+              <div class="field">
+                <label>区块下间距（px）</label>
+                <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+                  <input type="range" id="tl1PadBot" min="0" max="240" step="4" value="60" oninput="document.getElementById('tl1PadBotNum').value=this.value;markChanged()" style="flex:1;accent-color:var(--accent)">
+                  <input type="number" id="tl1PadBotNum" min="0" max="240" step="4" value="60" oninput="document.getElementById('tl1PadBot').value=this.value;markChanged()" style="width:60px;padding:5px 7px;border:1.5px solid var(--border);border-radius:6px;background:var(--panel2);color:var(--text);font-size:.82rem;outline:none">
+                  <span style="font-size:.72rem;color:var(--muted)">px</span>
+                </div>
+              </div>
+            </div>
             <div id="tlItemsEditor"></div>
             <button class="add-btn" onclick="addTLItem()">＋ 添加时间节点</button>
           </div>
@@ -367,6 +426,24 @@
             <div class="grid-2" style="margin-bottom:14px">
               <div class="field"><label>区块标语 (Eyebrow)</label><input type="text" id="tl2Eyebrow" oninput="markChanged()"></div>
               <div class="field"><label>区块大标题 (Section Title)</label><input type="text" id="tl2Title" oninput="markChanged()"></div>
+            </div>
+            <div class="grid-2" style="margin-bottom:14px">
+              <div class="field">
+                <label>区块上间距（px）</label>
+                <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+                  <input type="range" id="tl2PadTop" min="0" max="240" step="4" value="100" oninput="document.getElementById('tl2PadTopNum').value=this.value;markChanged()" style="flex:1;accent-color:var(--accent)">
+                  <input type="number" id="tl2PadTopNum" min="0" max="240" step="4" value="100" oninput="document.getElementById('tl2PadTop').value=this.value;markChanged()" style="width:60px;padding:5px 7px;border:1.5px solid var(--border);border-radius:6px;background:var(--panel2);color:var(--text);font-size:.82rem;outline:none">
+                  <span style="font-size:.72rem;color:var(--muted)">px</span>
+                </div>
+              </div>
+              <div class="field">
+                <label>区块下间距（px）</label>
+                <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+                  <input type="range" id="tl2PadBot" min="0" max="240" step="4" value="120" oninput="document.getElementById('tl2PadBotNum').value=this.value;markChanged()" style="flex:1;accent-color:var(--accent)">
+                  <input type="number" id="tl2PadBotNum" min="0" max="240" step="4" value="120" oninput="document.getElementById('tl2PadBot').value=this.value;markChanged()" style="width:60px;padding:5px 7px;border:1.5px solid var(--border);border-radius:6px;background:var(--panel2);color:var(--text);font-size:.82rem;outline:none">
+                  <span style="font-size:.72rem;color:var(--muted)">px</span>
+                </div>
+              </div>
             </div>
             <div id="tl2ItemsEditor"></div>
             <button class="add-btn" onclick="addTL2Item()">＋ 添加时间节点</button>
@@ -694,14 +771,39 @@ function parseAndRender(){
   const divSubM=html.match(/class="divider-sub">([^<]+)<\/p>/);
   if(divSubM)document.getElementById('dividerSub').value=divSubM[1];
 
-  // Hero 位置
+  // Hero 内容位置
   const heroContentStyleM=html.match(/class="hero-content"[^>]*style="([^"]*)"/);
   if(heroContentStyleM){
     const sty=heroContentStyleM[1];
-    const topM=sty.match(/top:([\d.]+)%/);
-    const leftM=sty.match(/left:([\d.]+)%/);
+    const topM=sty.match(/top:([\d.]+)%/);const leftM=sty.match(/left:([\d.]+)%/);
     if(topM){document.getElementById('heroTop').value=topM[1];document.getElementById('heroTopNum').value=topM[1];}
     if(leftM){document.getElementById('heroLeft').value=leftM[1];document.getElementById('heroLeftNum').value=leftM[1];}
+  }
+  // 人物图片位置
+  const personWrapM=html.match(/id="person-wrap"[^>]*style="([^"]*)"/);
+  if(personWrapM){
+    const s=personWrapM[1];
+    const bm=s.match(/bottom:([\d.]+)vh/);const lm=s.match(/left:([\d.]+)%/);
+    if(bm){document.getElementById('personBottom').value=bm[1];document.getElementById('personBottomNum').value=bm[1];}
+    if(lm){document.getElementById('personLeft').value=lm[1];document.getElementById('personLeftNum').value=lm[1];}
+  }
+  const personImgM=html.match(/id="person-img"[^>]*style="([^"]*)"/);
+  if(personImgM){
+    const hm=personImgM[1].match(/height:([\d.]+)vh/);
+    if(hm){document.getElementById('personHeight').value=hm[1];document.getElementById('personHeightNum').value=hm[1];}
+  }
+  // 时间线间距
+  const tl1M=html.match(/id="timeline-section"[^>]*style="([^"]*)"/);
+  if(tl1M){
+    const pt=tl1M[1].match(/padding-top:([\d.]+)px/);const pb=tl1M[1].match(/padding-bottom:([\d.]+)px/);
+    if(pt){document.getElementById('tl1PadTop').value=pt[1];document.getElementById('tl1PadTopNum').value=pt[1];}
+    if(pb){document.getElementById('tl1PadBot').value=pb[1];document.getElementById('tl1PadBotNum').value=pb[1];}
+  }
+  const tl2M=html.match(/id="timeline-section-2"[^>]*style="([^"]*)"/);
+  if(tl2M){
+    const pt=tl2M[1].match(/padding-top:([\d.]+)px/);const pb=tl2M[1].match(/padding-bottom:([\d.]+)px/);
+    if(pt){document.getElementById('tl2PadTop').value=pt[1];document.getElementById('tl2PadTopNum').value=pt[1];}
+    if(pb){document.getElementById('tl2PadBot').value=pb[1];document.getElementById('tl2PadBotNum').value=pb[1];}
   }
 
   const stats=[...html.matchAll(/<div class="stat-item"><div class="stat-num">([^<]+)<\/div><div class="stat-label">([^<]+)<\/div><\/div>/g)];
@@ -977,7 +1079,14 @@ function collectData(){
   const dividerSub=document.getElementById('dividerSub')?.value||'';
   const heroTop=document.getElementById('heroTop')?.value||'58';
   const heroLeft=document.getElementById('heroLeft')?.value||'50';
-  return{navBrand,navLinkRaw,heroEyebrow,heroSub,heroH1,heroH1Fs1,heroH1Fs2,tlSectionTitle,stats,tlEyebrow,footerText,tlItems,tl2Eyebrow,tl2TitleVal,tl2Items,dividerLabel,dividerSub,heroTop,heroLeft};
+  const personBottom=document.getElementById('personBottom')?.value||'12';
+  const personLeft=document.getElementById('personLeft')?.value||'49';
+  const personHeight=document.getElementById('personHeight')?.value||'90';
+  const tl1PadTop=document.getElementById('tl1PadTop')?.value||'100';
+  const tl1PadBot=document.getElementById('tl1PadBot')?.value||'60';
+  const tl2PadTop=document.getElementById('tl2PadTop')?.value||'100';
+  const tl2PadBot=document.getElementById('tl2PadBot')?.value||'120';
+  return{navBrand,navLinkRaw,heroEyebrow,heroSub,heroH1,heroH1Fs1,heroH1Fs2,tlSectionTitle,stats,tlEyebrow,footerText,tlItems,tl2Eyebrow,tl2TitleVal,tl2Items,dividerLabel,dividerSub,heroTop,heroLeft,personBottom,personLeft,personHeight,tl1PadTop,tl1PadBot,tl2PadTop,tl2PadBot};
 }
 
 // ── Rebuild HTML ───────────────────────────────────────────────
@@ -1005,11 +1114,14 @@ function rebuildHTML(data,imgMap){
   })(html);
   html=html.replace(/(id="tl-eyebrow"[^>]*>)[^<]+(<\/p>)/,`$1${data.tlEyebrow}$2`);
   if(!html.includes('id="tl-eyebrow"'))html=html.replace(/(class="sec-eyebrow"[^>]*>)[^<]+(<\/p>)/,`$1${data.tlEyebrow}$2`);
-  // Hero 位置
-  html=html.replace(
-    /(class="hero-content")[^>]*(>)/,
-    `$1 style="top:${data.heroTop}%;left:${data.heroLeft}%"$2`
-  );
+  // Hero 内容位置
+  html=html.replace(/(class="hero-content")[^>]*(>)/,`$1 style="top:${data.heroTop}%;left:${data.heroLeft}%"$2`);
+  // 人物图片
+  html=html.replace(/(id="person-wrap")[^>]*(>)/,`$1 style="bottom:${data.personBottom}vh;left:${data.personLeft}%"$2`);
+  html=html.replace(/(id="person-img")[^>]*style="[^"]*"/,`$1 style="height:${data.personHeight}vh"`);
+  // 时间线间距
+  html=html.replace(/(id="timeline-section")[^>]*(>)/,`$1 style="padding-top:${data.tl1PadTop}px;padding-bottom:${data.tl1PadBot}px"$2`);
+  html=html.replace(/(id="timeline-section-2")[^>]*(>)/,`$1 style="padding-top:${data.tl2PadTop}px;padding-bottom:${data.tl2PadBot}px"$2`);
   if(data.dividerLabel)html=html.replace(/(class="divider-label">)[^<]+(<\/span>)/,`$1${data.dividerLabel}$2`);
   if(data.dividerSub)html=html.replace(/(class="divider-sub">)[^<]+(<\/p>)/,`$1${data.dividerSub}$2`);
   html=html.replace(/<footer><p>[^<]+<\/p><\/footer>/,`<footer><p>${data.footerText}</p></footer>`);
