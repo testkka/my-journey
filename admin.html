@@ -5,184 +5,263 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Nexus · 后台管理</title>
 <style>
-  *{box-sizing:border-box;margin:0;padding:0}
-  :root{
-    --bg:#f1f5f9;--panel:#ffffff;--panel2:#f8fafc;--border:#e2e8f0;--border2:#cbd5e1;
-    --accent:#3b82f6;--accent2:#6366f1;--accent-bg:#eff6ff;
-    --text:#0f172a;--text2:#334155;--muted:#64748b;--muted2:#94a3b8;
-    --green:#16a34a;--green-bg:#f0fdf4;--green-bd:#bbf7d0;
-    --red:#dc2626;--red-bg:#fff1f2;--red-bd:#fecdd3;
-    --yellow:#b45309;--yellow-bg:#fffbeb;--yellow-bd:#fde68a;
-    --shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.04);
-    --shadow-md:0 4px 16px rgba(0,0,0,.10);
-    --r:10px;--rl:14px
-  }
-  body{background:var(--bg);color:var(--text);font-family:"Inter",-apple-system,BlinkMacSystemFont,sans-serif;min-height:100vh;font-size:14px;line-height:1.5}
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f1f5f9;--panel:#ffffff;--panel2:#f8fafc;--border:#e2e8f0;--border2:#cbd5e1;
+  --accent:#3b82f6;--accent2:#6366f1;--accent-bg:#eff6ff;
+  --text:#0f172a;--text2:#334155;--muted:#64748b;--muted2:#94a3b8;
+  --green:#16a34a;--green-bg:#f0fdf4;--green-bd:#bbf7d0;
+  --red:#dc2626;--red-bg:#fff1f2;--red-bd:#fecdd3;
+  --yellow:#b45309;--yellow-bg:#fffbeb;--yellow-bd:#fde68a;
+  --shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.04);
+  --shadow-md:0 4px 16px rgba(0,0,0,.10);
+  --r:10px;--rl:14px;
+  --sb-bg:#0c0e13;--sb-border:rgba(255,255,255,.07);--sb-text:rgba(255,255,255,.5);
+  --sb-text-active:#fff;--sb-hover:rgba(255,255,255,.05);--sb-active:rgba(59,130,246,.18);
+  --sb-accent:#3b82f6;--sb-width:220px
+}
+body{background:var(--bg);color:var(--text);font-family:"Inter",-apple-system,BlinkMacSystemFont,sans-serif;min-height:100vh;font-size:14px;line-height:1.5}
 
-  /* ── PREVIEW LAYOUT ── */
-  .app-wrap{display:flex;height:100vh;overflow:hidden;flex-direction:column}
-  .app-body{display:flex;flex:1;overflow:hidden;transition:all .3s}
-  .editor-pane{flex:1;overflow-y:auto;min-width:0}
-  .preview-pane{width:0;overflow:hidden;border-left:1px solid var(--border);background:#fff;transition:width .3s;flex-shrink:0;display:flex;flex-direction:column}
-  .preview-pane.open{width:45%}
-  .preview-toolbar{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-bottom:1px solid var(--border);background:var(--panel);flex-shrink:0}
-  .preview-toolbar-left{display:flex;align-items:center;gap:8px;font-size:.75rem;font-weight:600;color:var(--muted)}
-  .preview-live-dot{width:7px;height:7px;border-radius:50%;background:#ef4444;animation:blink 1.5s infinite}
-  @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
-  .preview-iframe{flex:1;border:none;width:100%;background:#fff}
-  .preview-note{font-size:.68rem;color:var(--muted2);padding:6px 12px;background:var(--yellow-bg);border-bottom:1px solid var(--yellow-bd);text-align:center;flex-shrink:0}
+/* ════════════════════════════════════════
+   APP SHELL
+════════════════════════════════════════ */
+.app-wrap{display:flex;height:100vh;overflow:hidden}
 
-  /* ── HEADER ── */
-  .header{background:var(--panel);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:56px;box-shadow:var(--shadow);flex-shrink:0;z-index:10}
-  .header-left{display:flex;align-items:center;gap:10px}
-  .brand-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);flex-shrink:0}
-  .header-brand{font-size:.8rem;font-weight:800;letter-spacing:2.5px;color:var(--text);text-transform:uppercase}
-  .header-brand span{color:var(--accent)}
-  .header-actions{display:flex;gap:6px;align-items:center}
+/* ════════════════════════════════════════
+   SIDEBAR
+════════════════════════════════════════ */
+.sidebar{
+  width:var(--sb-width);flex-shrink:0;
+  background:var(--sb-bg);
+  border-right:1px solid var(--sb-border);
+  display:flex;flex-direction:column;
+  height:100vh;overflow:hidden;
+  z-index:20
+}
+.sidebar-brand{
+  padding:18px 16px 14px;
+  border-bottom:1px solid var(--sb-border);
+  display:flex;align-items:center;gap:9px;flex-shrink:0
+}
+.brand-logo-dot{width:8px;height:8px;border-radius:50%;background:var(--sb-accent);flex-shrink:0;box-shadow:0 0 8px rgba(59,130,246,.6)}
+.brand-name{font-size:.72rem;font-weight:800;letter-spacing:2.5px;color:#fff;text-transform:uppercase}
+.brand-name span{color:var(--sb-accent)}
 
-  /* ── STATUS ── */
-  .status-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:.7rem;font-weight:600;border:1px solid transparent;transition:all .2s}
-  .status-badge.ok{background:var(--green-bg);color:var(--green);border-color:var(--green-bd)}
-  .status-badge.err{background:var(--red-bg);color:var(--red);border-color:var(--red-bd)}
-  .status-badge.loading{background:var(--yellow-bg);color:var(--yellow);border-color:var(--yellow-bd)}
-  .status-badge.idle{background:var(--panel2);color:var(--muted);border-color:var(--border)}
-  .s-dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0}
-  .status-badge.loading .s-dot{animation:blink 1s infinite}
+.sidebar-status{
+  padding:10px 14px;
+  border-bottom:1px solid var(--sb-border);
+  flex-shrink:0
+}
+.status-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:.67rem;font-weight:600;border:1px solid transparent;transition:all .2s;width:100%;justify-content:center}
+.status-badge.ok{background:rgba(22,163,74,.15);color:#4ade80;border-color:rgba(22,163,74,.25)}
+.status-badge.err{background:rgba(220,38,38,.15);color:#f87171;border-color:rgba(220,38,38,.25)}
+.status-badge.loading{background:rgba(180,83,9,.15);color:#fbbf24;border-color:rgba(180,83,9,.25)}
+.status-badge.idle{background:rgba(255,255,255,.05);color:var(--sb-text);border-color:var(--sb-border)}
+.s-dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0}
+.status-badge.loading .s-dot{animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 
-  /* ── BUTTONS ── */
-  .btn{padding:6px 14px;border-radius:7px;border:1px solid transparent;cursor:pointer;font-size:.76rem;font-weight:600;transition:all .15s;display:inline-flex;align-items:center;gap:5px;white-space:nowrap;font-family:inherit;line-height:1.3}
-  .btn-primary{background:var(--accent);color:#fff;border-color:var(--accent)}.btn-primary:hover{background:#2563eb;box-shadow:0 2px 8px rgba(59,130,246,.3)}
-  .btn-primary:disabled{background:#bfdbfe;color:#93c5fd;border-color:#bfdbfe;cursor:not-allowed;box-shadow:none}
-  .btn-success{background:var(--green);color:#fff;border-color:var(--green)}.btn-success:hover{background:#15803d;box-shadow:0 2px 8px rgba(22,163,74,.25)}
-  .btn-success:disabled{background:#bbf7d0;color:#6ee7b7;border-color:#bbf7d0;cursor:not-allowed;box-shadow:none}
-  .btn-ghost{background:transparent;color:var(--muted);border-color:var(--border)}.btn-ghost:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-bg)}
-  .btn-ghost.active{border-color:var(--accent);color:var(--accent);background:var(--accent-bg)}
-  .btn-danger{background:transparent;color:var(--red);border-color:var(--red-bd)}.btn-danger:hover{background:var(--red-bg)}
-  .btn-sm{padding:5px 11px;font-size:.72rem;border-radius:6px}
-  .btn-xs{padding:3px 9px;font-size:.68rem;border-radius:5px}
+.sidebar-nav{flex:1;overflow-y:auto;padding:8px 0;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.1) transparent}
+.sidebar-nav::-webkit-scrollbar{width:3px}
+.sidebar-nav::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px}
 
-  /* ── CONTAINER ── */
-  .container{max-width:900px;margin:0 auto;padding:20px 20px 100px}
+.nav-section-label{
+  font-size:.58rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  color:rgba(255,255,255,.2);padding:12px 16px 4px;
+}
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 16px;margin:1px 8px;border-radius:8px;
+  cursor:pointer;transition:background .15s,color .15s;
+  color:var(--sb-text);font-size:.78rem;font-weight:500;
+  user-select:none;
+}
+.nav-item:hover{background:var(--sb-hover);color:rgba(255,255,255,.8)}
+.nav-item.active{background:var(--sb-active);color:var(--sb-text-active)}
+.nav-item.active .nav-icon{color:var(--sb-accent)}
+.nav-icon{font-size:.95rem;width:20px;text-align:center;flex-shrink:0;transition:color .15s}
+.nav-label{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nav-badge{font-size:.58rem;background:rgba(251,191,36,.2);color:#fbbf24;border:1px solid rgba(251,191,36,.3);border-radius:20px;padding:1px 6px;flex-shrink:0}
 
-  /* ── AUTH CARD ── */
-  .auth-card{background:var(--panel);border:1px solid var(--border);border-radius:var(--rl);padding:20px 24px;margin-bottom:16px;box-shadow:var(--shadow)}
-  .card-title{font-size:.68rem;font-weight:700;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:7px}
-  .card-title::before{content:"";width:3px;height:12px;background:var(--accent);border-radius:2px;display:block}
-  .auth-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.sidebar-bottom{
+  padding:12px;border-top:1px solid var(--sb-border);
+  display:flex;flex-direction:column;gap:7px;flex-shrink:0
+}
+.sidebar-util-row{display:flex;gap:6px}
+.sb-btn{
+  flex:1;padding:7px 8px;border-radius:7px;border:1px solid var(--sb-border);
+  background:rgba(255,255,255,.04);color:var(--sb-text);
+  font-size:.67rem;font-weight:600;cursor:pointer;transition:all .15s;
+  font-family:inherit;text-align:center;white-space:nowrap;
+}
+.sb-btn:hover{background:rgba(255,255,255,.09);color:rgba(255,255,255,.8);border-color:rgba(255,255,255,.18)}
+.sb-push{
+  width:100%;padding:10px;border-radius:8px;border:none;
+  background:var(--sb-accent);color:#fff;
+  font-size:.76rem;font-weight:700;cursor:pointer;
+  font-family:inherit;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px;
+}
+.sb-push:hover:not(:disabled){background:#2563eb;box-shadow:0 4px 14px rgba(59,130,246,.35)}
+.sb-push:disabled{background:rgba(59,130,246,.3);color:rgba(255,255,255,.4);cursor:not-allowed}
+.sb-preview{
+  width:100%;padding:8px;border-radius:8px;
+  border:1px solid var(--sb-border);background:transparent;
+  color:var(--sb-text);font-size:.72rem;font-weight:600;
+  cursor:pointer;font-family:inherit;transition:all .15s;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+}
+.sb-preview:hover{border-color:var(--sb-accent);color:var(--sb-accent);background:rgba(59,130,246,.08)}
+.sb-preview.active{border-color:var(--sb-accent);color:var(--sb-accent);background:rgba(59,130,246,.12)}
 
-  /* ── FORM ── */
-  .field{display:flex;flex-direction:column;gap:4px}
-  .field label{font-size:.66rem;color:var(--muted);letter-spacing:.8px;font-weight:700;text-transform:uppercase}
-  .field input,.field textarea{background:var(--panel2);border:1.5px solid var(--border);border-radius:7px;padding:8px 11px;color:var(--text);font-size:.83rem;font-family:inherit;transition:border-color .15s,box-shadow .15s;outline:none;width:100%}
-  .field input:hover,.field textarea:hover{border-color:var(--border2)}
-  .field input:focus,.field textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,130,246,.1);background:#fff}
-  .field textarea{resize:vertical;line-height:1.65;min-height:68px}
-  .help-text{font-size:.66rem;color:var(--muted2);margin-top:2px}
+/* ════════════════════════════════════════
+   MAIN
+════════════════════════════════════════ */
+.main-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
 
-  /* ── SECTIONS ── */
-  .section{background:var(--panel);border:1px solid var(--border);border-radius:var(--rl);margin-bottom:12px;box-shadow:var(--shadow)}
-  .section-header{padding:13px 18px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;transition:background .12s;border-radius:var(--rl)}
-  .section-header:hover{background:var(--panel2)}
-  .section.open .section-header{border-radius:var(--rl) var(--rl) 0 0;border-bottom:1px solid var(--border)}
-  .section-title{font-size:.76rem;font-weight:700;color:var(--text);display:flex;align-items:center;gap:6px}
-  .section-sub{font-size:.67rem;color:var(--muted2);margin-top:2px;padding-left:22px}
-  .chevron{color:var(--muted2);font-size:.6rem;transition:transform .2s;margin-left:4px}
-  .section.open .chevron{transform:rotate(180deg)}
-  .section-body{display:none;padding:18px 20px}
-  .section.open .section-body{display:block}
+.topbar{
+  height:52px;background:var(--panel);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 24px;flex-shrink:0;
+  box-shadow:0 1px 0 var(--border)
+}
+.topbar-left{display:flex;align-items:center;gap:12px}
+.topbar-title{font-size:.88rem;font-weight:700;color:var(--text)}
+.topbar-divider{width:1px;height:16px;background:var(--border)}
+.topbar-sub{font-size:.72rem;color:var(--muted)}
+.topbar-right{display:flex;align-items:center;gap:8px}
+.unsaved-dot{display:inline-flex;align-items:center;gap:5px;font-size:.67rem;font-weight:600;color:var(--yellow);background:var(--yellow-bg);border:1px solid var(--yellow-bd);border-radius:20px;padding:3px 9px}
+.unsaved-dot::before{content:"";width:5px;height:5px;border-radius:50%;background:currentColor}
 
-  /* ── GRID ── */
-  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
-  .divider{border:none;border-top:1px solid var(--border);margin:14px 0}
-  .row-label{font-size:.66rem;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.content-area{flex:1;overflow-y:auto;padding:24px;background:var(--bg)}
 
-  /* ── TL CARD ── */
-  .tl-editor{background:var(--panel2);border:1.5px solid var(--border);border-radius:var(--r);margin-bottom:10px;overflow:hidden;transition:border-color .15s,box-shadow .15s}
-  .tl-editor.drag-over{border-color:var(--accent);background:var(--accent-bg);box-shadow:0 0 0 3px rgba(59,130,246,.12)}
-  .tl-editor.is-dragging{opacity:.5;border-color:var(--accent)}
-  .tl-editor-hd{display:flex;align-items:center;justify-content:space-between;padding:9px 13px;background:var(--panel);border-bottom:1px solid var(--border)}
-  .tl-editor-left{display:flex;align-items:center;gap:7px}
-  .tl-editor-body{padding:13px 14px;display:flex;flex-direction:column;gap:11px}
-  .tl-num{font-size:.63rem;color:var(--accent);font-weight:700;letter-spacing:1.5px;background:var(--accent-bg);padding:2px 8px;border-radius:20px;border:1px solid #bfdbfe}
-  .tl-num.p{color:var(--accent2);background:#f5f3ff;border-color:#ddd6fe}
+/* Panels */
+.panel{display:none}
+.panel.active{display:block}
+.panel-card{background:var(--panel);border:1px solid var(--border);border-radius:var(--rl);padding:22px 24px;margin-bottom:16px;box-shadow:var(--shadow)}
+.panel-section-title{font-size:.67rem;font-weight:700;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:7px}
+.panel-section-title::before{content:"";width:3px;height:12px;background:var(--accent);border-radius:2px;display:block;flex-shrink:0}
 
-  /* ── DRAG HANDLE — only draggable from here ── */
-  .drag-handle{cursor:grab;color:var(--muted2);font-size:.95rem;padding:4px 6px;user-select:none;border-radius:4px;transition:background .12s,color .12s;line-height:1;touch-action:none}
-  .drag-handle:hover{background:var(--border);color:var(--text2)}
-  .drag-handle:active{cursor:grabbing}
+/* ════════════════════════════════════════
+   PREVIEW PANE
+════════════════════════════════════════ */
+.preview-pane{width:0;overflow:hidden;border-left:1px solid var(--border);background:#fff;transition:width .3s;flex-shrink:0;display:flex;flex-direction:column}
+.preview-pane.open{width:45%}
+.preview-toolbar{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-bottom:1px solid var(--border);background:var(--panel);flex-shrink:0}
+.preview-toolbar-left{display:flex;align-items:center;gap:8px;font-size:.72rem;font-weight:600;color:var(--muted)}
+.preview-live-dot{width:7px;height:7px;border-radius:50%;background:#22c55e;animation:blink 1.5s infinite}
+.preview-iframe{flex:1;border:none;width:100%;background:#fff}
+.preview-note{font-size:.67rem;color:var(--yellow);padding:5px 12px;background:var(--yellow-bg);border-bottom:1px solid var(--yellow-bd);text-align:center;flex-shrink:0}
 
-  /* ── IMG UPLOAD ── */
-  .tl-img-preview{width:100%;max-height:140px;object-fit:cover;border-radius:7px;display:none;border:1px solid var(--border)}
-  .tl-img-preview.show{display:block;margin-bottom:8px}
-  .img-upload{border:2px dashed var(--border2);border-radius:7px;padding:12px;text-align:center;cursor:pointer;transition:all .15s;font-size:.76rem;color:var(--muted);background:var(--panel);line-height:1.5}
-  .img-upload:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-bg)}
-  .img-upload input{display:none}
-  .img-upload.has-img{border-style:solid;border-color:var(--green-bd);background:var(--green-bg)}
-  .add-btn{width:100%;padding:10px;border:1.5px dashed var(--border2);background:transparent;color:var(--muted);border-radius:var(--r);cursor:pointer;font-size:.78rem;font-weight:600;transition:all .15s;margin-top:4px;font-family:inherit}
-  .add-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-bg)}
-  .stat-card{background:var(--panel);border:1.5px solid var(--border);border-radius:var(--r);padding:11px;position:relative}
+/* ════════════════════════════════════════
+   FORM ELEMENTS
+════════════════════════════════════════ */
+.field{display:flex;flex-direction:column;gap:4px}
+.field label{font-size:.64rem;color:var(--muted);letter-spacing:.8px;font-weight:700;text-transform:uppercase}
+.field input,.field textarea{background:var(--panel2);border:1.5px solid var(--border);border-radius:7px;padding:8px 11px;color:var(--text);font-size:.83rem;font-family:inherit;transition:border-color .15s,box-shadow .15s;outline:none;width:100%}
+.field input:hover,.field textarea:hover{border-color:var(--border2)}
+.field input:focus,.field textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,130,246,.1);background:#fff}
+.field textarea{resize:vertical;line-height:1.65;min-height:68px}
+.help-text{font-size:.64rem;color:var(--muted2);margin-top:2px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.divider{border:none;border-top:1px solid var(--border);margin:16px 0}
+.row-label{font-size:.64rem;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
 
-  /* ── TOAST ── */
-  .toast{position:fixed;bottom:20px;right:20px;background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:10px 15px;font-size:.78rem;display:flex;align-items:center;gap:8px;box-shadow:var(--shadow-md);z-index:999;opacity:0;transform:translateY(6px);transition:all .22s;pointer-events:none}
-  .toast.show{opacity:1;transform:translateY(0)}
-  .toast.success .t-icon{color:var(--green)}.toast.error .t-icon{color:var(--red)}.toast.loading .t-icon{color:var(--yellow)}
-  .t-msg{color:var(--text2);font-weight:500}
+/* ════════════════════════════════════════
+   BUTTONS
+════════════════════════════════════════ */
+.btn{padding:6px 14px;border-radius:7px;border:1px solid transparent;cursor:pointer;font-size:.74rem;font-weight:600;transition:all .15s;display:inline-flex;align-items:center;gap:5px;white-space:nowrap;font-family:inherit;line-height:1.3}
+.btn-primary{background:var(--accent);color:#fff;border-color:var(--accent)}.btn-primary:hover{background:#2563eb}
+.btn-ghost{background:transparent;color:var(--muted);border-color:var(--border)}.btn-ghost:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-bg)}
+.btn-danger{background:transparent;color:var(--red);border-color:var(--red-bd)}.btn-danger:hover{background:var(--red-bg)}
+.btn-sm{padding:5px 11px;font-size:.7rem;border-radius:6px}
+.btn-xs{padding:3px 9px;font-size:.66rem;border-radius:5px}
+.add-btn{width:100%;padding:10px;border:1.5px dashed var(--border2);background:transparent;color:var(--muted);border-radius:var(--r);cursor:pointer;font-size:.76rem;font-weight:600;transition:all .15s;margin-top:4px;font-family:inherit}
+.add-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-bg)}
 
-  /* ── PUSH BAR ── */
-  .push-bar{position:fixed;bottom:0;left:0;right:0;background:var(--panel);border-top:2px solid #fbbf24;padding:10px 24px;display:flex;align-items:center;justify-content:space-between;z-index:100;transform:translateY(100%);transition:transform .22s;box-shadow:0 -4px 20px rgba(0,0,0,.06)}
-  .push-bar.show{transform:translateY(0)}
-  .push-bar-msg{font-size:.78rem;color:var(--yellow);font-weight:600;display:flex;align-items:center;gap:6px}
+/* ════════════════════════════════════════
+   TL CARDS
+════════════════════════════════════════ */
+.tl-editor{background:var(--panel2);border:1.5px solid var(--border);border-radius:var(--r);margin-bottom:10px;overflow:hidden;transition:border-color .15s,box-shadow .15s}
+.tl-editor.drag-over{border-color:var(--accent);background:var(--accent-bg);box-shadow:0 0 0 3px rgba(59,130,246,.12)}
+.tl-editor.is-dragging{opacity:.5;border-color:var(--accent)}
+.tl-editor-hd{display:flex;align-items:center;justify-content:space-between;padding:9px 13px;background:var(--panel);border-bottom:1px solid var(--border)}
+.tl-editor-left{display:flex;align-items:center;gap:7px}
+.tl-editor-body{padding:13px 14px;display:flex;flex-direction:column;gap:11px}
+.tl-num{font-size:.61rem;color:var(--accent);font-weight:700;letter-spacing:1.5px;background:var(--accent-bg);padding:2px 8px;border-radius:20px;border:1px solid #bfdbfe}
+.tl-num.p{color:var(--accent2);background:#f5f3ff;border-color:#ddd6fe}
+.drag-handle{cursor:grab;color:var(--muted2);font-size:.95rem;padding:4px 6px;user-select:none;border-radius:4px;transition:background .12s,color .12s;line-height:1;touch-action:none}
+.drag-handle:hover{background:var(--border);color:var(--text2)}
+.drag-handle:active{cursor:grabbing}
+.tl-img-preview{width:100%;max-height:140px;object-fit:cover;border-radius:7px;display:none;border:1px solid var(--border)}
+.tl-img-preview.show{display:block;margin-bottom:8px}
+.img-upload{border:2px dashed var(--border2);border-radius:7px;padding:12px;text-align:center;cursor:pointer;transition:all .15s;font-size:.76rem;color:var(--muted);background:var(--panel);line-height:1.5}
+.img-upload:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-bg)}
+.img-upload input{display:none}
+.img-upload.has-img{border-style:solid;border-color:var(--green-bd);background:var(--green-bg)}
+.stat-card{background:var(--panel);border:1.5px solid var(--border);border-radius:var(--r);padding:11px;position:relative}
 
-  /* ── LOADING ── */
-  .loading-overlay{position:fixed;inset:0;background:rgba(248,250,252,.88);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:200;flex-direction:column;gap:12px}
-  .loading-overlay.show{display:flex}
-  .loading-spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
-  .loading-label{font-size:.78rem;color:var(--muted);font-weight:600}
-  @keyframes spin{to{transform:rotate(360deg)}}
+/* Slider style */
+input[type=range]{-webkit-appearance:none;height:5px;border-radius:3px;background:var(--border2);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--accent);cursor:pointer;box-shadow:0 1px 4px rgba(59,130,246,.3)}
 
-  /* ── HISTORY MODAL ── */
-  .history-modal{position:fixed;inset:0;background:rgba(15,23,42,.35);backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;z-index:300;padding:20px}
-  .history-modal.show{display:flex}
-  .history-box{background:var(--panel);border:1px solid var(--border);border-radius:var(--rl);width:100%;max-width:640px;max-height:80vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:var(--shadow-md)}
-  .history-hd{padding:15px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-  .history-hd h3{font-size:.86rem;font-weight:700;color:var(--text)}
-  .history-list{overflow-y:auto;flex:1}
-  .history-item{padding:12px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:11px;transition:background .1s}
-  .history-item:hover{background:var(--panel2)}
-  .history-item:last-child{border-bottom:none}
-  .history-sha{font-family:ui-monospace,monospace;font-size:.66rem;color:var(--accent);background:var(--accent-bg);padding:2px 7px;border-radius:4px;flex-shrink:0;border:1px solid #bfdbfe}
-  .history-info{flex:1;min-width:0}
-  .history-msg{font-size:.8rem;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .history-meta{font-size:.66rem;color:var(--muted);margin-top:2px}
-  .history-restore{flex-shrink:0;padding:4px 12px;border-radius:6px;border:1.5px solid var(--accent);background:transparent;color:var(--accent);font-size:.72rem;font-weight:600;cursor:pointer;transition:all .15s;font-family:inherit}
-  .history-restore:hover{background:var(--accent);color:#fff}
-  .history-empty,.history-loading{padding:36px;text-align:center;color:var(--muted);font-size:.78rem}
+/* ════════════════════════════════════════
+   TOAST
+════════════════════════════════════════ */
+.toast{position:fixed;bottom:20px;right:20px;background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:10px 15px;font-size:.76rem;display:flex;align-items:center;gap:8px;box-shadow:var(--shadow-md);z-index:999;opacity:0;transform:translateY(6px);transition:all .22s;pointer-events:none}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast.success .t-icon{color:var(--green)}.toast.error .t-icon{color:var(--red)}.toast.loading .t-icon{color:var(--yellow)}
+.t-msg{color:var(--text2);font-weight:500}
 
-  @media(max-width:768px){
-    .auth-grid,.grid-2,.grid-3{grid-template-columns:1fr}
-    .header{padding:0 12px}
-    .container{padding:12px 10px 90px}
-    .preview-pane.open{width:100%;position:fixed;inset:56px 0 0 0;z-index:50}
-  }
+/* ════════════════════════════════════════
+   LOADING
+════════════════════════════════════════ */
+.loading-overlay{position:fixed;inset:0;background:rgba(248,250,252,.88);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:200;flex-direction:column;gap:12px}
+.loading-overlay.show{display:flex}
+.loading-spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+.loading-label{font-size:.76rem;color:var(--muted);font-weight:600}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-  /* ── PASSWORD GATE ── */
-  #pw-gate{position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg,#eff6ff,#f1f5f9 60%,#f5f3ff);display:flex;align-items:center;justify-content:center}
-  #pw-gate.hidden{display:none}
-  .pw-box{background:#fff;border:1px solid var(--border);border-radius:18px;padding:40px 36px;width:350px;max-width:90vw;display:flex;flex-direction:column;gap:15px;box-shadow:0 8px 40px rgba(59,130,246,.1)}
-  .pw-logo{font-size:.72rem;font-weight:800;letter-spacing:3px;color:var(--muted);text-align:center;text-transform:uppercase}.pw-logo span{color:var(--accent)}
-  .pw-title{font-size:1.1rem;font-weight:700;color:var(--text);text-align:center}
-  .pw-sub{font-size:.73rem;color:var(--muted2);text-align:center}
-  .pw-input{background:var(--panel2);border:1.5px solid var(--border);border-radius:7px;padding:10px 13px;color:var(--text);font-size:.9rem;outline:none;transition:border .15s,box-shadow .15s;width:100%;font-family:inherit}
-  .pw-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,130,246,.1)}
-  .pw-btn{background:var(--accent);color:#fff;border:none;border-radius:7px;padding:11px;font-weight:700;font-size:.87rem;cursor:pointer;transition:all .15s;width:100%;font-family:inherit}
-  .pw-btn:hover{background:#2563eb;box-shadow:0 4px 14px rgba(59,130,246,.25);transform:translateY(-1px)}
-  .pw-err{color:var(--red);font-size:.72rem;text-align:center;padding:6px 11px;background:var(--red-bg);border:1px solid var(--red-bd);border-radius:6px;transition:opacity .2s}
-  .pw-err.hide{opacity:0;pointer-events:none}
+/* ════════════════════════════════════════
+   HISTORY MODAL
+════════════════════════════════════════ */
+.history-modal{position:fixed;inset:0;background:rgba(15,23,42,.35);backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;z-index:300;padding:20px}
+.history-modal.show{display:flex}
+.history-box{background:var(--panel);border:1px solid var(--border);border-radius:var(--rl);width:100%;max-width:640px;max-height:80vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:var(--shadow-md)}
+.history-hd{padding:15px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.history-hd h3{font-size:.86rem;font-weight:700;color:var(--text)}
+.history-list{overflow-y:auto;flex:1}
+.history-item{padding:12px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:11px;transition:background .1s}
+.history-item:hover{background:var(--panel2)}
+.history-item:last-child{border-bottom:none}
+.history-sha{font-family:ui-monospace,monospace;font-size:.64rem;color:var(--accent);background:var(--accent-bg);padding:2px 7px;border-radius:4px;flex-shrink:0;border:1px solid #bfdbfe}
+.history-info{flex:1;min-width:0}
+.history-msg{font-size:.78rem;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.history-meta{font-size:.64rem;color:var(--muted);margin-top:2px}
+.history-restore{flex-shrink:0;padding:4px 12px;border-radius:6px;border:1.5px solid var(--accent);background:transparent;color:var(--accent);font-size:.7rem;font-weight:600;cursor:pointer;transition:all .15s;font-family:inherit}
+.history-restore:hover{background:var(--accent);color:#fff}
+.history-empty,.history-loading{padding:36px;text-align:center;color:var(--muted);font-size:.76rem}
+
+/* ════════════════════════════════════════
+   PASSWORD GATE
+════════════════════════════════════════ */
+#pw-gate{position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg,#0c0e13,#111827);display:flex;align-items:center;justify-content:center}
+#pw-gate.hidden{display:none}
+.pw-box{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:40px 36px;width:350px;max-width:90vw;display:flex;flex-direction:column;gap:15px;box-shadow:0 8px 40px rgba(0,0,0,.4)}
+.pw-logo{font-size:.68rem;font-weight:800;letter-spacing:3px;color:rgba(255,255,255,.35);text-align:center;text-transform:uppercase}.pw-logo span{color:#3b82f6}
+.pw-title{font-size:1.1rem;font-weight:700;color:#fff;text-align:center}
+.pw-sub{font-size:.72rem;color:rgba(255,255,255,.3);text-align:center}
+.pw-input{background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.12);border-radius:7px;padding:10px 13px;color:#fff;font-size:.9rem;outline:none;transition:border .15s;width:100%;font-family:inherit}
+.pw-input:focus{border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.15)}
+.pw-btn{background:#3b82f6;color:#fff;border:none;border-radius:7px;padding:11px;font-weight:700;font-size:.87rem;cursor:pointer;transition:all .15s;width:100%;font-family:inherit}
+.pw-btn:hover{background:#2563eb;box-shadow:0 4px 14px rgba(59,130,246,.3)}
+.pw-err{color:#f87171;font-size:.7rem;text-align:center;padding:6px 11px;background:rgba(220,38,38,.1);border:1px solid rgba(220,38,38,.2);border-radius:6px;transition:opacity .2s}
+.pw-err.hide{opacity:0;pointer-events:none}
 </style>
 </head>
 <body>
 
+<!-- ── Password Gate ── -->
 <div id="pw-gate">
   <div class="pw-box">
     <div class="pw-logo">NEXUS <span>·</span> ADMIN</div>
@@ -194,11 +273,13 @@
   </div>
 </div>
 
+<!-- ── Loading ── -->
 <div class="loading-overlay" id="loadingOverlay">
   <div class="loading-spinner"></div>
   <div class="loading-label" id="loadingLabel">加载中…</div>
 </div>
 
+<!-- ── History Modal ── -->
 <div class="history-modal" id="historyModal">
   <div class="history-box">
     <div class="history-hd">
@@ -209,32 +290,95 @@
   </div>
 </div>
 
+<!-- ── App ── -->
 <div class="app-wrap">
-  <div class="header">
-    <div class="header-left">
-      <span class="brand-dot"></span>
-      <div class="header-brand">NEXUS <span>ADMIN</span></div>
+
+  <!-- LEFT SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-logo-dot"></div>
+      <div class="brand-name">NEXUS <span>ADMIN</span></div>
+    </div>
+
+    <div class="sidebar-status">
       <span id="statusBadge" class="status-badge idle">
         <span class="s-dot"></span>
         <span id="statusText">未连接</span>
       </span>
     </div>
-    <div class="header-actions">
-      <button class="btn btn-ghost btn-sm" id="previewBtn" onclick="togglePreview()">👁 实时预览</button>
-      <button class="btn btn-ghost btn-sm" onclick="openHistory()">🕐 历史版本</button>
-      <button class="btn btn-ghost btn-sm" onclick="loadContent()">🔄 重载</button>
-      <button class="btn btn-success btn-sm" id="pushBtn" onclick="pushToGitHub()" disabled>🚀 推送 GitHub</button>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">配置</div>
+      <div class="nav-item active" data-panel="github" onclick="switchPanel('github')">
+        <span class="nav-icon">⚙️</span><span class="nav-label">GitHub 连接</span>
+      </div>
+
+      <div class="nav-section-label">页面内容</div>
+      <div class="nav-item" data-panel="nav-sec" onclick="switchPanel('nav-sec')">
+        <span class="nav-icon">🧭</span><span class="nav-label">导航栏</span>
+      </div>
+      <div class="nav-item" data-panel="hero" onclick="switchPanel('hero')">
+        <span class="nav-icon">🦸</span><span class="nav-label">Hero 区域</span>
+      </div>
+      <div class="nav-item" data-panel="person" onclick="switchPanel('person')">
+        <span class="nav-icon">🧍</span><span class="nav-label">人物图片</span>
+      </div>
+      <div class="nav-item" data-panel="divider-sec" onclick="switchPanel('divider-sec')">
+        <span class="nav-icon">✦</span><span class="nav-label">过渡分割线</span>
+      </div>
+
+      <div class="nav-section-label">时间线</div>
+      <div class="nav-item" data-panel="timeline" onclick="switchPanel('timeline')">
+        <span class="nav-icon">🗓</span><span class="nav-label">时间线一</span>
+      </div>
+      <div class="nav-item" data-panel="timeline2" onclick="switchPanel('timeline2')">
+        <span class="nav-icon">🗓</span><span class="nav-label">时间线二</span>
+      </div>
+
+      <div class="nav-section-label">其他</div>
+      <div class="nav-item" data-panel="music" onclick="switchPanel('music')">
+        <span class="nav-icon">🎵</span><span class="nav-label">背景音乐</span>
+      </div>
+      <div class="nav-item" data-panel="footer-sec" onclick="switchPanel('footer-sec')">
+        <span class="nav-icon">📄</span><span class="nav-label">页脚</span>
+      </div>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <button class="sb-preview" id="previewBtn" onclick="togglePreview()">
+        <span>👁</span> 实时预览
+      </button>
+      <div class="sidebar-util-row">
+        <button class="sb-btn" onclick="openHistory()">🕐 历史</button>
+        <button class="sb-btn" onclick="loadContent()">🔄 重载</button>
+      </div>
+      <button class="sb-push" id="pushBtn" onclick="pushToGitHub()" disabled>
+        🚀 推送 GitHub
+      </button>
     </div>
-  </div>
+  </aside>
 
-  <div class="app-body">
-    <!-- 编辑区 -->
-    <div class="editor-pane">
-      <div class="container">
+  <!-- MAIN CONTENT -->
+  <div class="main-wrap">
+    <div class="topbar">
+      <div class="topbar-left">
+        <div class="topbar-title" id="topbarTitle">GitHub 连接</div>
+        <div class="topbar-divider"></div>
+        <div class="topbar-sub" id="topbarSub">Token & 仓库配置</div>
+      </div>
+      <div class="topbar-right">
+        <span class="unsaved-dot" id="unsavedDot" style="display:none">未保存修改</span>
+        <button class="btn btn-ghost btn-sm" onclick="reloadAndDiscard()" id="discardBtn" style="display:none">放弃修改</button>
+      </div>
+    </div>
 
-        <div class="auth-card">
-          <div class="card-title">GitHub 连接配置</div>
-          <div class="auth-grid">
+    <div class="content-area">
+
+      <!-- ① GitHub 连接 -->
+      <div class="panel active" id="panel-github">
+        <div class="panel-card">
+          <div class="panel-section-title">GitHub 连接配置</div>
+          <div class="grid-2">
             <div class="field">
               <label>Personal Access Token</label>
               <input type="password" id="ghToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" oninput="saveAuth()">
@@ -253,278 +397,241 @@
             </div>
           </div>
         </div>
+      </div>
 
-        <!-- ① 导航栏 -->
-        <div class="section open" id="sec-nav">
-          <div class="section-header" onclick="toggleSection('nav')">
-            <div>
-              <div class="section-title">🧭 导航栏 <span class="chevron">▼</span></div>
-              <div class="section-sub">品牌名称与顶部导航链接</div>
-            </div>
+      <!-- ② 导航栏 -->
+      <div class="panel" id="panel-nav-sec">
+        <div class="panel-card">
+          <div class="panel-section-title">导航栏设置</div>
+          <div class="grid-2">
+            <div class="field"><label>品牌名</label><input type="text" id="navBrand" oninput="markChanged()"></div>
+            <div class="field"><label>导航链接（每行：文字|#锚点）</label><textarea id="navLinks" rows="4" oninput="markChanged()"></textarea></div>
           </div>
-          <div class="section-body" id="body-nav">
-            <div class="grid-2">
-              <div class="field"><label>品牌名</label><input type="text" id="navBrand" oninput="markChanged()"></div>
-              <div class="field"><label>导航链接（每行：文字|#锚点）</label><textarea id="navLinks" rows="3" oninput="markChanged()"></textarea></div>
-            </div>
+        </div>
+      </div>
+
+      <!-- ③ Hero 区域 -->
+      <div class="panel" id="panel-hero">
+        <div class="panel-card">
+          <div class="panel-section-title">标语与标题</div>
+          <div class="grid-2" style="margin-bottom:14px">
+            <div class="field"><label>顶部标语 (Eyebrow)</label><input type="text" id="heroEyebrow" oninput="markChanged()"></div>
+            <div class="field"><label>副标题（换行用回车）</label><textarea id="heroSub" rows="3" oninput="markChanged()" placeholder="Building a future of mathematical truth&#10;Nexus runs on proof"></textarea></div>
+          </div>
+          <hr class="divider">
+          <div class="grid-2">
+            <div class="field"><label>大标题 · 第一行</label><input type="text" id="heroH1L1" oninput="markChanged()" placeholder="DANIEL MARIN"></div>
+            <div class="field"><label>大标题 · 第二行</label><input type="text" id="heroH1L2" oninput="markChanged()" placeholder="Empire"></div>
+            <div class="field"><label>第一行字体大小（rem）</label><input type="number" id="heroH1Fs1" step="0.1" min="1" max="20" oninput="markChanged()" placeholder="5"><div class="help-text">如 5 表示 5rem</div></div>
+            <div class="field"><label>第二行字体大小（rem）</label><input type="number" id="heroH1Fs2" step="0.1" min="1" max="20" oninput="markChanged()" placeholder="2.8"><div class="help-text">如 2.8 表示 2.8rem</div></div>
           </div>
         </div>
 
-        <!-- ② Hero 区域 -->
-        <div class="section open" id="sec-hero">
-          <div class="section-header" onclick="toggleSection('hero')">
-            <div>
-              <div class="section-title">🦸 Hero 区域 <span class="chevron">▼</span></div>
-              <div class="section-sub">页面顶部大标题、副标题、统计数据</div>
-            </div>
-          </div>
-          <div class="section-body" id="body-hero">
-            <div class="grid-2" style="margin-bottom:14px">
-              <div class="field"><label>顶部标语 (Eyebrow)</label><input type="text" id="heroEyebrow" oninput="markChanged()"></div>
-              <div class="field"><label>副标题（每行一句，换行用回车）</label><textarea id="heroSub" rows="3" oninput="markChanged()" placeholder="Building a future of mathematical truth&#10;Nexus runs on proof"></textarea></div>
-            </div>
-            <hr class="divider">
-            <div class="grid-2" style="margin-bottom:14px">
-              <div class="field"><label>大标题 · 第一行</label><input type="text" id="heroH1L1" oninput="markChanged()" placeholder="DANIEL MARIN"></div>
-              <div class="field"><label>大标题 · 第二行</label><input type="text" id="heroH1L2" oninput="markChanged()" placeholder="Empire"></div>
-              <div class="field"><label>第一行字体大小（rem）</label><input type="number" id="heroH1Fs1" step="0.1" min="1" max="20" oninput="markChanged()" placeholder="5"><div class="help-text">直接填数字，如 5 表示 5rem</div></div>
-              <div class="field"><label>第二行字体大小（rem）</label><input type="number" id="heroH1Fs2" step="0.1" min="1" max="20" oninput="markChanged()" placeholder="2.8"><div class="help-text">直接填数字，如 2.8 表示 2.8rem</div></div>
-            </div>
-            <hr class="divider">
-            <div class="row-label">
-              <span>统计数据</span>
-              <button class="btn btn-ghost btn-sm" onclick="addStat()">＋ 添加</button>
-            </div>
-            <div class="grid-3" id="statsEditor"></div>
-            <hr class="divider">
-            <div class="row-label"><span>Hero 整体位置</span><span style="font-size:.66rem;color:var(--muted2)">拖动滑块调整内容块在屏幕中的位置</span></div>
-            <div class="grid-2">
-              <div class="field">
-                <label>垂直位置（上 → 下）</label>
-                <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
-                  <input type="range" id="heroTop" min="0" max="100" step="1" value="58" oninput="document.getElementById('heroTopNum').value=this.value;markChanged()" style="flex:1;accent-color:var(--accent)">
-                  <input type="number" id="heroTopNum" min="0" max="100" step="1" value="58" oninput="document.getElementById('heroTop').value=this.value;markChanged()" style="width:56px;padding:5px 7px;border:1.5px solid var(--border);border-radius:6px;background:var(--panel2);color:var(--text);font-size:.82rem;outline:none">
-                  <span style="font-size:.72rem;color:var(--muted)">%</span>
-                </div>
-                <div class="help-text">数值越大越靠下 · 50 = 垂直居中</div>
+        <div class="panel-card">
+          <div class="row-label"><span>统计数据</span><button class="btn btn-ghost btn-sm" onclick="addStat()">＋ 添加</button></div>
+          <div class="grid-3" id="statsEditor"></div>
+        </div>
+
+        <div class="panel-card">
+          <div class="panel-section-title">Hero 内容位置</div>
+          <div class="grid-2">
+            <div class="field">
+              <label>垂直位置（上→下 %）</label>
+              <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+                <input type="range" id="heroTop" min="0" max="100" step="1" value="58" oninput="document.getElementById('heroTopNum').value=this.value;markChanged()" style="flex:1">
+                <input type="number" id="heroTopNum" min="0" max="100" step="1" value="58" oninput="document.getElementById('heroTop').value=this.value;markChanged()" style="width:56px;padding:5px 7px;border:1.5px solid var(--border);border-radius:6px;background:var(--panel2);color:var(--text);font-size:.82rem;outline:none">
+                <span style="font-size:.7rem;color:var(--muted)">%</span>
               </div>
-              <div class="field">
-                <label>水平位置（左 → 右）</label>
-                <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
-                  <input type="range" id="heroLeft" min="0" max="100" step="1" value="50" oninput="document.getElementById('heroLeftNum').value=this.value;markChanged()" style="flex:1;accent-color:var(--accent)">
-                  <input type="number" id="heroLeftNum" min="0" max="100" step="1" value="50" oninput="document.getElementById('heroLeft').value=this.value;markChanged()" style="width:56px;padding:5px 7px;border:1.5px solid var(--border);border-radius:6px;background:var(--panel2);color:var(--text);font-size:.82rem;outline:none">
-                  <span style="font-size:.72rem;color:var(--muted)">%</span>
-                </div>
-                <div class="help-text">50 = 水平居中 · 向左减小 · 向右增大</div>
+              <div class="help-text">数值越大越靠下 · 50=居中</div>
+            </div>
+            <div class="field">
+              <label>水平位置（左→右 %）</label>
+              <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+                <input type="range" id="heroLeft" min="0" max="100" step="1" value="50" oninput="document.getElementById('heroLeftNum').value=this.value;markChanged()" style="flex:1">
+                <input type="number" id="heroLeftNum" min="0" max="100" step="1" value="50" oninput="document.getElementById('heroLeft').value=this.value;markChanged()" style="width:56px;padding:5px 7px;border:1.5px solid var(--border);border-radius:6px;background:var(--panel2);color:var(--text);font-size:.82rem;outline:none">
+                <span style="font-size:.7rem;color:var(--muted)">%</span>
               </div>
+              <div class="help-text">50=水平居中</div>
             </div>
           </div>
         </div>
+      </div>
 
-        <!-- ③ 人物图片 -->
-        <div class="section open" id="sec-person">
-          <div class="section-header" onclick="toggleSection('person')">
-            <div>
-              <div class="section-title">🧍 人物图片 <span class="chevron">▼</span></div>
-              <div class="section-sub">背景人物图片的位置与大小</div>
+      <!-- ④ 人物图片 -->
+      <div class="panel" id="panel-person">
+        <div class="panel-card">
+          <div class="panel-section-title">人物图片位置与大小</div>
+          <div class="grid-3">
+            <div class="field">
+              <label>垂直位置（距底部 vh）</label>
+              <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+                <input type="range" id="personBottom" min="0" max="50" step="1" value="12" oninput="document.getElementById('personBottomNum').value=this.value;markChanged()" style="flex:1">
+                <input type="number" id="personBottomNum" min="0" max="50" step="1" value="12" oninput="document.getElementById('personBottom').value=this.value;markChanged()" style="width:54px;padding:5px 7px;border:1.5px solid var(--border);border-radius:6px;background:var(--panel2);color:var(--text);font-size:.82rem;outline:none">
+                <span style="font-size:.7rem;color:var(--muted)">vh</span>
+              </div>
+              <div class="help-text">数值越大越靠上</div>
             </div>
-          </div>
-          <div class="section-body" id="body-person">
-            <div class="grid-3">
-              <div class="field">
-                <label>垂直位置（距底部 vh）</label>
-                <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
-                  <input type="range" id="personBottom" min="0" max="50" step="1" value="12" oninput="document.getElementById('personBottomNum').value=this.value;markChanged()" style="flex:1;accent-color:var(--accent)">
-                  <input type="number" id="personBottomNum" min="0" max="50" step="1" value="12" oninput="document.getElementById('personBottom').value=this.value;markChanged()" style="width:54px;padding:5px 7px;border:1.5px solid var(--border);border-radius:6px;background:var(--panel2);color:var(--text);font-size:.82rem;outline:none">
-                  <span style="font-size:.72rem;color:var(--muted)">vh</span>
-                </div>
-                <div class="help-text">数值越大越靠上</div>
+            <div class="field">
+              <label>水平位置（%）</label>
+              <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+                <input type="range" id="personLeft" min="0" max="100" step="1" value="49" oninput="document.getElementById('personLeftNum').value=this.value;markChanged()" style="flex:1">
+                <input type="number" id="personLeftNum" min="0" max="100" step="1" value="49" oninput="document.getElementById('personLeft').value=this.value;markChanged()" style="width:54px;padding:5px 7px;border:1.5px solid var(--border);border-radius:6px;background:var(--panel2);color:var(--text);font-size:.82rem;outline:none">
+                <span style="font-size:.7rem;color:var(--muted)">%</span>
               </div>
-              <div class="field">
-                <label>水平位置（%）</label>
-                <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
-                  <input type="range" id="personLeft" min="0" max="100" step="1" value="49" oninput="document.getElementById('personLeftNum').value=this.value;markChanged()" style="flex:1;accent-color:var(--accent)">
-                  <input type="number" id="personLeftNum" min="0" max="100" step="1" value="49" oninput="document.getElementById('personLeft').value=this.value;markChanged()" style="width:54px;padding:5px 7px;border:1.5px solid var(--border);border-radius:6px;background:var(--panel2);color:var(--text);font-size:.82rem;outline:none">
-                  <span style="font-size:.72rem;color:var(--muted)">%</span>
-                </div>
-                <div class="help-text">50 = 水平居中</div>
+              <div class="help-text">50=水平居中</div>
+            </div>
+            <div class="field">
+              <label>图片高度（vh）</label>
+              <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+                <input type="range" id="personHeight" min="40" max="130" step="1" value="90" oninput="document.getElementById('personHeightNum').value=this.value;markChanged()" style="flex:1">
+                <input type="number" id="personHeightNum" min="40" max="130" step="1" value="90" oninput="document.getElementById('personHeight').value=this.value;markChanged()" style="width:54px;padding:5px 7px;border:1.5px solid var(--border);border-radius:6px;background:var(--panel2);color:var(--text);font-size:.82rem;outline:none">
+                <span style="font-size:.7rem;color:var(--muted)">vh</span>
               </div>
-              <div class="field">
-                <label>图片高度（vh）</label>
-                <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
-                  <input type="range" id="personHeight" min="40" max="130" step="1" value="90" oninput="document.getElementById('personHeightNum').value=this.value;markChanged()" style="flex:1;accent-color:var(--accent)">
-                  <input type="number" id="personHeightNum" min="40" max="130" step="1" value="90" oninput="document.getElementById('personHeight').value=this.value;markChanged()" style="width:54px;padding:5px 7px;border:1.5px solid var(--border);border-radius:6px;background:var(--panel2);color:var(--text);font-size:.82rem;outline:none">
-                  <span style="font-size:.72rem;color:var(--muted)">vh</span>
-                </div>
-                <div class="help-text">数值越大图片越高</div>
-              </div>
+              <div class="help-text">数值越大图片越高</div>
             </div>
           </div>
         </div>
+      </div>
 
-        <!-- ④ 分割线 -->
-        <div class="section open" id="sec-divider">
-          <div class="section-header" onclick="toggleSection('divider')">
-            <div>
-              <div class="section-title">✦ 过渡分割线 <span class="chevron">▼</span></div>
-              <div class="section-sub">Hero 与时间线之间的标题文字</div>
-            </div>
-          </div>
-          <div class="section-body" id="body-divider">
-            <div class="grid-2">
-              <div class="field"><label>中间标题（◈ 两侧文字）</label><input type="text" id="dividerLabel" oninput="markChanged()" placeholder="The Founder"></div>
-              <div class="field"><label>副标题说明文字</label><input type="text" id="dividerSub" oninput="markChanged()" placeholder="A journey from Venezuela to the frontier of cryptography"></div>
-            </div>
+      <!-- ⑤ 过渡分割线 -->
+      <div class="panel" id="panel-divider-sec">
+        <div class="panel-card">
+          <div class="panel-section-title">过渡分割线文字</div>
+          <div class="grid-2">
+            <div class="field"><label>中间标题（◈ 两侧文字）</label><input type="text" id="dividerLabel" oninput="markChanged()" placeholder="The Founder"></div>
+            <div class="field"><label>副标题说明文字</label><input type="text" id="dividerSub" oninput="markChanged()" placeholder="A journey from Venezuela…"></div>
           </div>
         </div>
+      </div>
 
-        <!-- ④ 时间线一 -->
-        <div class="section open" id="sec-timeline">
-          <div class="section-header" onclick="toggleSection('timeline')">
-            <div>
-              <div class="section-title">🗓 时间线一 · Nexus Journey <span class="chevron">▼</span></div>
-              <div class="section-sub">编辑每个时间节点 · 按住 ⠿ 拖拽排序</div>
-            </div>
+      <!-- ⑥ 时间线一 -->
+      <div class="panel" id="panel-timeline">
+        <div class="panel-card">
+          <div class="panel-section-title">区块标题</div>
+          <div class="grid-2" style="margin-bottom:14px">
+            <div class="field"><label>区块标语 (Eyebrow)</label><input type="text" id="tlEyebrow" oninput="markChanged()"></div>
+            <div class="field"><label>区块大标题 (Section Title)</label><input type="text" id="tlSectionTitle" oninput="markChanged()"></div>
           </div>
-          <div class="section-body" id="body-timeline">
-            <div class="grid-2" style="margin-bottom:14px">
-              <div class="field"><label>区块标语 (Eyebrow)</label><input type="text" id="tlEyebrow" oninput="markChanged()"></div>
-              <div class="field"><label>区块大标题 (Section Title)</label><input type="text" id="tlSectionTitle" oninput="markChanged()"></div>
-            </div>
-            <div class="grid-2" style="margin-bottom:14px">
-              <div class="field">
-                <label>区块上间距（px）</label>
-                <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
-                  <input type="range" id="tl1PadTop" min="0" max="240" step="4" value="100" oninput="document.getElementById('tl1PadTopNum').value=this.value;markChanged()" style="flex:1;accent-color:var(--accent)">
-                  <input type="number" id="tl1PadTopNum" min="0" max="240" step="4" value="100" oninput="document.getElementById('tl1PadTop').value=this.value;markChanged()" style="width:60px;padding:5px 7px;border:1.5px solid var(--border);border-radius:6px;background:var(--panel2);color:var(--text);font-size:.82rem;outline:none">
-                  <span style="font-size:.72rem;color:var(--muted)">px</span>
-                </div>
-              </div>
-              <div class="field">
-                <label>区块下间距（px）</label>
-                <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
-                  <input type="range" id="tl1PadBot" min="0" max="240" step="4" value="60" oninput="document.getElementById('tl1PadBotNum').value=this.value;markChanged()" style="flex:1;accent-color:var(--accent)">
-                  <input type="number" id="tl1PadBotNum" min="0" max="240" step="4" value="60" oninput="document.getElementById('tl1PadBot').value=this.value;markChanged()" style="width:60px;padding:5px 7px;border:1.5px solid var(--border);border-radius:6px;background:var(--panel2);color:var(--text);font-size:.82rem;outline:none">
-                  <span style="font-size:.72rem;color:var(--muted)">px</span>
-                </div>
-              </div>
-            </div>
-            <div id="tlItemsEditor"></div>
-            <button class="add-btn" onclick="addTLItem()">＋ 添加时间节点</button>
-          </div>
-        </div>
-
-        <!-- ⑤ 时间线二 -->
-        <div class="section open" id="sec-timeline2">
-          <div class="section-header" onclick="toggleSection('timeline2')">
-            <div>
-              <div class="section-title">🗓 时间线二 · Personal Journey <span class="chevron">▼</span></div>
-              <div class="section-sub">编辑第二条时间线节点 · 按住 ⠿ 拖拽排序</div>
-            </div>
-          </div>
-          <div class="section-body" id="body-timeline2">
-            <div class="grid-2" style="margin-bottom:14px">
-              <div class="field"><label>区块标语 (Eyebrow)</label><input type="text" id="tl2Eyebrow" oninput="markChanged()"></div>
-              <div class="field"><label>区块大标题 (Section Title)</label><input type="text" id="tl2Title" oninput="markChanged()"></div>
-            </div>
-            <div class="grid-2" style="margin-bottom:14px">
-              <div class="field">
-                <label>区块上间距（px）</label>
-                <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
-                  <input type="range" id="tl2PadTop" min="0" max="240" step="4" value="100" oninput="document.getElementById('tl2PadTopNum').value=this.value;markChanged()" style="flex:1;accent-color:var(--accent)">
-                  <input type="number" id="tl2PadTopNum" min="0" max="240" step="4" value="100" oninput="document.getElementById('tl2PadTop').value=this.value;markChanged()" style="width:60px;padding:5px 7px;border:1.5px solid var(--border);border-radius:6px;background:var(--panel2);color:var(--text);font-size:.82rem;outline:none">
-                  <span style="font-size:.72rem;color:var(--muted)">px</span>
-                </div>
-              </div>
-              <div class="field">
-                <label>区块下间距（px）</label>
-                <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
-                  <input type="range" id="tl2PadBot" min="0" max="240" step="4" value="120" oninput="document.getElementById('tl2PadBotNum').value=this.value;markChanged()" style="flex:1;accent-color:var(--accent)">
-                  <input type="number" id="tl2PadBotNum" min="0" max="240" step="4" value="120" oninput="document.getElementById('tl2PadBot').value=this.value;markChanged()" style="width:60px;padding:5px 7px;border:1.5px solid var(--border);border-radius:6px;background:var(--panel2);color:var(--text);font-size:.82rem;outline:none">
-                  <span style="font-size:.72rem;color:var(--muted)">px</span>
-                </div>
-              </div>
-            </div>
-            <div id="tl2ItemsEditor"></div>
-            <button class="add-btn" onclick="addTL2Item()">＋ 添加时间节点</button>
-          </div>
-        </div>
-
-        <!-- ⑥ 背景音乐 -->
-        <div class="section open" id="sec-music">
-          <div class="section-header" onclick="toggleSection('music')">
-            <div>
-              <div class="section-title">🎵 背景音乐 <span class="chevron">▼</span></div>
-              <div class="section-sub">上传替换背景音乐文件，编辑歌曲名称</div>
-            </div>
-          </div>
-          <div class="section-body" id="body-music">
-            <div class="grid-2" style="margin-bottom:14px">
-              <div class="field">
-                <label>歌曲名称（显示在按钮悬停提示）</label>
-                <input type="text" id="musicTitle" oninput="markChanged()" placeholder="Artist – Song Name">
-              </div>
-              <div class="field">
-                <label>当前音频文件</label>
-                <div id="musicCurrentSrc" style="font-size:.72rem;color:var(--muted2);padding:8px 10px;background:var(--panel2);border:1.5px solid var(--border);border-radius:7px;word-break:break-all;line-height:1.5">加载中…</div>
+          <hr class="divider">
+          <div class="row-label"><span>上下间距</span></div>
+          <div class="grid-2">
+            <div class="field">
+              <label>上间距（px）</label>
+              <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+                <input type="range" id="tl1PadTop" min="0" max="240" step="4" value="100" oninput="document.getElementById('tl1PadTopNum').value=this.value;markChanged()" style="flex:1">
+                <input type="number" id="tl1PadTopNum" min="0" max="240" step="4" value="100" oninput="document.getElementById('tl1PadTop').value=this.value;markChanged()" style="width:60px;padding:5px 7px;border:1.5px solid var(--border);border-radius:6px;background:var(--panel2);color:var(--text);font-size:.82rem;outline:none">
+                <span style="font-size:.7rem;color:var(--muted)">px</span>
               </div>
             </div>
             <div class="field">
-              <label>上传新音频文件</label>
-              <img class="tl-img-preview" id="musicWavePreview" style="display:none">
-              <div class="img-upload" id="musicUploadArea" onclick="document.getElementById('musicFileInput').click()" style="padding:20px">
-                <input type="file" id="musicFileInput" accept="audio/*,.mp3,.wav,.ogg,.m4a,.flac" style="display:none" onchange="handleMusicUpload(this)">
-                <div style="font-size:1.4rem;margin-bottom:6px">🎵</div>
-                <div>点击选择音频文件</div>
-                <div style="font-size:.66rem;margin-top:4px">支持 MP3 / WAV / OGG / M4A · 推荐 MP3，文件不宜过大</div>
+              <label>下间距（px）</label>
+              <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+                <input type="range" id="tl1PadBot" min="0" max="240" step="4" value="60" oninput="document.getElementById('tl1PadBotNum').value=this.value;markChanged()" style="flex:1">
+                <input type="number" id="tl1PadBotNum" min="0" max="240" step="4" value="60" oninput="document.getElementById('tl1PadBot').value=this.value;markChanged()" style="width:60px;padding:5px 7px;border:1.5px solid var(--border);border-radius:6px;background:var(--panel2);color:var(--text);font-size:.82rem;outline:none">
+                <span style="font-size:.7rem;color:var(--muted)">px</span>
               </div>
-              <div id="musicFileInfo" style="font-size:.72rem;color:var(--muted2);margin-top:6px"></div>
             </div>
           </div>
         </div>
+        <div class="panel-card">
+          <div class="panel-section-title">时间节点</div>
+          <div id="tlItemsEditor"></div>
+          <button class="add-btn" onclick="addTLItem()">＋ 添加时间节点</button>
+        </div>
+      </div>
 
-        <!-- ⑦ 页脚 -->
-        <div class="section open" id="sec-footer">
-          <div class="section-header" onclick="toggleSection('footer')">
-            <div>
-              <div class="section-title">📄 页脚 <span class="chevron">▼</span></div>
-              <div class="section-sub">底部版权文字</div>
+      <!-- ⑦ 时间线二 -->
+      <div class="panel" id="panel-timeline2">
+        <div class="panel-card">
+          <div class="panel-section-title">区块标题</div>
+          <div class="grid-2" style="margin-bottom:14px">
+            <div class="field"><label>区块标语 (Eyebrow)</label><input type="text" id="tl2Eyebrow" oninput="markChanged()"></div>
+            <div class="field"><label>区块大标题 (Section Title)</label><input type="text" id="tl2Title" oninput="markChanged()"></div>
+          </div>
+          <hr class="divider">
+          <div class="row-label"><span>上下间距</span></div>
+          <div class="grid-2">
+            <div class="field">
+              <label>上间距（px）</label>
+              <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+                <input type="range" id="tl2PadTop" min="0" max="240" step="4" value="100" oninput="document.getElementById('tl2PadTopNum').value=this.value;markChanged()" style="flex:1">
+                <input type="number" id="tl2PadTopNum" min="0" max="240" step="4" value="100" oninput="document.getElementById('tl2PadTop').value=this.value;markChanged()" style="width:60px;padding:5px 7px;border:1.5px solid var(--border);border-radius:6px;background:var(--panel2);color:var(--text);font-size:.82rem;outline:none">
+                <span style="font-size:.7rem;color:var(--muted)">px</span>
+              </div>
+            </div>
+            <div class="field">
+              <label>下间距（px）</label>
+              <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+                <input type="range" id="tl2PadBot" min="0" max="240" step="4" value="120" oninput="document.getElementById('tl2PadBot').value=this.value;markChanged()" style="flex:1">
+                <input type="number" id="tl2PadBotNum" min="0" max="240" step="4" value="120" oninput="document.getElementById('tl2PadBot').value=this.value;markChanged()" style="width:60px;padding:5px 7px;border:1.5px solid var(--border);border-radius:6px;background:var(--panel2);color:var(--text);font-size:.82rem;outline:none">
+                <span style="font-size:.7rem;color:var(--muted)">px</span>
+              </div>
             </div>
           </div>
-          <div class="section-body" id="body-footer">
-            <div class="field"><label>页脚文字</label><input type="text" id="footerText" oninput="markChanged()"></div>
+        </div>
+        <div class="panel-card">
+          <div class="panel-section-title">时间节点</div>
+          <div id="tl2ItemsEditor"></div>
+          <button class="add-btn" onclick="addTL2Item()">＋ 添加时间节点</button>
+        </div>
+      </div>
+
+      <!-- ⑧ 背景音乐 -->
+      <div class="panel" id="panel-music">
+        <div class="panel-card">
+          <div class="panel-section-title">背景音乐设置</div>
+          <div class="grid-2" style="margin-bottom:16px">
+            <div class="field">
+              <label>歌曲名称（悬停提示）</label>
+              <input type="text" id="musicTitle" oninput="markChanged()" placeholder="Artist – Song Name">
+            </div>
+            <div class="field">
+              <label>当前音频文件</label>
+              <div id="musicCurrentSrc" style="font-size:.7rem;color:var(--muted2);padding:8px 10px;background:var(--panel2);border:1.5px solid var(--border);border-radius:7px;word-break:break-all;line-height:1.5">加载中…</div>
+            </div>
+          </div>
+          <div class="field">
+            <label>上传新音频文件</label>
+            <div class="img-upload" id="musicUploadArea" onclick="document.getElementById('musicFileInput').click()" style="padding:20px">
+              <input type="file" id="musicFileInput" accept="audio/*,.mp3,.wav,.ogg,.m4a,.flac" style="display:none" onchange="handleMusicUpload(this)">
+              <div style="font-size:1.4rem;margin-bottom:6px">🎵</div>
+              <div>点击选择音频文件</div>
+              <div style="font-size:.64rem;margin-top:4px">支持 MP3 / WAV / OGG / M4A · 推荐 MP3</div>
+            </div>
+            <div id="musicFileInfo" style="font-size:.7rem;color:var(--muted2);margin-top:6px"></div>
           </div>
         </div>
-
       </div>
-    </div>
 
-    <!-- 预览区 -->
-    <div class="preview-pane" id="previewPane">
-      <div class="preview-toolbar">
-        <div class="preview-toolbar-left">
-          <span class="preview-live-dot"></span>
-          实时预览 · 随编辑实时更新
-        </div>
-        <div style="display:flex;gap:6px">
-          <button class="btn btn-ghost btn-sm" onclick="updateLivePreview()" title="刷新预览">🔄</button>
-          <button class="btn btn-ghost btn-sm" onclick="openExternal()" title="新标签页在 GitHub Pages 打开">↗</button>
-          <button class="btn btn-ghost btn-sm" onclick="togglePreview()">✕</button>
+      <!-- ⑨ 页脚 -->
+      <div class="panel" id="panel-footer-sec">
+        <div class="panel-card">
+          <div class="panel-section-title">页脚文字</div>
+          <div class="field"><label>页脚版权文字</label><input type="text" id="footerText" oninput="markChanged()"></div>
         </div>
       </div>
-      <div class="preview-note">✅ 编辑内容后预览会自动更新，无需推送</div>
-      <iframe class="preview-iframe" id="previewFrame"></iframe>
-    </div>
-  </div>
-</div>
 
-<div class="push-bar" id="pushBar">
-  <span class="push-bar-msg">⚠ 有未保存的修改</span>
-  <div style="display:flex;gap:7px">
-    <button class="btn btn-ghost btn-sm" onclick="reloadAndDiscard()">放弃修改</button>
-    <button class="btn btn-success btn-sm" onclick="pushToGitHub()">🚀 推送到 GitHub</button>
+    </div><!-- /content-area -->
+  </div><!-- /main-wrap -->
+
+  <!-- PREVIEW PANE -->
+  <div class="preview-pane" id="previewPane">
+    <div class="preview-toolbar">
+      <div class="preview-toolbar-left">
+        <span class="preview-live-dot"></span>
+        实时预览 · 随编辑更新
+      </div>
+      <div style="display:flex;gap:6px">
+        <button class="btn btn-ghost btn-sm" onclick="updateLivePreview()" title="刷新">🔄</button>
+        <button class="btn btn-ghost btn-sm" onclick="openExternal()" title="在 GitHub Pages 打开">↗</button>
+        <button class="btn btn-ghost btn-sm" onclick="togglePreview()">✕</button>
+      </div>
+    </div>
+    <div class="preview-note">✅ 编辑内容后预览自动更新，无需推送</div>
+    <iframe class="preview-iframe" id="previewFrame"></iframe>
   </div>
-</div>
+
+</div><!-- /app-wrap -->
 
 <div class="toast" id="toast">
   <span class="t-icon" id="toastIcon">✓</span>
@@ -567,6 +674,30 @@ let imageUploads={},tl2ImageUploads={};
 let tlUidCounter=0,tl2UidCounter=0,statCount=0;
 let previewOpen=false;
 let musicUpload=null;
+
+// ── Panel Navigation ───────────────────────────────────────────
+const PANEL_META={
+  'github':     ['GitHub 连接','Token & 仓库配置'],
+  'nav-sec':    ['导航栏','品牌名称与顶部导航链接'],
+  'hero':       ['Hero 区域','大标题、副标题、统计数据、位置'],
+  'person':     ['人物图片','背景人物图片的位置与大小'],
+  'divider-sec':['过渡分割线','Hero 与时间线之间的标题文字'],
+  'timeline':   ['时间线一 · Nexus Journey','编辑每个时间节点'],
+  'timeline2':  ['时间线二 · Personal Journey','编辑第二条时间线节点'],
+  'music':      ['背景音乐','上传替换背景音乐文件'],
+  'footer-sec': ['页脚','底部版权文字'],
+};
+function switchPanel(id){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const panel=document.getElementById('panel-'+id);
+  if(panel)panel.classList.add('active');
+  const navItem=document.querySelector(`[data-panel="${id}"]`);
+  if(navItem)navItem.classList.add('active');
+  const meta=PANEL_META[id]||[id,''];
+  document.getElementById('topbarTitle').textContent=meta[0];
+  document.getElementById('topbarSub').textContent=meta[1];
+}
 
 // ── Preview ────────────────────────────────────────────────────
 const PREVIEW_URL='https://testkka.github.io/my-journey/';
@@ -628,11 +759,11 @@ function toast(msg,type='success'){
 }
 function markChanged(){
   hasChanges=true;
-  document.getElementById('pushBar').classList.add('show');
+  document.getElementById('unsavedDot').style.display='';
+  document.getElementById('discardBtn').style.display='';
   document.getElementById('pushBtn').disabled=false;
   if(previewOpen) updateLivePreview();
 }
-function toggleSection(id){const el=document.getElementById('sec-'+id);if(el)el.classList.toggle('open');}
 window.addEventListener('beforeunload',e=>{if(hasChanges){e.preventDefault();e.returnValue='';}});
 
 // ── GitHub API ─────────────────────────────────────────────────
@@ -672,22 +803,18 @@ async function ghPut(path,content_b64,sha,message){
 // ── Load Content ───────────────────────────────────────────────
 async function loadContent(){
   if(!token()){toast('请先填写 GitHub Token','error');return;}
-  showLoading(true,'加载内容…');
-  setStatus('loading','加载中…');
+  showLoading(true,'加载内容…');setStatus('loading','加载中…');
   try{
     const data=await ghGet('index.html');
     currentSHA=data.sha;
     currentHTML=b64ToUtf8(data.content.replace(/\s/g,''));
     parseAndRender();
-    setStatus('ok','已连接');
-    toast('内容加载成功 ✓');
+    setStatus('ok','已连接');toast('内容加载成功 ✓');
     document.getElementById('pushBtn').disabled=false;
     hasChanges=false;
-    document.getElementById('pushBar').classList.remove('show');
-  }catch(e){
-    setStatus('err','连接失败');
-    toast('加载失败: '+e.message,'error');
-  }
+    document.getElementById('unsavedDot').style.display='none';
+    document.getElementById('discardBtn').style.display='none';
+  }catch(e){setStatus('err','连接失败');toast('加载失败: '+e.message,'error');}
   showLoading(false);
 }
 
@@ -705,27 +832,20 @@ async function openHistory(){
       const author=c.commit.author.name;
       const date=new Date(c.commit.author.date).toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});
       const isCurrent=c.sha===currentSHA;
-      return `<div class="history-item">
+      return`<div class="history-item">
         <span class="history-sha">${sha}</span>
-        <div class="history-info">
-          <div class="history-msg">${msg}</div>
-          <div class="history-meta">${author} · ${date}${isCurrent?' · <span style="color:var(--green)">当前版本</span>':''}</div>
-        </div>
+        <div class="history-info"><div class="history-msg">${msg}</div><div class="history-meta">${author} · ${date}${isCurrent?' · <span style="color:var(--green)">当前版本</span>':''}</div></div>
         ${isCurrent
-          ?`<span style="font-size:.68rem;color:var(--green);padding:3px 10px;background:var(--green-bg);border-radius:20px;border:1px solid var(--green-bd)">✓ 当前</span>`
+          ?`<span style="font-size:.66rem;color:var(--green);padding:3px 10px;background:var(--green-bg);border-radius:20px;border:1px solid var(--green-bd)">✓ 当前</span>`
           :`<button class="history-restore" onclick="restoreVersion('${c.sha}','${sha}: ${c.commit.message.replace(/'/g,"\\'")}')">恢复</button>`}
       </div>`;
     }).join('');
-  }catch(e){
-    document.getElementById('historyList').innerHTML=`<div class="history-empty">加载失败: ${e.message}</div>`;
-  }
+  }catch(e){document.getElementById('historyList').innerHTML=`<div class="history-empty">加载失败: ${e.message}</div>`;}
 }
 function closeHistory(){document.getElementById('historyModal').classList.remove('show');}
 async function restoreVersion(fullSha,label){
   if(!confirm(`确定恢复到版本 "${label}"？\n当前内容将被覆盖，此操作将产生一条新的提交记录。`))return;
-  closeHistory();
-  showLoading(true,'恢复版本…');
-  setStatus('loading','恢复中…');
+  closeHistory();showLoading(true,'恢复版本…');setStatus('loading','恢复中…');
   try{
     const fileData=await ghGetFileAtCommit('index.html',fullSha);
     const restoredContent=b64ToUtf8(fileData.content.replace(/\s/g,''));
@@ -734,31 +854,23 @@ async function restoreVersion(fullSha,label){
     const res=await ghPut('index.html',b64,cur.sha,`⏪ 恢复到版本 ${fullSha.slice(0,7)}`);
     currentSHA=res.content.sha;currentHTML=restoredContent;
     parseAndRender();hasChanges=false;
-    document.getElementById('pushBar').classList.remove('show');
+    document.getElementById('unsavedDot').style.display='none';
+    document.getElementById('discardBtn').style.display='none';
     document.getElementById('pushBtn').disabled=false;
-    setStatus('ok','已恢复');
-    toast(`🎉 已成功恢复到版本 ${fullSha.slice(0,7)}`);
+    setStatus('ok','已恢复');toast(`🎉 已成功恢复到版本 ${fullSha.slice(0,7)}`);
   }catch(e){setStatus('err','恢复失败');toast('恢复失败: '+e.message,'error');}
   showLoading(false);
 }
 document.getElementById('historyModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeHistory();});
 
 // ── Font size helpers ──────────────────────────────────────────
-// 把 clamp(2.4rem,6vw,5rem) 或 5rem 解析为纯数字字符串 "5"
 function parseFsNum(val){
   if(!val) return '';
-  // clamp(...)  → 取最后一个 rem 值
-  const clampM=val.match(/(\d+\.?\d*)rem\s*\)?\s*$/);
-  if(clampM) return clampM[1];
-  // Xrem → X
-  const remM=val.match(/^(\d+\.?\d*)rem$/);
-  if(remM) return remM[1];
-  // plain number
-  const numM=val.match(/^(\d+\.?\d*)$/);
-  if(numM) return numM[1];
+  const clampM=val.match(/(\d+\.?\d*)rem\s*\)?\s*$/);if(clampM) return clampM[1];
+  const remM=val.match(/^(\d+\.?\d*)rem$/);if(remM) return remM[1];
+  const numM=val.match(/^(\d+\.?\d*)$/);if(numM) return numM[1];
   return val;
 }
-// 把纯数字 "5" 转为 CSS 值 "5rem"
 function fsToCss(val){ return val&&!isNaN(val)?val+'rem':val||'5rem'; }
 
 // ── Parse HTML → Forms ─────────────────────────────────────────
@@ -768,7 +880,6 @@ function parseAndRender(){
 
   const navBrand=html.match(/<div class="nav-logo">([^<]+)<span>([^<]+)<\/span><\/div>/);
   if(navBrand)document.getElementById('navBrand').value=(navBrand[1].trim()+' '+navBrand[2].trim()).trim();
-
   const navLinksMatch=html.match(/<div class="nav-links">([\s\S]*?)<\/div>/);
   document.getElementById('navLinks').value=navLinksMatch
     ?[...navLinksMatch[1].matchAll(/<a href="([^"]+)">([^<]+)<\/a>/g)].map(m=>`${m[2]}|${m[1]}`).join('\n'):'';
@@ -777,7 +888,6 @@ function parseAndRender(){
   if(eyebrow)document.getElementById('heroEyebrow').value=eyebrow[1];
   const heroSub=html.match(/class="hero-sub">([\s\S]*?)<\/p>/);
   if(heroSub)document.getElementById('heroSub').value=heroSub[1].replace(/<br\s*\/?>/gi,'\n');
-  // Parse two-line H1 with font sizes
   const heroH1StyleM=html.match(/<h1 class="hero-h1"[^>]*style="([^"]*)"/);
   const heroH1Style=heroH1StyleM?heroH1StyleM[1]:'';
   const fs1M=heroH1Style.match(/--h1-fs1:([^;}"]+)/);
@@ -788,24 +898,12 @@ function parseAndRender(){
   const h1L2M=html.match(/<span class="h1-l2">([^<]*)<\/span>/);
   if(h1L1M)document.getElementById('heroH1L1').value=h1L1M[1];
   if(h1L2M)document.getElementById('heroH1L2').value=h1L2M[1];
-  // Legacy single-line H1 fallback
-  const heroH1Match=html.match(/class="hero-h1"[^>]*>([\s\S]*?)<\/h1>/);
-  if(heroH1Match&&!h1L1M){
-    const raw=heroH1Match[1].replace(/<[^>]+>/g,'').trim();
-    const parts=raw.split(/\n/);
-    if(document.getElementById('heroH1L1'))document.getElementById('heroH1L1').value=parts[0]||raw;
-    if(document.getElementById('heroH1L2'))document.getElementById('heroH1L2').value=parts[1]||'';
-  }
   const tlSecTitle=html.match(/class="sec-title">([^<]+)<\/h2>/);
   if(tlSecTitle)document.getElementById('tlSectionTitle').value=tlSecTitle[1];
-
-  // 分割线
   const divLabelM=html.match(/class="divider-label">([^<]+)<\/span>/);
   if(divLabelM)document.getElementById('dividerLabel').value=divLabelM[1];
   const divSubM=html.match(/class="divider-sub">([^<]+)<\/p>/);
   if(divSubM)document.getElementById('dividerSub').value=divSubM[1];
-
-  // Hero 内容位置
   const heroContentStyleM=html.match(/class="hero-content"[^>]*style="([^"]*)"/);
   if(heroContentStyleM){
     const sty=heroContentStyleM[1];
@@ -813,7 +911,6 @@ function parseAndRender(){
     if(topM){document.getElementById('heroTop').value=topM[1];document.getElementById('heroTopNum').value=topM[1];}
     if(leftM){document.getElementById('heroLeft').value=leftM[1];document.getElementById('heroLeftNum').value=leftM[1];}
   }
-  // 人物图片位置
   const personWrapM=html.match(/id="person-wrap"[^>]*style="([^"]*)"/);
   if(personWrapM){
     const s=personWrapM[1];
@@ -826,7 +923,6 @@ function parseAndRender(){
     const hm=personImgM[1].match(/height:([\d.]+)vh/);
     if(hm){document.getElementById('personHeight').value=hm[1];document.getElementById('personHeightNum').value=hm[1];}
   }
-  // 时间线间距
   const tl1M=html.match(/id="timeline-section"[^>]*style="([^"]*)"/);
   if(tl1M){
     const pt=tl1M[1].match(/padding-top:([\d.]+)px/);const pb=tl1M[1].match(/padding-bottom:([\d.]+)px/);
@@ -839,29 +935,21 @@ function parseAndRender(){
     if(pt){document.getElementById('tl2PadTop').value=pt[1];document.getElementById('tl2PadTopNum').value=pt[1];}
     if(pb){document.getElementById('tl2PadBot').value=pb[1];document.getElementById('tl2PadBotNum').value=pb[1];}
   }
-
   const stats=[...html.matchAll(/<div class="stat-item"><div class="stat-num">([^<]+)<\/div><div class="stat-label">([^<]+)<\/div><\/div>/g)];
   renderStats(stats.map(m=>({num:m[1],label:m[2]})));
-
   const tlEye=html.match(/id="tl-eyebrow"[^>]*>([^<]+)<\/p>/);
   if(tlEye)document.getElementById('tlEyebrow').value=tlEye[1];
   else{const fb=html.match(/class="sec-eyebrow"[^>]*>([^<]+)<\/p>/);if(fb)document.getElementById('tlEyebrow').value=fb[1];}
-
   const footer=html.match(/<footer><p>([^<]+)<\/p><\/footer>/);
   if(footer)document.getElementById('footerText').value=footer[1];
-
   const tlMatch=html.match(/const TL=(\[[\s\S]*?\]);\s*\(function/);
   if(tlMatch){try{renderTLItems((new Function('return '+tlMatch[1]))());}catch(e){console.error('TL parse',e);}}
-
   const tl2Eye=html.match(/id="tl2-eyebrow"[^>]*>([^<]+)<\/p>/);
   if(tl2Eye)document.getElementById('tl2Eyebrow').value=tl2Eye[1];
   const tl2TitleMatch=html.match(/id="tl2-title"[^>]*>([^<]+)<\/h2>/);
   if(tl2TitleMatch)document.getElementById('tl2Title').value=tl2TitleMatch[1];
-
   const tl2Match=html.match(/const TL2=(\[[\s\S]*?\]);\s*\/\/ Render TL2/);
   if(tl2Match){try{renderTL2Items((new Function('return '+tl2Match[1]))());}catch(e){console.error('TL2 parse',e);}}
-
-  // 背景音乐
   const musicTitleM=html.match(/id="music-btn"[^>]*title="([^"]*)"/);
   if(musicTitleM)document.getElementById('musicTitle').value=musicTitleM[1];
   const musicSrcM=html.match(/<source\s+src="([^"]+)"\s+type="audio/);
@@ -870,21 +958,18 @@ function parseAndRender(){
   musicUpload=null;
   document.getElementById('musicFileInfo').textContent='';
   document.getElementById('musicUploadArea').className='img-upload';
-  document.getElementById('musicUploadArea').innerHTML=`<input type="file" id="musicFileInput" accept="audio/*,.mp3,.wav,.ogg,.m4a,.flac" style="display:none" onchange="handleMusicUpload(this)"><div style="font-size:1.4rem;margin-bottom:6px">🎵</div><div>点击选择音频文件</div><div style="font-size:.66rem;margin-top:4px">支持 MP3 / WAV / OGG / M4A · 推荐 MP3，文件不宜过大</div>`;
+  document.getElementById('musicUploadArea').innerHTML=`<input type="file" id="musicFileInput" accept="audio/*,.mp3,.wav,.ogg,.m4a,.flac" style="display:none" onchange="handleMusicUpload(this)"><div style="font-size:1.4rem;margin-bottom:6px">🎵</div><div>点击选择音频文件</div><div style="font-size:.64rem;margin-top:4px">支持 MP3 / WAV / OGG / M4A</div>`;
 }
 
 // ── Stats ──────────────────────────────────────────────────────
 function renderStats(stats){
-  statCount=0;
-  const c=document.getElementById('statsEditor');c.innerHTML='';
+  statCount=0;const c=document.getElementById('statsEditor');c.innerHTML='';
   (stats.length?stats:[{num:'',label:''}]).forEach(s=>addStatHTML(s));
 }
 function addStatHTML(s={num:'',label:''}){
-  const i=statCount++;
-  const c=document.getElementById('statsEditor');
+  const i=statCount++;const c=document.getElementById('statsEditor');
   const div=document.createElement('div');div.id=`statItem${i}`;div.className='stat-card';
-  div.innerHTML=`
-    <button onclick="removeStat(${i})" title="删除" style="position:absolute;top:6px;right:6px;background:transparent;border:none;color:var(--muted2);cursor:pointer;font-size:.76rem;padding:2px 5px;border-radius:3px">✕</button>
+  div.innerHTML=`<button onclick="removeStat(${i})" title="删除" style="position:absolute;top:6px;right:6px;background:transparent;border:none;color:var(--muted2);cursor:pointer;font-size:.76rem;padding:2px 5px;border-radius:3px">✕</button>
     <div class="field" style="margin-bottom:7px"><label>数值 ${i+1}</label><input type="text" id="statNum${i}" value="${escHtml(s.num||'')}" oninput="markChanged()"></div>
     <div class="field"><label>标签</label><input type="text" id="statLabel${i}" value="${escHtml(s.label||'')}" oninput="markChanged()"></div>`;
   c.appendChild(div);
@@ -892,81 +977,45 @@ function addStatHTML(s={num:'',label:''}){
 function addStat(){addStatHTML();markChanged();}
 function removeStat(i){const el=document.getElementById('statItem'+i);if(el){el.remove();markChanged();}}
 
-// ── DRAG SORT — 修复版：只从手柄触发 ──────────────────────────
+// ── Drag Sort ──────────────────────────────────────────────────
 function setupDrag(containerId){
-  const container=document.getElementById(containerId);
-  if(!container)return;
+  const container=document.getElementById(containerId);if(!container)return;
   let dragSrc=null;
-
   container.querySelectorAll('.tl-editor').forEach(card=>{
     card.draggable=false;
-
     const handle=card.querySelector('.drag-handle');
     if(handle){
       handle.addEventListener('mousedown',()=>{card.draggable=true;},{passive:true});
       handle.addEventListener('touchstart',()=>{card.draggable=true;},{passive:true});
     }
-    card.addEventListener('dragstart',e=>{
-      if(!card.draggable){e.preventDefault();return;}
-      dragSrc=card;card.classList.add('is-dragging');
-      e.dataTransfer.effectAllowed='move';
-      e.dataTransfer.setData('text/plain',card.id);
-    });
-    card.addEventListener('dragend',()=>{
-      card.draggable=false;card.classList.remove('is-dragging');
-      container.querySelectorAll('.tl-editor').forEach(x=>x.classList.remove('drag-over'));
-      dragSrc=null;
-    });
+    card.addEventListener('dragstart',e=>{if(!card.draggable){e.preventDefault();return;}dragSrc=card;card.classList.add('is-dragging');e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain',card.id);});
+    card.addEventListener('dragend',()=>{card.draggable=false;card.classList.remove('is-dragging');container.querySelectorAll('.tl-editor').forEach(x=>x.classList.remove('drag-over'));dragSrc=null;});
     card.addEventListener('dragover',e=>{e.preventDefault();e.dataTransfer.dropEffect='move';});
     card.addEventListener('dragenter',e=>{e.preventDefault();if(card!==dragSrc)card.classList.add('drag-over');});
     card.addEventListener('dragleave',()=>card.classList.remove('drag-over'));
     card.addEventListener('drop',e=>{
       e.preventDefault();
-      if(dragSrc&&dragSrc!==card){
-        const all=[...container.querySelectorAll('.tl-editor')];
-        const fi=all.indexOf(dragSrc),ti=all.indexOf(card);
-        if(fi<ti)card.after(dragSrc);else card.before(dragSrc);
-        markChanged();
-      }
-      card.classList.remove('drag-over');
-      if(dragSrc)dragSrc.draggable=false;
+      if(dragSrc&&dragSrc!==card){const all=[...container.querySelectorAll('.tl-editor')];const fi=all.indexOf(dragSrc),ti=all.indexOf(card);if(fi<ti)card.after(dragSrc);else card.before(dragSrc);markChanged();}
+      card.classList.remove('drag-over');if(dragSrc)dragSrc.draggable=false;
     });
   });
-
-  document.addEventListener('mouseup',()=>{
-    container.querySelectorAll('.tl-editor').forEach(c=>c.draggable=false);
-  },{passive:true});
+  document.addEventListener('mouseup',()=>{container.querySelectorAll('.tl-editor').forEach(c=>c.draggable=false);},{passive:true});
 }
 
 // ── Timeline 1 ─────────────────────────────────────────────────
-function renderTLItems(items){
-  tlUidCounter=0;imageUploads={};
-  const c=document.getElementById('tlItemsEditor');c.innerHTML='';
-  items.forEach(item=>addTLItemHTML(c,item,tlUidCounter++));
-  setupDrag('tlItemsEditor');
-}
+function renderTLItems(items){tlUidCounter=0;imageUploads={};const c=document.getElementById('tlItemsEditor');c.innerHTML='';items.forEach(item=>addTLItemHTML(c,item,tlUidCounter++));setupDrag('tlItemsEditor');}
 function addTLItemHTML(container,item,uid){
   const div=document.createElement('div');div.className='tl-editor';div.id=`tl-${uid}`;
-  div.innerHTML=`
-    <div class="tl-editor-hd">
-      <div class="tl-editor-left">
-        <span class="drag-handle" title="按住拖拽排序">⠿</span>
-        <span class="tl-num">节点 ${uid+1}</span>
-      </div>
-      <button class="btn btn-danger btn-xs" onclick="removeTLItem('${uid}')">✕ 删除</button>
-    </div>
+  div.innerHTML=`<div class="tl-editor-hd"><div class="tl-editor-left"><span class="drag-handle" title="按住拖拽排序">⠿</span><span class="tl-num">节点 ${uid+1}</span></div><button class="btn btn-danger btn-xs" onclick="removeTLItem('${uid}')">✕ 删除</button></div>
     <div class="tl-editor-body">
-      <div class="grid-2">
-        <div class="field"><label>年份 / 日期</label><input type="text" id="tlYear${uid}" value="${escHtml(item.year||'')}" oninput="markChanged()"></div>
-        <div class="field"><label>标签 (Tag)</label><input type="text" id="tlTag${uid}" value="${escHtml(item.tag||'')}" oninput="markChanged()"></div>
-      </div>
+      <div class="grid-2"><div class="field"><label>年份 / 日期</label><input type="text" id="tlYear${uid}" value="${escHtml(item.year||'')}" oninput="markChanged()"></div><div class="field"><label>标签 (Tag)</label><input type="text" id="tlTag${uid}" value="${escHtml(item.tag||'')}" oninput="markChanged()"></div></div>
       <div class="field"><label>标题</label><input type="text" id="tlTitle${uid}" value="${escHtml(item.title||'')}" oninput="markChanged()"></div>
       <div class="field"><label>描述</label><textarea id="tlDesc${uid}" rows="3" oninput="markChanged()">${escHtml(item.desc||'')}</textarea></div>
       <div class="field"><label>图片</label>
         <img class="tl-img-preview${item.img?' show':''}" id="tlImgPreview${uid}" src="${item.img||''}" alt="">
         <div class="img-upload${item.img?' has-img':''}" id="tlImgArea${uid}" onclick="document.getElementById('tlImgFile${uid}').click()">
           <input type="file" id="tlImgFile${uid}" accept="image/*" onchange="handleImgUpload('${uid}',this)">
-          ${item.img?`<span style="color:var(--green)">✓ 已有图片 · 点击重新选择</span><br><span style="font-size:.66rem;color:var(--muted2)">${item.img}</span>`:'📷 点击选择图片<br><span style="font-size:.66rem">支持 JPG/PNG/GIF · 自动上传到 images/</span>'}
+          ${item.img?`<span style="color:var(--green)">✓ 已有图片 · 点击重新选择</span><br><span style="font-size:.64rem;color:var(--muted2)">${item.img}</span>`:'📷 点击选择图片<br><span style="font-size:.64rem">支持 JPG/PNG/GIF</span>'}
         </div>
         ${item.img?`<button class="btn btn-danger btn-xs" style="margin-top:5px" onclick="clearImg('${uid}')">× 移除图片</button>`:''}
         <input type="hidden" id="tlImgSrc${uid}" value="${escHtml(item.img||'')}">
@@ -974,49 +1023,30 @@ function addTLItemHTML(container,item,uid){
     </div>`;
   container.appendChild(div);
 }
-function addTLItem(){
-  const c=document.getElementById('tlItemsEditor');const uid=tlUidCounter++;
-  addTLItemHTML(c,{year:'',title:'',tag:'',desc:'',img:''},uid);
-  setupDrag('tlItemsEditor');markChanged();
-}
+function addTLItem(){const c=document.getElementById('tlItemsEditor');const uid=tlUidCounter++;addTLItemHTML(c,{year:'',title:'',tag:'',desc:'',img:''},uid);setupDrag('tlItemsEditor');markChanged();}
 function removeTLItem(uid){const el=document.getElementById(`tl-${uid}`);if(el){el.remove();markChanged();}}
 function clearImg(uid){
   document.getElementById('tlImgSrc'+uid).value='';
   const p=document.getElementById('tlImgPreview'+uid);p.src='';p.classList.remove('show');
   document.getElementById('tlImgArea'+uid).className='img-upload';
-  document.getElementById('tlImgArea'+uid).innerHTML=`<input type="file" id="tlImgFile${uid}" accept="image/*" onchange="handleImgUpload('${uid}',this)">📷 点击选择图片<br><span style="font-size:.66rem">支持 JPG/PNG/GIF</span>`;
+  document.getElementById('tlImgArea'+uid).innerHTML=`<input type="file" id="tlImgFile${uid}" accept="image/*" onchange="handleImgUpload('${uid}',this)">📷 点击选择图片<br><span style="font-size:.64rem">支持 JPG/PNG/GIF</span>`;
   delete imageUploads[uid];markChanged();
 }
 
 // ── Timeline 2 ─────────────────────────────────────────────────
-function renderTL2Items(items){
-  tl2UidCounter=0;tl2ImageUploads={};
-  const c=document.getElementById('tl2ItemsEditor');c.innerHTML='';
-  items.forEach(item=>addTL2ItemHTML(c,item,tl2UidCounter++));
-  setupDrag('tl2ItemsEditor');
-}
+function renderTL2Items(items){tl2UidCounter=0;tl2ImageUploads={};const c=document.getElementById('tl2ItemsEditor');c.innerHTML='';items.forEach(item=>addTL2ItemHTML(c,item,tl2UidCounter++));setupDrag('tl2ItemsEditor');}
 function addTL2ItemHTML(container,item,uid){
   const div=document.createElement('div');div.className='tl-editor';div.id=`tl2-${uid}`;
-  div.innerHTML=`
-    <div class="tl-editor-hd">
-      <div class="tl-editor-left">
-        <span class="drag-handle" title="按住拖拽排序">⠿</span>
-        <span class="tl-num p">节点 ${uid+1}</span>
-      </div>
-      <button class="btn btn-danger btn-xs" onclick="removeTL2Item('${uid}')">✕ 删除</button>
-    </div>
+  div.innerHTML=`<div class="tl-editor-hd"><div class="tl-editor-left"><span class="drag-handle" title="按住拖拽排序">⠿</span><span class="tl-num p">节点 ${uid+1}</span></div><button class="btn btn-danger btn-xs" onclick="removeTL2Item('${uid}')">✕ 删除</button></div>
     <div class="tl-editor-body">
-      <div class="grid-2">
-        <div class="field"><label>年份 / 日期</label><input type="text" id="tl2Year${uid}" value="${escHtml(item.year||'')}" oninput="markChanged()"></div>
-        <div class="field"><label>标签 (Tag)</label><input type="text" id="tl2Tag${uid}" value="${escHtml(item.tag||'')}" oninput="markChanged()"></div>
-      </div>
+      <div class="grid-2"><div class="field"><label>年份 / 日期</label><input type="text" id="tl2Year${uid}" value="${escHtml(item.year||'')}" oninput="markChanged()"></div><div class="field"><label>标签 (Tag)</label><input type="text" id="tl2Tag${uid}" value="${escHtml(item.tag||'')}" oninput="markChanged()"></div></div>
       <div class="field"><label>标题</label><input type="text" id="tl2Title${uid}" value="${escHtml(item.title||'')}" oninput="markChanged()"></div>
       <div class="field"><label>描述</label><textarea id="tl2Desc${uid}" rows="3" oninput="markChanged()">${escHtml(item.desc||'')}</textarea></div>
       <div class="field"><label>图片</label>
         <img class="tl-img-preview${item.img?' show':''}" id="tl2ImgPreview${uid}" src="${item.img||''}" alt="">
         <div class="img-upload${item.img?' has-img':''}" id="tl2ImgArea${uid}" onclick="document.getElementById('tl2ImgFile${uid}').click()">
           <input type="file" id="tl2ImgFile${uid}" accept="image/*" onchange="handleTL2ImgUpload('${uid}',this)">
-          ${item.img?`<span style="color:var(--green)">✓ 已有图片 · 点击重新选择</span><br><span style="font-size:.66rem;color:var(--muted2)">${item.img}</span>`:'📷 点击选择图片<br><span style="font-size:.66rem">支持 JPG/PNG/GIF · 自动上传到 images/</span>'}
+          ${item.img?`<span style="color:var(--green)">✓ 已有图片 · 点击重新选择</span><br><span style="font-size:.64rem;color:var(--muted2)">${item.img}</span>`:'📷 点击选择图片<br><span style="font-size:.64rem">支持 JPG/PNG/GIF</span>'}
         </div>
         ${item.img?`<button class="btn btn-danger btn-xs" style="margin-top:5px" onclick="clearTL2Img('${uid}')">× 移除图片</button>`:''}
         <input type="hidden" id="tl2ImgSrc${uid}" value="${escHtml(item.img||'')}">
@@ -1024,17 +1054,13 @@ function addTL2ItemHTML(container,item,uid){
     </div>`;
   container.appendChild(div);
 }
-function addTL2Item(){
-  const c=document.getElementById('tl2ItemsEditor');const uid=tl2UidCounter++;
-  addTL2ItemHTML(c,{year:'',title:'',tag:'',desc:'',img:''},uid);
-  setupDrag('tl2ItemsEditor');markChanged();
-}
+function addTL2Item(){const c=document.getElementById('tl2ItemsEditor');const uid=tl2UidCounter++;addTL2ItemHTML(c,{year:'',title:'',tag:'',desc:'',img:''},uid);setupDrag('tl2ItemsEditor');markChanged();}
 function removeTL2Item(uid){const el=document.getElementById(`tl2-${uid}`);if(el){el.remove();markChanged();}}
 function clearTL2Img(uid){
   document.getElementById('tl2ImgSrc'+uid).value='';
   const p=document.getElementById('tl2ImgPreview'+uid);p.src='';p.classList.remove('show');
   document.getElementById('tl2ImgArea'+uid).className='img-upload';
-  document.getElementById('tl2ImgArea'+uid).innerHTML=`<input type="file" id="tl2ImgFile${uid}" accept="image/*" onchange="handleTL2ImgUpload('${uid}',this)">📷 点击选择图片<br><span style="font-size:.66rem">支持 JPG/PNG/GIF</span>`;
+  document.getElementById('tl2ImgArea'+uid).innerHTML=`<input type="file" id="tl2ImgFile${uid}" accept="image/*" onchange="handleTL2ImgUpload('${uid}',this)">📷 点击选择图片<br><span style="font-size:.64rem">支持 JPG/PNG/GIF</span>`;
   delete tl2ImageUploads[uid];markChanged();
 }
 
@@ -1043,12 +1069,7 @@ function convertToWebP(file,quality=0.82){
   return new Promise(resolve=>{
     if(file.type==='image/webp'){const r=new FileReader();r.onload=e=>resolve({dataUrl:e.target.result});r.readAsDataURL(file);return;}
     const img=new Image(),url=URL.createObjectURL(file);
-    img.onload=()=>{
-      const canvas=document.createElement('canvas');
-      canvas.width=img.naturalWidth;canvas.height=img.naturalHeight;
-      const ctx=canvas.getContext('2d');ctx.fillStyle='#000';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.drawImage(img,0,0);
-      URL.revokeObjectURL(url);resolve({dataUrl:canvas.toDataURL('image/webp',quality)});
-    };
+    img.onload=()=>{const canvas=document.createElement('canvas');canvas.width=img.naturalWidth;canvas.height=img.naturalHeight;const ctx=canvas.getContext('2d');ctx.fillStyle='#000';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.drawImage(img,0,0);URL.revokeObjectURL(url);resolve({dataUrl:canvas.toDataURL('image/webp',quality)});};
     img.onerror=()=>{const r=new FileReader();r.onload=e=>resolve({dataUrl:e.target.result});r.readAsDataURL(file);};
     img.src=url;
   });
@@ -1082,15 +1103,10 @@ function handleMusicUpload(input){
   const sizeMB=(file.size/1024/1024).toFixed(1);
   const reader=new FileReader();
   reader.onload=e=>{
-    musicUpload={
-      base64:e.target.result.split(',')[1],
-      filename:'bg-music.mp3',
-      mimeType:file.type||'audio/mpeg',
-      originalName:file.name
-    };
+    musicUpload={base64:e.target.result.split(',')[1],filename:'bg-music.mp3',mimeType:file.type||'audio/mpeg',originalName:file.name};
     const area=document.getElementById('musicUploadArea');
     area.className='img-upload has-img';
-    area.innerHTML=`<input type="file" id="musicFileInput" accept="audio/*,.mp3,.wav,.ogg,.m4a,.flac" style="display:none" onchange="handleMusicUpload(this)"><span style="color:var(--yellow)">⏳ 待上传：${file.name}</span><br><span style="font-size:.66rem;color:var(--muted2)">大小：${sizeMB}MB · 点击重新选择</span>`;
+    area.innerHTML=`<input type="file" id="musicFileInput" accept="audio/*,.mp3,.wav,.ogg,.m4a,.flac" style="display:none" onchange="handleMusicUpload(this)"><span style="color:var(--yellow)">⏳ 待上传：${file.name}</span><br><span style="font-size:.64rem;color:var(--muted2)">大小：${sizeMB}MB · 点击重新选择</span>`;
     document.getElementById('musicFileInfo').innerHTML=`<span style="color:var(--yellow);font-weight:600">⚠ 文件已选择，点击"推送 GitHub"后正式上传替换</span>`;
     markChanged();
   };
@@ -1098,15 +1114,8 @@ function handleMusicUpload(input){
 }
 
 // ── Base64 ─────────────────────────────────────────────────────
-function b64ToUtf8(b64){
-  const binary=atob(b64),bytes=new Uint8Array(binary.length);
-  for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);
-  return new TextDecoder('utf-8').decode(bytes);
-}
-function utf8ToB64(str){
-  const bytes=new TextEncoder().encode(str);let binary='';
-  bytes.forEach(b=>binary+=String.fromCharCode(b));return btoa(binary);
-}
+function b64ToUtf8(b64){const binary=atob(b64),bytes=new Uint8Array(binary.length);for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);return new TextDecoder('utf-8').decode(bytes);}
+function utf8ToB64(str){const bytes=new TextEncoder().encode(str);let binary='';bytes.forEach(b=>binary+=String.fromCharCode(b));return btoa(binary);}
 
 // ── Collect Data ───────────────────────────────────────────────
 function collectData(){
@@ -1165,47 +1174,28 @@ function rebuildHTML(data,imgMap){
   const newLinks=data.navLinkRaw.map(l=>{const[text,href='#']=l.split('|');return`<a href="${href.trim()}">${text.trim()}</a>`;}).join('');
   html=html.replace(/<div class="nav-links">[\s\S]*?<\/div>/,`<div class="nav-links">${newLinks}</div>`);
   html=html.replace(/(class="hero-eyebrow">)[^<]+(<\/div>)/,`$1${data.heroEyebrow}$2`);
-  if(data.heroH1){
-    const newStyle=`--h1-fs1:${data.heroH1Fs1};--h1-fs2:${data.heroH1Fs2}`;
-    html=html.replace(/<h1 class="hero-h1"[^>]*>([\s\S]*?)<\/h1>/,
-      `<h1 class="hero-h1" style="${newStyle}">${data.heroH1}</h1>`);
-  }
+  if(data.heroH1){const newStyle=`--h1-fs1:${data.heroH1Fs1};--h1-fs2:${data.heroH1Fs2}`;html=html.replace(/<h1 class="hero-h1"[^>]*>([\s\S]*?)<\/h1>/,`<h1 class="hero-h1" style="${newStyle}">${data.heroH1}</h1>`);}
   html=html.replace(/(class="hero-sub">)[\s\S]*?(<\/p>)/,`$1${data.heroSub}$2`);
   if(data.tlSectionTitle)html=html.replace(/(class="sec-title">)[^<]+(<\/h2>)/,`$1${data.tlSectionTitle}$2`);
   const newStats=data.stats.map(s=>`<div class="stat-item"><div class="stat-num">${s.num}</div><div class="stat-label">${s.label}</div></div>`).join('');
-  html=(function(h){
-    const open='<div class="hero-stats">',si=h.indexOf(open);if(si===-1)return h;
-    let depth=0,i=si;
-    while(i<h.length){if(h.startsWith('<div',i)){depth++;i+=4;}else if(h.startsWith('</div>',i)){depth--;if(!depth){i+=6;break;}else i+=6;}else i++;}
-    return h.slice(0,si)+open+newStats+'</div>'+h.slice(i);
-  })(html);
+  html=(function(h){const open='<div class="hero-stats">',si=h.indexOf(open);if(si===-1)return h;let depth=0,i=si;while(i<h.length){if(h.startsWith('<div',i)){depth++;i+=4;}else if(h.startsWith('</div>',i)){depth--;if(!depth){i+=6;break;}else i+=6;}else i++;}return h.slice(0,si)+open+newStats+'</div>'+h.slice(i);})(html);
   html=html.replace(/(id="tl-eyebrow"[^>]*>)[^<]+(<\/p>)/,`$1${data.tlEyebrow}$2`);
   if(!html.includes('id="tl-eyebrow"'))html=html.replace(/(class="sec-eyebrow"[^>]*>)[^<]+(<\/p>)/,`$1${data.tlEyebrow}$2`);
-  // Hero 内容位置
   html=html.replace(/(class="hero-content")[^>]*(>)/,`$1 style="top:${data.heroTop}%;left:${data.heroLeft}%"$2`);
-  // 人物图片
   html=html.replace(/(id="person-wrap")[^>]*(>)/,`$1 style="bottom:${data.personBottom}vh;left:${data.personLeft}%"$2`);
   html=html.replace(/(id="person-img")[^>]*style="[^"]*"/,`$1 style="height:${data.personHeight}vh"`);
-  // 时间线间距
   html=html.replace(/(id="timeline-section")[^>]*(>)/,`$1 style="padding-top:${data.tl1PadTop}px;padding-bottom:${data.tl1PadBot}px"$2`);
   html=html.replace(/(id="timeline-section-2")[^>]*(>)/,`$1 style="padding-top:${data.tl2PadTop}px;padding-bottom:${data.tl2PadBot}px"$2`);
-  // 音乐
   if(data.musicTitle)html=html.replace(/(id="music-btn"[^>]*title=")[^"]*(")/,`$1${data.musicTitle}$2`);
   if(data._newMusicSrc)html=html.replace(/(<source\s+src=")[^"]+("\s+type="audio)/,`$1${data._newMusicSrc}$2`);
   if(data.dividerLabel)html=html.replace(/(class="divider-label">)[^<]+(<\/span>)/,`$1${data.dividerLabel}$2`);
   if(data.dividerSub)html=html.replace(/(class="divider-sub">)[^<]+(<\/p>)/,`$1${data.dividerSub}$2`);
   html=html.replace(/<footer><p>[^<]+<\/p><\/footer>/,`<footer><p>${data.footerText}</p></footer>`);
-  const tlJS=data.tlItems.map(item=>{
-    const img=imgMap[item.img]||(item.img.startsWith('__PENDING__')?'':item.img);
-    return`  {\n    year: ${JSON.stringify(item.year)},\n    title: ${JSON.stringify(item.title)},\n    tag: ${JSON.stringify(item.tag)},\n    desc: ${JSON.stringify(item.desc)}${img?`,\n    img: ${JSON.stringify(img)}`:''}\n  }`;
-  }).join(',\n');
+  const tlJS=data.tlItems.map(item=>{const img=imgMap[item.img]||(item.img.startsWith('__PENDING__')?'':item.img);return`  {\n    year: ${JSON.stringify(item.year)},\n    title: ${JSON.stringify(item.title)},\n    tag: ${JSON.stringify(item.tag)},\n    desc: ${JSON.stringify(item.desc)}${img?`,\n    img: ${JSON.stringify(img)}`:''}\n  }`;}).join(',\n');
   html=html.replace(/const TL=\[[\s\S]*?\];(\s*\(function)/,`const TL=[\n${tlJS}\n];$1`);
   if(data.tl2Eyebrow)html=html.replace(/(id="tl2-eyebrow"[^>]*>)[^<]+(<\/p>)/,`$1${data.tl2Eyebrow}$2`);
   if(data.tl2TitleVal)html=html.replace(/(id="tl2-title"[^>]*>)[^<]+(<\/h2>)/,`$1${data.tl2TitleVal}$2`);
-  const tl2JS=data.tl2Items.map(item=>{
-    const img=imgMap[item.img]||(item.img.startsWith('__TL2PENDING__')?'':item.img);
-    return`{\nyear: ${JSON.stringify(item.year)},\ntitle: ${JSON.stringify(item.title)},\ntag: ${JSON.stringify(item.tag)},\ndesc: ${JSON.stringify(item.desc)}${img?`,\nimg: ${JSON.stringify(img)}`:''}\n}`;
-  }).join(',\n');
+  const tl2JS=data.tl2Items.map(item=>{const img=imgMap[item.img]||(item.img.startsWith('__TL2PENDING__')?'':item.img);return`{\nyear: ${JSON.stringify(item.year)},\ntitle: ${JSON.stringify(item.title)},\ntag: ${JSON.stringify(item.tag)},\ndesc: ${JSON.stringify(item.desc)}${img?`,\nimg: ${JSON.stringify(img)}`:''}\n}`;}).join(',\n');
   html=html.replace(/const TL2=\[[\s\S]*?\];\s*\/\/ Render TL2/,`const TL2=[\n${tl2JS}\n];\n// Render TL2`);
   return html;
 }
@@ -1217,7 +1207,7 @@ async function pushToGitHub(){
   try{
     const imgMap={};
     for(const[uid,upload] of Object.entries(imageUploads)){
-      toast(`上传图片…`,'loading');
+      toast('上传图片…','loading');
       let existingSHA=null;try{const e=await ghGet(upload.filename);existingSHA=e.sha;}catch(e){}
       await ghPut(upload.filename,upload.base64,existingSHA,`upload: 时间线图片 ${upload.filename}`);
       const rawUrl=`https://cdn.jsdelivr.net/gh/${repo()}@${branch()}/${upload.filename}`;
@@ -1228,7 +1218,7 @@ async function pushToGitHub(){
     }
     imageUploads={};
     for(const[uid,upload] of Object.entries(tl2ImageUploads)){
-      toast(`上传时间线2图片…`,'loading');
+      toast('上传时间线2图片…','loading');
       let existingSHA=null;try{const e=await ghGet(upload.filename);existingSHA=e.sha;}catch(e){}
       await ghPut(upload.filename,upload.base64,existingSHA,`upload: 时间线2图片 ${upload.filename}`);
       const rawUrl=`https://cdn.jsdelivr.net/gh/${repo()}@${branch()}/${upload.filename}`;
@@ -1238,14 +1228,11 @@ async function pushToGitHub(){
       if(a)a.innerHTML=`<input type="file" id="tl2ImgFile${uid}" accept="image/*" onchange="handleTL2ImgUpload('${uid}',this)"><span style="color:var(--green)">✓ 已上传</span>`;
     }
     tl2ImageUploads={};
-    // 上传音乐文件
     let newMusicSrc='';
     if(musicUpload){
-      showLoading(true,'上传音乐文件…');
-      toast('上传音乐文件…','loading');
+      showLoading(true,'上传音乐文件…');toast('上传音乐文件…','loading');
       try{
-        let existingSHA=null;
-        try{const e=await ghGet(musicUpload.filename);existingSHA=e.sha;}catch(e){}
+        let existingSHA=null;try{const e=await ghGet(musicUpload.filename);existingSHA=e.sha;}catch(e){}
         await ghPut(musicUpload.filename,musicUpload.base64,existingSHA,`🎵 替换背景音乐: ${musicUpload.originalName}`);
         newMusicSrc=`https://cdn.jsdelivr.net/gh/${repo()}@${branch()}/${musicUpload.filename}?v=${Date.now()}`;
         const area=document.getElementById('musicUploadArea');
@@ -1264,15 +1251,13 @@ async function pushToGitHub(){
     const res=await ghPut('index.html',b64,currentSHA,'✏️ 后台管理更新内容');
     currentSHA=res.content.sha;currentHTML=newHTML;
     hasChanges=false;
-    document.getElementById('pushBar').classList.remove('show');
+    document.getElementById('unsavedDot').style.display='none';
+    document.getElementById('discardBtn').style.display='none';
     document.getElementById('pushBtn').disabled=true;
     setStatus('ok','已同步');
     toast('🎉 推送成功！GitHub Pages 约 1 分钟内更新');
-    // Refresh local preview after push
     if(previewOpen) updateLivePreview();
-  }catch(e){
-    setStatus('err','推送失败');toast('推送失败: '+e.message,'error');console.error(e);
-  }
+  }catch(e){setStatus('err','推送失败');toast('推送失败: '+e.message,'error');console.error(e);}
   showLoading(false);
 }
 
