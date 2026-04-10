@@ -296,6 +296,28 @@
               <button class="btn btn-ghost btn-sm" onclick="addStat()">＋ 添加</button>
             </div>
             <div class="grid-3" id="statsEditor"></div>
+            <hr class="divider">
+            <div class="row-label"><span>Hero 整体位置</span><span style="font-size:.66rem;color:var(--muted2)">拖动滑块调整内容块在屏幕中的位置</span></div>
+            <div class="grid-2">
+              <div class="field">
+                <label>垂直位置（上 → 下）</label>
+                <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+                  <input type="range" id="heroTop" min="0" max="100" step="1" value="58" oninput="document.getElementById('heroTopNum').value=this.value;markChanged()" style="flex:1;accent-color:var(--accent)">
+                  <input type="number" id="heroTopNum" min="0" max="100" step="1" value="58" oninput="document.getElementById('heroTop').value=this.value;markChanged()" style="width:56px;padding:5px 7px;border:1.5px solid var(--border);border-radius:6px;background:var(--panel2);color:var(--text);font-size:.82rem;outline:none">
+                  <span style="font-size:.72rem;color:var(--muted)">%</span>
+                </div>
+                <div class="help-text">数值越大越靠下 · 50 = 垂直居中</div>
+              </div>
+              <div class="field">
+                <label>水平位置（左 → 右）</label>
+                <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+                  <input type="range" id="heroLeft" min="0" max="100" step="1" value="50" oninput="document.getElementById('heroLeftNum').value=this.value;markChanged()" style="flex:1;accent-color:var(--accent)">
+                  <input type="number" id="heroLeftNum" min="0" max="100" step="1" value="50" oninput="document.getElementById('heroLeft').value=this.value;markChanged()" style="width:56px;padding:5px 7px;border:1.5px solid var(--border);border-radius:6px;background:var(--panel2);color:var(--text);font-size:.82rem;outline:none">
+                  <span style="font-size:.72rem;color:var(--muted)">%</span>
+                </div>
+                <div class="help-text">50 = 水平居中 · 向左减小 · 向右增大</div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -672,6 +694,16 @@ function parseAndRender(){
   const divSubM=html.match(/class="divider-sub">([^<]+)<\/p>/);
   if(divSubM)document.getElementById('dividerSub').value=divSubM[1];
 
+  // Hero 位置
+  const heroContentStyleM=html.match(/class="hero-content"[^>]*style="([^"]*)"/);
+  if(heroContentStyleM){
+    const sty=heroContentStyleM[1];
+    const topM=sty.match(/top:([\d.]+)%/);
+    const leftM=sty.match(/left:([\d.]+)%/);
+    if(topM){document.getElementById('heroTop').value=topM[1];document.getElementById('heroTopNum').value=topM[1];}
+    if(leftM){document.getElementById('heroLeft').value=leftM[1];document.getElementById('heroLeftNum').value=leftM[1];}
+  }
+
   const stats=[...html.matchAll(/<div class="stat-item"><div class="stat-num">([^<]+)<\/div><div class="stat-label">([^<]+)<\/div><\/div>/g)];
   renderStats(stats.map(m=>({num:m[1],label:m[2]})));
 
@@ -943,7 +975,9 @@ function collectData(){
   });
   const dividerLabel=document.getElementById('dividerLabel')?.value||'';
   const dividerSub=document.getElementById('dividerSub')?.value||'';
-  return{navBrand,navLinkRaw,heroEyebrow,heroSub,heroH1,heroH1Fs1,heroH1Fs2,tlSectionTitle,stats,tlEyebrow,footerText,tlItems,tl2Eyebrow,tl2TitleVal,tl2Items,dividerLabel,dividerSub};
+  const heroTop=document.getElementById('heroTop')?.value||'58';
+  const heroLeft=document.getElementById('heroLeft')?.value||'50';
+  return{navBrand,navLinkRaw,heroEyebrow,heroSub,heroH1,heroH1Fs1,heroH1Fs2,tlSectionTitle,stats,tlEyebrow,footerText,tlItems,tl2Eyebrow,tl2TitleVal,tl2Items,dividerLabel,dividerSub,heroTop,heroLeft};
 }
 
 // ── Rebuild HTML ───────────────────────────────────────────────
@@ -971,6 +1005,11 @@ function rebuildHTML(data,imgMap){
   })(html);
   html=html.replace(/(id="tl-eyebrow"[^>]*>)[^<]+(<\/p>)/,`$1${data.tlEyebrow}$2`);
   if(!html.includes('id="tl-eyebrow"'))html=html.replace(/(class="sec-eyebrow"[^>]*>)[^<]+(<\/p>)/,`$1${data.tlEyebrow}$2`);
+  // Hero 位置
+  html=html.replace(
+    /(class="hero-content")[^>]*(>)/,
+    `$1 style="top:${data.heroTop}%;left:${data.heroLeft}%"$2`
+  );
   if(data.dividerLabel)html=html.replace(/(class="divider-label">)[^<]+(<\/span>)/,`$1${data.dividerLabel}$2`);
   if(data.dividerSub)html=html.replace(/(class="divider-sub">)[^<]+(<\/p>)/,`$1${data.dividerSub}$2`);
   html=html.replace(/<footer><p>[^<]+<\/p><\/footer>/,`<footer><p>${data.footerText}</p></footer>`);
