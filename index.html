@@ -79,7 +79,7 @@ nav{padding:14px 16px;-webkit-transform:translateZ(0);transform:translateZ(0);-w
 #nexus-btn,#discord-btn{display:none}
 #music-label{display:none}
 /* 移除 backdrop-filter：移动端性能开销大，是 nav 抖动的诱因之一 */
-#lang-btn,#music-btn{backdrop-filter:none;-webkit-backdrop-filter:none;background:rgba(20,20,20,0.85)}
+#nexus-btn,#discord-btn,#lang-btn,#music-btn{backdrop-filter:none;-webkit-backdrop-filter:none;background:rgba(15,15,15,0.88)}
 /* 彻底隐藏 scroll-cue：它的 CSS transform 动画在 iOS Safari 会污染 fixed 元素的合成层 */
 .scroll-cue{display:none!important}
 /* Hero 区域：限制内部动画影响范围 */
@@ -122,36 +122,16 @@ linear-gradient(to right,  transparent 0%, black 10%, black 90%, transparent 100
 mask-composite: intersect;
 mix-blend-mode: screen;
 }
-/* ── 音乐按钮 ── */
-#music-btn{
+/* ── 导航按钮 · 统一白色胶囊 ── */
+#nexus-btn,#discord-btn,#lang-btn,#music-btn{
 display:flex;align-items:center;gap:7px;
-background:rgba(255,255,255,.06);
-border:1px solid rgba(255,255,255,.18);
-border-radius:30px;
-padding:7px 16px;
+background:rgba(255,255,255,.05);
+border:1.5px solid rgba(255,255,255,.38);
+border-radius:999px;
+padding:7px 18px;
 color:#fff;
 font-size:.72rem;
-letter-spacing:1.5px;
-text-transform:uppercase;
-cursor:pointer;
-transition:background .25s,border-color .25s,box-shadow .25s;
-backdrop-filter:blur(12px);
-white-space:nowrap;
-}
-#music-btn:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.4);box-shadow:0 0 18px rgba(255,255,255,.1)}
-#music-btn.playing{border-color:rgba(96,165,250,.6);background:rgba(59,130,246,.15);box-shadow:0 0 18px rgba(59,130,246,.25)}
-#music-icon{font-size:.9rem;transition:transform .3s}
-#music-btn.playing #music-icon{display:inline-block;animation:spin-slow 3s linear infinite}
-@keyframes spin-slow{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
-/* ── 导航链接按钮 ── */
-#nexus-btn,#discord-btn{
-display:flex;align-items:center;gap:6px;
-background:rgba(255,255,255,.06);
-border:1px solid rgba(255,255,255,.18);
-border-radius:30px;
-padding:7px 16px;
-color:#fff;
-font-size:.72rem;
+font-weight:600;
 letter-spacing:1.5px;
 text-transform:uppercase;
 cursor:pointer;
@@ -159,10 +139,18 @@ text-decoration:none;
 transition:background .25s,border-color .25s,box-shadow .25s;
 backdrop-filter:blur(12px);
 white-space:nowrap;
+font-family:inherit;
 }
-#nexus-btn:hover,#discord-btn:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.4);box-shadow:0 0 18px rgba(255,255,255,.1)}
-#discord-btn{border-color:rgba(88,101,242,.5);background:rgba(88,101,242,.12);}
-#discord-btn:hover{border-color:rgba(88,101,242,.8);background:rgba(88,101,242,.22);box-shadow:0 0 18px rgba(88,101,242,.25)}
+#nexus-btn:hover,#discord-btn:hover,#lang-btn:hover,#music-btn:hover{
+background:rgba(255,255,255,.12);
+border-color:rgba(255,255,255,.75);
+box-shadow:0 0 20px rgba(255,255,255,.12);
+}
+#music-btn.playing{border-color:rgba(96,165,250,.7);background:rgba(59,130,246,.15);box-shadow:0 0 18px rgba(59,130,246,.25)}
+#music-icon{font-size:.9rem;transition:transform .3s}
+#music-btn.playing #music-icon{display:inline-block;animation:spin-slow 3s linear infinite}
+@keyframes spin-slow{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+#lang-btn.active{border-color:rgba(96,165,250,.7);background:rgba(59,130,246,.15);box-shadow:0 0 18px rgba(59,130,246,.25)}
 /* ── 手部光线特效 ── */
 #beam-canvas{
 position:absolute;
@@ -172,10 +160,7 @@ pointer-events:none;
 width:100%;
 height:100%;
 }
-/* ── Language Button ── */
-#lang-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid rgba(255,255,255,.22);border-radius:20px;background:rgba(255,255,255,.05);color:#e2e8f0;font-size:.7rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:border-color .25s,background .25s,box-shadow .25s;font-family:inherit}
-#lang-btn:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.4);box-shadow:0 0 14px rgba(255,255,255,.08)}
-#lang-btn.active{border-color:rgba(96,165,250,.6);background:rgba(59,130,246,.15);box-shadow:0 0 18px rgba(59,130,246,.25)}
+/* ── Language Button active state ── */
 /* Hide Google Translate toolbar */
 .goog-te-banner-frame,.goog-te-balloon-frame{display:none!important}
 body{top:0!important}
@@ -257,12 +242,9 @@ body{top:0!important}
 /* ── Section background tint to reinforce split ── */
 #timeline-section{background:linear-gradient(180deg,#000 0%,#080a0e 100%)}
 #timeline-section-2{background:linear-gradient(180deg,#03070f 0%,#000 100%);border-top:none}
-/* ── Section 1 title accent — silver/white ── */
-#timeline-section .sec-eyebrow{color:rgba(255,255,255,.7)}
-#timeline-section .sec-title{background:linear-gradient(135deg,#fff 0%,#c8d8f0 60%,#8aa8cc 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-/* ── Section 2 title accent — Nexus blue ── */
-#timeline-section-2 .sec-eyebrow{color:var(--blue)}
-#timeline-section-2 .sec-title{background:linear-gradient(135deg,#60a5fa 0%,#a8c8ff 50%,#fff 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+/* ── Section 1 & 2 title accent — unified Nexus blue ── */
+#timeline-section .sec-eyebrow,#timeline-section-2 .sec-eyebrow{color:var(--blue)}
+#timeline-section .sec-title,#timeline-section-2 .sec-title{background:linear-gradient(135deg,#60a5fa 0%,#a8c8ff 50%,#fff 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 </style>
 </head>
 <body>
