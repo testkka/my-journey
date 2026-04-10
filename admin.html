@@ -269,7 +269,7 @@
             <hr class="divider">
             <div class="grid-2" style="margin-bottom:14px">
               <div class="field"><label>Hero 标语 (Eyebrow)</label><input type="text" id="heroEyebrow" oninput="markChanged()"></div>
-              <div class="field"><label>Hero 副标题</label><textarea id="heroSub" rows="2" oninput="markChanged()"></textarea></div>
+              <div class="field"><label>Hero 副标题（如：Building a future of mathematical truth↵Nexus runs on proof，每行一句）</label><textarea id="heroSub" rows="3" oninput="markChanged()" placeholder="Building a future of mathematical truth&#10;Nexus runs on proof"></textarea></div>
             </div>
             <div class="grid-2" style="margin-bottom:14px">
               <div class="field"><label>Hero 大标题（H1）</label><textarea id="heroH1" rows="2" oninput="markChanged()"></textarea></div>
@@ -570,8 +570,8 @@ function parseAndRender(){
 
   const eyebrow=html.match(/class="hero-eyebrow">([^<]+)<\/div>/);
   if(eyebrow)document.getElementById('heroEyebrow').value=eyebrow[1];
-  const heroSub=html.match(/class="hero-sub">([^<]+)<\/p>/);
-  if(heroSub)document.getElementById('heroSub').value=heroSub[1].replace(/<br>/g,'\n');
+  const heroSub=html.match(/class="hero-sub">([\s\S]*?)<\/p>/);
+  if(heroSub)document.getElementById('heroSub').value=heroSub[1].replace(/<br\s*\/?>/gi,'\n');
   const heroH1Match=html.match(/class="hero-h1">([\s\S]*?)<\/h1>/);
   if(heroH1Match)document.getElementById('heroH1').value=heroH1Match[1].replace(/<br>/g,'\n');
   const tlSecTitle=html.match(/class="sec-title">([^<]+)<\/h2>/);
@@ -855,7 +855,7 @@ function rebuildHTML(data,imgMap){
   html=html.replace(/<div class="nav-links">[\s\S]*?<\/div>/,`<div class="nav-links">${newLinks}</div>`);
   html=html.replace(/(class="hero-eyebrow">)[^<]+(<\/div>)/,`$1${data.heroEyebrow}$2`);
   if(data.heroH1)html=html.replace(/(class="hero-h1">)[\s\S]*?(<\/h1>)/,`$1${data.heroH1}$2`);
-  html=html.replace(/(class="hero-sub">)[^<]+(<\/p>)/,`$1${data.heroSub}$2`);
+  html=html.replace(/(class="hero-sub">)[\s\S]*?(<\/p>)/,`$1${data.heroSub}$2`);
   if(data.tlSectionTitle)html=html.replace(/(class="sec-title">)[^<]+(<\/h2>)/,`$1${data.tlSectionTitle}$2`);
   const newStats=data.stats.map(s=>`<div class="stat-item"><div class="stat-num">${s.num}</div><div class="stat-label">${s.label}</div></div>`).join('');
   html=(function(h){
