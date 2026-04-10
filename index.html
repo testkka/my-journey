@@ -189,6 +189,29 @@ body{top:0!important}
 .nav-links a{font-size:.72rem;letter-spacing:1.2px}
 /* ── Second Timeline Section ── */
 #timeline-section-2{padding:100px 0 120px;overflow:hidden;background:#000;border-top:1px solid rgba(255,255,255,.06)}
+
+/* ── Section Dividers ── */
+.section-divider{padding:56px 24px 0;text-align:center;background:#000;position:relative}
+.divider-inner{display:flex;align-items:center;justify-content:center;gap:20px;margin-bottom:14px}
+.divider-line{flex:1;max-width:200px;height:1px;background:linear-gradient(to right,transparent,rgba(255,255,255,.25),transparent)}
+.divider-line-blue{background:linear-gradient(to right,transparent,rgba(59,130,246,.5),transparent)}
+.divider-badge{display:flex;align-items:center;gap:10px;padding:8px 22px;border:1px solid rgba(255,255,255,.18);border-radius:40px;background:rgba(255,255,255,.04);backdrop-filter:blur(12px);white-space:nowrap}
+.divider-badge-blue{border-color:rgba(59,130,246,.35);background:rgba(59,130,246,.07)}
+.divider-icon{font-size:.75rem;color:rgba(255,255,255,.5)}
+.divider-icon-blue{font-size:.8rem;color:rgba(96,165,250,.7)}
+.divider-label{font-size:.65rem;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:rgba(255,255,255,.8)}
+.divider-label-blue{font-size:.65rem;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--blue)}
+.divider-sub{font-size:.72rem;color:rgba(255,255,255,.3);letter-spacing:1.5px;margin:0;padding-bottom:0}
+.divider-sub-blue{color:rgba(96,165,250,.4)}
+/* ── Section background tint to reinforce split ── */
+#timeline-section{background:linear-gradient(180deg,#000 0%,#080a0e 100%)}
+#timeline-section-2{background:linear-gradient(180deg,#03070f 0%,#000 100%);border-top:none}
+/* ── Section 1 title accent — silver/white ── */
+#timeline-section .sec-eyebrow{color:rgba(255,255,255,.7)}
+#timeline-section .sec-title{background:linear-gradient(135deg,#fff 0%,#c8d8f0 60%,#8aa8cc 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+/* ── Section 2 title accent — Nexus blue ── */
+#timeline-section-2 .sec-eyebrow{color:var(--blue)}
+#timeline-section-2 .sec-title{background:linear-gradient(135deg,#60a5fa 0%,#a8c8ff 50%,#fff 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 </style>
 </head>
 <body>
@@ -226,6 +249,18 @@ body{top:0!important}
 SCROLL
 </div>
 </section>
+<div class="section-divider divider-person">
+  <div class="divider-inner">
+    <div class="divider-line"></div>
+    <div class="divider-badge">
+      <span class="divider-icon">◈</span>
+      <span class="divider-label">The Founder</span>
+      <span class="divider-icon">◈</span>
+    </div>
+    <div class="divider-line"></div>
+  </div>
+  <p class="divider-sub">A journey from Venezuela to the frontier of cryptography</p>
+</div>
 <section id="timeline-section">
 <p class="sec-eyebrow">DANIEL MARIN · PERSONAL JOURNEY</p>
 <h2 class="sec-title">The Man Behind the Proof</h2>
@@ -245,6 +280,18 @@ SCROLL
 <svg width="14" height="10" viewBox="0 0 20 14" fill="none" stroke="currentColor" stroke-width="1.8" style="transform:scaleX(-1)"><path d="M1 7h18M13 1l6 6-6 6"/></svg>
 </div>
 </section>
+<div class="section-divider divider-nexus">
+  <div class="divider-inner">
+    <div class="divider-line divider-line-blue"></div>
+    <div class="divider-badge divider-badge-blue">
+      <span class="divider-icon-blue">⬡</span>
+      <span class="divider-label-blue">Nexus</span>
+      <span class="divider-icon-blue">⬡</span>
+    </div>
+    <div class="divider-line divider-line-blue"></div>
+  </div>
+  <p class="divider-sub divider-sub-blue">From a 1Hz prototype to a planet-scale verifiable compute layer</p>
+</div>
 <section id="timeline-section-2">
 <p class="sec-eyebrow" id="tl2-eyebrow">NEXUS · PROJECT MILESTONES</p>
 <h2 class="sec-title" id="tl2-title">Building the Verifiable Internet</h2>
