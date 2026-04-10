@@ -1,1 +1,28 @@
-Ly8g6Ieq5Yqo5pKt5pS+6IOM5pmv6Z+z5LmQIOKAlCDov5vlhaXpobXpnaLljbPmkq3mlL7vvIzmtY/op4jlmajmi6bmiKrml7bnrYnlvoXpppbmrKHkuqTkupIKKGZ1bmN0aW9uKCl7CiAgdmFyIGF1ZGlvID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2JnLWF1ZGlvJyk7CiAgaWYgKCFhdWRpbykgcmV0dXJuOwogIGZ1bmN0aW9uIHN0YXJ0KCkgewogICAgaWYgKHdpbmRvdy5fYmdQbGF5aW5nKSByZXR1cm47CiAgICBhdWRpby5wbGF5KCkudGhlbihmdW5jdGlvbigpewogICAgICB3aW5kb3cuX2JnUGxheWluZyA9IHRydWU7CiAgICAgIHZhciBidG4gPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnbXVzaWMtYnRuJyk7CiAgICAgIHZhciBsYmwgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnbXVzaWMtbGFiZWwnKTsKICAgICAgaWYgKGJ0bikgYnRuLmNsYXNzTGlzdC5hZGQoJ3BsYXlpbmcnKTsKICAgICAgaWYgKGxibCkgbGJsLnRleHRDb250ZW50ID0gJ1BhdXNlJzsKICAgIH0pLmNhdGNoKGZ1bmN0aW9uKCl7CiAgICAgIC8vIGJsb2NrZWQgYnkgYnJvd3Nlciwgd2FpdCBmb3IgZmlyc3QgaW50ZXJhY3Rpb24KICAgICAgWyJjbGljayIsInRvdWNoc3RhcnQiLCJrZXlkb3duIl0uZm9yRWFjaChmdW5jdGlvbihldil7CiAgICAgICAgZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcihldiwgZnVuY3Rpb24gaCgpewogICAgICAgICAgc3RhcnQoKTsKICAgICAgICAgIGRvY3VtZW50LnJlbW92ZUV2ZW50TGlzdGVuZXIoZXYsIGgpOwogICAgICAgIH0sIHtvbmNlOnRydWV9KTsKICAgICAgfSk7CiAgICB9KTsKICB9CiAgaWYgKGRvY3VtZW50LnJlYWR5U3RhdGUgPT09ICJsb2FkaW5nIikgewogICAgZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcigiRE9NQ29udGVudExvYWRlZCIsIHN0YXJ0KTsKICB9IGVsc2UgewogICAgc3RhcnQoKTsKICB9Cn0pKCk7Cg==
+// 自动播放背景音乐 — 进入页面即播放，浏览器拦截时等待首次交互
+(function(){
+  var audio = document.getElementById('bg-audio');
+  if (!audio) return;
+  function start() {
+    if (window._bgPlaying) return;
+    audio.play().then(function(){
+      window._bgPlaying = true;
+      var btn = document.getElementById('music-btn');
+      var lbl = document.getElementById('music-label');
+      if (btn) btn.classList.add('playing');
+      if (lbl) lbl.textContent = 'Pause';
+    }).catch(function(){
+      // blocked by browser, wait for first user interaction
+      ['click','touchstart','keydown'].forEach(function(ev){
+        document.addEventListener(ev, function h(){
+          start();
+          document.removeEventListener(ev, h);
+        }, {once:true});
+      });
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', start);
+  } else {
+    start();
+  }
+})();
