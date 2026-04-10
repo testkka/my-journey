@@ -1,63 +1,39 @@
-// 自动播放背景音乐
-// 策略：静音状态直接 autoplay（浏览器允许）→ 用户首次交互时取消静音
+// 自动播放背景音乐 — 进入即播放，仅 Music 按钮可暂停
 (function () {
-  var audio = document.getElementById('bg-audio');
+  var audio = document.getElementById("bg-audio");
   if (!audio) return;
 
-  audio.preload = 'auto';
-  audio.muted = true; // 先静音，确保 autoplay 成功
+  audio.preload = "auto";
 
   function updateUI(playing) {
-    var btn = document.getElementById('music-btn');
-    var lbl = document.getElementById('music-label');
-    if (btn) {
-      if (playing) btn.classList.add('playing');
-      else btn.classList.remove('playing');
-    }
-    if (lbl) lbl.textContent = playing ? 'Pause' : 'Music';
+    var btn = document.getElementById("music-btn");
+    var lbl = document.getElementById("music-label");
+    if (btn) playing ? btn.classList.add("playing") : btn.classList.remove("playing");
+    if (lbl) lbl.textContent = playing ? "Pause" : "Music";
     window.isPlaying = playing;
     window._bgPlaying = playing;
   }
 
-  // 用户首次交互时取消静音
-  function setupUnmute() {
-    var events = ['click', 'touchstart', 'keydown', 'scroll'];
-    function onFirstInteract() {
-      events.forEach(function (ev) {
-        document.removeEventListener(ev, onFirstInteract);
-      });
-      audio.muted = false; // 取消静音，音乐开始播放出声
-    }
-    events.forEach(function (ev) {
-      document.addEventListener(ev, onFirstInteract, { once: true, passive: true });
-    });
-  }
-
-  function start() {
+  function tryPlay() {
+    // 先静音播放（浏览器允许）→ 立即取消静音
+    audio.muted = true;
     audio.play().then(function () {
+      audio.muted = false; // 立刻取消静音，无需等待任何交互
       updateUI(true);
-      setupUnmute(); // 播放成功（静音），等待用户交互后取消静音
     }).catch(function (e) {
-      // 极少数情况下静音 autoplay 也被拦截（如 iframe 沙箱）
-      console.warn('muted autoplay blocked:', e);
-      // 降级：等待任意交互再播放
-      var events = ['click', 'touchstart', 'keydown', 'scroll'];
-      function onInteract() {
-        events.forEach(function (ev) { document.removeEventListener(ev, onInteract); });
+      // 极少数严格环境（如 iframe 沙箱）降级处理：等待首次点击
+      console.warn("autoplay blocked, waiting for click:", e);
+      document.addEventListener("click", function once() {
+        document.removeEventListener("click", once);
         audio.muted = false;
-        audio.play().then(function () { updateUI(true); }).catch(function (e2) {
-          console.warn('autoplay failed:', e2);
-        });
-      }
-      events.forEach(function (ev) {
-        document.addEventListener(ev, onInteract, { once: true, passive: true });
-      });
+        audio.play().then(function () { updateUI(true); }).catch(function () {});
+      }, { once: true });
     });
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', start);
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", tryPlay);
   } else {
-    start();
+    tryPlay();
   }
 })();
