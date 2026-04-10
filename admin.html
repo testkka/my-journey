@@ -196,12 +196,27 @@
 
   <div class="section" id="sec-timeline">
     <div class="section-header" onclick="toggleSection('timeline')">
-      <div><div class="section-title">🗓 时间线管理</div><div class="section-subtitle">编辑每个时间节点 · 拖拽手柄可排序</div></div>
+      <div><div class="section-title">🗓 时间线一 · Nexus Journey</div><div class="section-subtitle">编辑每个时间节点 · 拖拽手柄可排序</div></div>
       <span class="section-toggle" id="toggle-timeline">▲</span>
     </div>
     <div class="section-body" id="body-timeline">
       <div id="tlItemsEditor"></div>
       <button class="add-btn" onclick="addTLItem()">＋ 添加时间节点</button>
+    </div>
+  </div>
+
+  <div class="section" id="sec-timeline2">
+    <div class="section-header" onclick="toggleSection('timeline2')">
+      <div><div class="section-title">🗓 时间线二 · Personal Journey</div><div class="section-subtitle">编辑第二条时间线节点 · 拖拽手柄可排序</div></div>
+      <span class="section-toggle" id="toggle-timeline2">▲</span>
+    </div>
+    <div class="section-body" id="body-timeline2">
+      <div class="grid-2" style="margin-bottom:16px">
+        <div class="field"><label>顶部小标题 (Eyebrow)</label><input type="text" id="tl2Eyebrow" oninput="markChanged()"></div>
+        <div class="field"><label>大标题 (Section Title)</label><input type="text" id="tl2Title" oninput="markChanged()"></div>
+      </div>
+      <div id="tl2ItemsEditor"></div>
+      <button class="add-btn" onclick="addTL2Item()">＋ 添加时间节点</button>
     </div>
   </div>
 </div>
@@ -225,7 +240,9 @@ let currentHTML = '';
 let currentSHA  = '';
 let hasChanges  = false;
 let imageUploads = {};
-let tlUidCounter = 0; // always-increasing uid for tl items, avoids id collisions
+let tl2ImageUploads = {};
+let tlUidCounter = 0;
+let tl2UidCounter = 0;
 let statCount = 0;
 
 // ─── Auth ────────────────────────────────────────────────
@@ -428,8 +445,13 @@ function parseAndRender(){
   const stats = [...html.matchAll(/<div class="stat-item"><div class="stat-num">([^<]+)<\/div><div class="stat-label">([^<]+)<\/div><\/div>/g)];
   renderStats(stats.map(m=>({num:m[1],label:m[2]})));
 
-  const tlEye = html.match(/class="sec-eyebrow">([^<]+)<\/p>/);
-  if(tlEye) document.getElementById('tlEyebrow').value = tlEye[1];
+  // TL1 eyebrow (first sec-eyebrow, not tl2)
+  const tlEyeMatch = html.match(/id="tl-eyebrow"[^>]*>([^<]+)<\/p>/);
+  if(tlEyeMatch) document.getElementById('tlEyebrow').value = tlEyeMatch[1];
+  else {
+    const tlEyeFallback = html.match(/class="sec-eyebrow"[^>]*>([^<]+)<\/p>/);
+    if(tlEyeFallback) document.getElementById('tlEyebrow').value = tlEyeFallback[1];
+  }
 
   const footer = html.match(/<footer><p>([^<]+)<\/p><\/footer>/);
   if(footer) document.getElementById('footerText').value = footer[1];
@@ -438,6 +460,19 @@ function parseAndRender(){
   if(tlMatch){
     try { renderTLItems((new Function('return '+tlMatch[1]))()); }
     catch(e){ console.error('TL parse error', e); }
+  }
+
+  // TL2 eyebrow & title
+  const tl2EyeMatch = html.match(/id="tl2-eyebrow"[^>]*>([^<]+)<\/p>/);
+  if(tl2EyeMatch) document.getElementById('tl2Eyebrow').value = tl2EyeMatch[1];
+  const tl2TitleMatch = html.match(/id="tl2-title"[^>]*>([^<]+)<\/h2>/);
+  if(tl2TitleMatch) document.getElementById('tl2Title').value = tl2TitleMatch[1];
+
+  // TL2 data array
+  const tl2Match = html.match(/const TL2=(\[[\s\S]*?\]);\s*\/\/ Render TL2/);
+  if(tl2Match){
+    try { renderTL2Items((new Function('return '+tl2Match[1]))()); }
+    catch(e){ console.error('TL2 parse error', e); }
   }
 }
 
@@ -520,6 +555,115 @@ function addTLItem(){
 function removeTLItem(uid){
   const el = document.getElementById(`tl-${uid}`);
   if(el){ el.remove(); markChanged(); }
+}
+
+// ─── Timeline2 Editor ─────────────────────────────────────
+function renderTL2Items(items){
+  tl2UidCounter = 0;
+  tl2ImageUploads = {};
+  const container = document.getElementById('tl2ItemsEditor');
+  container.innerHTML = '';
+  items.forEach(item => addTL2ItemHTML(container, item, tl2UidCounter++));
+  initDragSort2();
+}
+
+function addTL2ItemHTML(container, item, uid){
+  const div = document.createElement('div');
+  div.className = 'tl-editor';
+  div.id = `tl2-${uid}`;
+  div.draggable = true;
+  div.innerHTML = `
+    <div class="tl-editor-header">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="drag-handle" title="拖拽排序">⠿</span>
+        <span class="tl-editor-num" style="background:rgba(99,102,241,.15);color:#818cf8">节点</span>
+      </div>
+      <button class="btn btn-danger btn-sm" onclick="removeTL2Item('${uid}')">删除</button>
+    </div>
+    <div class="grid-2" style="margin-bottom:12px">
+      <div class="field"><label>年份 / 日期</label><input type="text" id="tl2Year${uid}" value="${escHtml(item.year||'')}" oninput="markChanged()"></div>
+      <div class="field"><label>标签 (Tag)</label><input type="text" id="tl2Tag${uid}" value="${escHtml(item.tag||'')}" oninput="markChanged()"></div>
+    </div>
+    <div class="field" style="margin-bottom:12px"><label>标题</label><input type="text" id="tl2Title${uid}" value="${escHtml(item.title||'')}" oninput="markChanged()"></div>
+    <div class="field" style="margin-bottom:12px"><label>描述</label><textarea id="tl2Desc${uid}" rows="3" oninput="markChanged()">${escHtml(item.desc||'')}</textarea></div>
+    <div class="field"><label>图片</label>
+      <img class="tl-img-preview ${item.img?'show':''}" id="tl2ImgPreview${uid}" src="${item.img||''}" alt="">
+      <div class="img-upload-area ${item.img?'has-img':''}" id="tl2ImgArea${uid}" onclick="document.getElementById('tl2ImgFile${uid}').click()">
+        <input type="file" id="tl2ImgFile${uid}" accept="image/*" onchange="handleTL2ImgUpload('${uid}',this)">
+        ${item.img
+          ? `<span style="color:var(--green)">✓ 已有图片 · 点击重新选择</span><br><span style="font-size:.72rem;opacity:.6">${item.img}</span>`
+          : `📷 点击选择图片<br><span style="font-size:.72rem">支持 JPG / PNG / GIF · 自动上传到仓库 images/</span>`}
+      </div>
+      ${item.img ? `<button class="btn btn-danger btn-sm" style="margin-top:6px" onclick="clearTL2Img('${uid}')">× 移除图片</button>` : ''}
+      <input type="hidden" id="tl2ImgSrc${uid}" value="${escHtml(item.img||'')}">
+    </div>`;
+  container.appendChild(div);
+}
+
+function addTL2Item(){
+  const container = document.getElementById('tl2ItemsEditor');
+  const uid = tl2UidCounter++;
+  addTL2ItemHTML(container, {year:'',title:'',tag:'',desc:'',img:''}, uid);
+  initDragSort2();
+  markChanged();
+}
+
+function removeTL2Item(uid){
+  const el = document.getElementById(`tl2-${uid}`);
+  if(el){ el.remove(); markChanged(); }
+}
+
+function clearTL2Img(uid){
+  document.getElementById('tl2ImgSrc'+uid).value = '';
+  const preview = document.getElementById('tl2ImgPreview'+uid);
+  preview.src = ''; preview.classList.remove('show');
+  document.getElementById('tl2ImgArea'+uid).className = 'img-upload-area';
+  document.getElementById('tl2ImgArea'+uid).innerHTML = `<input type="file" id="tl2ImgFile${uid}" accept="image/*" onchange="handleTL2ImgUpload('${uid}',this)">📷 点击选择图片<br><span style="font-size:.72rem">支持 JPG / PNG / GIF</span>`;
+  delete tl2ImageUploads[uid];
+  markChanged();
+}
+
+function handleTL2ImgUpload(uid, input){
+  const file = input.files[0];
+  if(!file) return;
+  const ext = file.name.split('.').pop().toLowerCase();
+  const filename = `images/tl2-${uid}-${Date.now()}.${ext}`;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const b64 = e.target.result.split(',')[1];
+    tl2ImageUploads[uid] = { filename, base64: b64, mimeType: file.type };
+    const preview = document.getElementById('tl2ImgPreview'+uid);
+    preview.src = e.target.result; preview.classList.add('show');
+    document.getElementById('tl2ImgArea'+uid).className = 'img-upload-area has-img';
+    document.getElementById('tl2ImgArea'+uid).innerHTML = `<input type="file" id="tl2ImgFile${uid}" accept="image/*" onchange="handleTL2ImgUpload('${uid}',this)"><span style="color:var(--yellow)">⏳ 待上传: ${file.name}</span>`;
+    document.getElementById('tl2ImgSrc'+uid).value = '__TL2PENDING__'+uid;
+    markChanged();
+  };
+  reader.readAsDataURL(file);
+}
+
+// ─── Drag-to-reorder TL2 ──────────────────────────────────
+let dragSrc2 = null;
+function initDragSort2(){
+  const container = document.getElementById('tl2ItemsEditor');
+  container.querySelectorAll('.tl-editor').forEach(el => {
+    el.addEventListener('dragstart', e => { dragSrc2 = el; el.style.opacity='.4'; e.dataTransfer.effectAllowed='move'; });
+    el.addEventListener('dragend',   e => { el.style.opacity=''; container.querySelectorAll('.tl-editor').forEach(x=>x.classList.remove('drag-over')); });
+    el.addEventListener('dragover',  e => { e.preventDefault(); e.dataTransfer.dropEffect='move'; });
+    el.addEventListener('dragenter', e => { if(el!==dragSrc2) el.classList.add('drag-over'); });
+    el.addEventListener('dragleave', e => { el.classList.remove('drag-over'); });
+    el.addEventListener('drop',      e => {
+      e.preventDefault();
+      if(dragSrc2 && dragSrc2 !== el){
+        const els = [...container.querySelectorAll('.tl-editor')];
+        const fromIdx = els.indexOf(dragSrc2);
+        const toIdx   = els.indexOf(el);
+        if(fromIdx < toIdx) el.after(dragSrc2); else el.before(dragSrc2);
+        markChanged();
+      }
+      el.classList.remove('drag-over');
+    });
+  });
 }
 
 function clearImg(uid){
@@ -608,7 +752,7 @@ function collectData(){
     if(num||label) stats.push({num,label});
   });
 
-  // Timeline items (in current DOM order)
+  // Timeline TL1 items (in current DOM order)
   const tlItems = [];
   document.getElementById('tlItemsEditor').querySelectorAll('.tl-editor').forEach(el => {
     const uid = el.id.split('-')[1];
@@ -621,7 +765,24 @@ function collectData(){
     });
   });
 
-  return { navBrand, navLinkRaw, heroEyebrow, heroSub, stats, tlEyebrow, footerText, tlItems };
+  // Timeline TL2 eyebrow & title
+  const tl2Eyebrow = document.getElementById('tl2Eyebrow')?.value || '';
+  const tl2TitleVal = document.getElementById('tl2Title')?.value || '';
+
+  // Timeline TL2 items
+  const tl2Items = [];
+  document.getElementById('tl2ItemsEditor').querySelectorAll('.tl-editor').forEach(el => {
+    const uid = el.id.replace('tl2-','');
+    tl2Items.push({
+      year:  document.getElementById('tl2Year'+uid)?.value || '',
+      title: document.getElementById('tl2Title'+uid)?.value || '',
+      tag:   document.getElementById('tl2Tag'+uid)?.value || '',
+      desc:  document.getElementById('tl2Desc'+uid)?.value || '',
+      img:   document.getElementById('tl2ImgSrc'+uid)?.value || '',
+    });
+  });
+
+  return { navBrand, navLinkRaw, heroEyebrow, heroSub, stats, tlEyebrow, footerText, tlItems, tl2Eyebrow, tl2TitleVal, tl2Items };
 }
 
 // ─── Rebuild HTML ─────────────────────────────────────────
@@ -668,18 +829,34 @@ function rebuildHTML(data, imgMap){
     return h.slice(0,si)+open+newStats+'</div>'+h.slice(i);
   })(html);
 
-  // TL eyebrow
-  html = html.replace(/(class="sec-eyebrow">)[^<]+(<\/p>)/, `$1${data.tlEyebrow}$2`);
+  // TL1 eyebrow (first sec-eyebrow)
+  html = html.replace(/(id="tl-eyebrow"[^>]*>)[^<]+(<\/p>)/, `$1${data.tlEyebrow}$2`);
+  // Fallback if no id
+  if(!html.includes('id="tl-eyebrow"'))
+    html = html.replace(/(class="sec-eyebrow"[^>]*>)[^<]+(<\/p>)/, `$1${data.tlEyebrow}$2`);
 
   // Footer
   html = html.replace(/<footer><p>[^<]+<\/p><\/footer>/, `<footer><p>${data.footerText}</p></footer>`);
 
-  // Timeline TL array
+  // Timeline TL1 array
   const tlJS = data.tlItems.map(item => {
     const img = imgMap[item.img] || (item.img.startsWith('__PENDING__') ? '' : item.img);
     return `  {\n    year: ${JSON.stringify(item.year)},\n    title: ${JSON.stringify(item.title)},\n    tag: ${JSON.stringify(item.tag)},\n    desc: ${JSON.stringify(item.desc)}${img ? `,\n    img: ${JSON.stringify(img)}` : ''}\n  }`;
   }).join(',\n');
   html = html.replace(/const TL=\[[\s\S]*?\];(\s*\(function)/, `const TL=[\n${tlJS}\n];$1`);
+
+  // TL2 eyebrow & title
+  if(data.tl2Eyebrow)
+    html = html.replace(/(id="tl2-eyebrow"[^>]*>)[^<]+(<\/p>)/, `$1${data.tl2Eyebrow}$2`);
+  if(data.tl2TitleVal)
+    html = html.replace(/(id="tl2-title"[^>]*>)[^<]+(<\/h2>)/, `$1${data.tl2TitleVal}$2`);
+
+  // Timeline TL2 array
+  const tl2JS = data.tl2Items.map(item => {
+    const img = imgMap[item.img] || (item.img.startsWith('__TL2PENDING__') ? '' : item.img);
+    return `{\nyear: ${JSON.stringify(item.year)},\ntitle: ${JSON.stringify(item.title)},\ntag: ${JSON.stringify(item.tag)},\ndesc: ${JSON.stringify(item.desc)}${img ? `,\nimg: ${JSON.stringify(img)}` : ''}\n}`;
+  }).join(',\n');
+  html = html.replace(/const TL2=\[[\s\S]*?\];\s*\/\/ Render TL2/, `const TL2=[\n${tl2JS}\n];\n// Render TL2`);
 
   return html;
 }
@@ -692,7 +869,7 @@ async function pushToGitHub(){
   try {
     const imgMap = {};
 
-    // 1. Upload pending images
+    // 1. Upload pending images (TL1)
     for(const [uid, upload] of Object.entries(imageUploads)){
       toast(`上传图片…`, 'loading');
       let existingSHA = null;
@@ -706,6 +883,21 @@ async function pushToGitHub(){
       if(area) area.innerHTML = `<input type="file" id="tlImgFile${uid}" accept="image/*" onchange="handleImgUpload('${uid}',this)"><span style="color:var(--green)">✓ 已上传: ${upload.filename}</span>`;
     }
     imageUploads = {};
+
+    // 1b. Upload pending images (TL2)
+    for(const [uid, upload] of Object.entries(tl2ImageUploads)){
+      toast(`上传时间线2图片…`, 'loading');
+      let existingSHA = null;
+      try { const e = await ghGet(upload.filename); existingSHA = e.sha; } catch(e){}
+      await ghPut(upload.filename, upload.base64, existingSHA, `upload: 时间线2图片 ${upload.filename}`);
+      const rawUrl = `https://cdn.jsdelivr.net/gh/${repo()}@${branch()}/${upload.filename}`;
+      imgMap['__TL2PENDING__'+uid] = rawUrl;
+      const hiddenInput = document.getElementById('tl2ImgSrc'+uid);
+      if(hiddenInput) hiddenInput.value = rawUrl;
+      const area = document.getElementById('tl2ImgArea'+uid);
+      if(area) area.innerHTML = `<input type="file" id="tl2ImgFile${uid}" accept="image/*" onchange="handleTL2ImgUpload('${uid}',this)"><span style="color:var(--green)">✓ 已上传: ${upload.filename}</span>`;
+    }
+    tl2ImageUploads = {};
 
     // 2. Collect data & rebuild
     const data = collectData();
