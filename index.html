@@ -17,7 +17,7 @@ html{scroll-behavior:smooth}
 body{background:#000;color:#e2e8f0;font-family:"Inter",-apple-system,sans-serif;overflow-x:hidden}
 :root{--blue:#60a5fa;--blue-dim:#1d4ed8;--blue-glow:rgba(59,130,246,.35);--muted:#4e6080;--border:rgba(59,130,246,.18);--border-hover:rgba(59,130,246,.5);--card-bg:rgba(8,14,28,.92);--tl:#e2e8f0;--tl-dim:rgba(255,255,255,.55);--tl-glow:rgba(226,232,240,.28);--tl-border:rgba(255,255,255,.12);--tl-bh:rgba(255,255,255,.35);--tl-bg:rgba(12,14,18,.94)}
 nav{position:fixed;top:0;left:0;right:0;z-index:300;display:flex;align-items:center;justify-content:space-between;padding:18px 48px;background:linear-gradient(to bottom,rgba(0,0,0,.9),transparent)}
-#nav-logo-img{display:block;height:36px;object-fit:contain;position:relative;}
+.nav-logo{font-size:1rem;font-weight:800;letter-spacing:3px;color:#fff;text-transform:uppercase}.nav-logo span{color:var(--blue)}
 .nav-links{display:flex;gap:32px}.nav-links a{color:var(--muted);text-decoration:none;font-size:.75rem;letter-spacing:1.5px;text-transform:uppercase;transition:color .2s}.nav-links a:hover{color:#fff}
 #hero{position:relative;width:100%;height:100vh;overflow:hidden;background:#000;display:flex;align-items:center;justify-content:center}
 #globe-wrap{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:3}
@@ -245,51 +245,11 @@ body{top:0!important}
 /* ── Section 1 & 2 title accent — unified silver/white ── */
 #timeline-section .sec-eyebrow,#timeline-section-2 .sec-eyebrow{color:rgba(255,255,255,.7)}
 #timeline-section .sec-title,#timeline-section-2 .sec-title{background:linear-gradient(135deg,#fff 0%,#c8d8f0 60%,#8aa8cc 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-
-/* ── Laser Eyes Canvas ── */
-#laser-canvas{
-  position:absolute;
-  inset:0;
-  z-index:6;
-  pointer-events:none;
-  width:100%;
-  height:100%;
-}
-
-/* ── Empire Gold Overlay ── */
-#hero::before{
-  content:'';
-  position:absolute;
-  inset:0;
-  background: radial-gradient(ellipse 80% 60% at 50% 100%, rgba(120,80,0,0.25) 0%, transparent 70%),
-              radial-gradient(ellipse 100% 40% at 50% 0%,   rgba(80,50,0,0.15) 0%, transparent 60%);
-  z-index:1;
-  pointer-events:none;
-}
-/* ── Empire 皇冠光晕 ── */
-#crown-glow{
-  position:absolute;
-  top:2vh; left:50%;
-  transform:translateX(-50%);
-  width:320px; height:120px;
-  background: radial-gradient(ellipse 100% 100%, rgba(255,215,0,0.18) 0%, transparent 70%);
-  z-index:3;
-  pointer-events:none;
-  animation: crown-pulse 3s ease-in-out infinite;
-}
-@keyframes crown-pulse{
-  0%,100%{opacity:0.6; transform:translateX(-50%) scaleX(1);}
-  50%{opacity:1; transform:translateX(-50%) scaleX(1.1);}
-}
-/* hero-eyebrow 改金色 */
-.hero-eyebrow{ color: rgba(255,200,50,0.85) !important; letter-spacing:3px; }
-/* 数字改金色 */
-.stat-num{ color:#ffd700 !important; text-shadow: 0 0 20px rgba(255,200,0,0.6); }
 </style>
 </head>
 <body>
 <nav>
-<img id="nav-logo-img" src="https://raw.githubusercontent.com/testkka/my-journey/main/images/nexus-logo.png" alt="Nexus" style="height:36px;object-fit:contain;position:relative;top:0px;left:0px;" />
+<div class="nav-logo">Nexus <span></span></div>
 <div style="display:flex;align-items:center;gap:12px;">
 <a href="https://nexus.xyz" target="_blank" rel="noopener" id="nexus-btn">About Nexus</a>
 <a href="https://discord.com/invite/nexus-xyz" target="_blank" rel="noopener" id="discord-btn">Join Discord</a>
@@ -304,11 +264,9 @@ body{top:0!important}
 <source src="https://raw.githubusercontent.com/testkka/my-journey/main/bg-music.mp3" type="audio/mpeg">
 </audio>
 <section id="hero">
-<div id="crown-glow"></div>
 <div id="person-wrap" style="bottom:12vh;left:49%">
 <img id="person-img" style="height:90vh" src="https://raw.githubusercontent.com/testkka/my-journey/main/images/hero.webp" alt="person" />
 </div>
-<canvas id="laser-canvas"></canvas>
 <div id="globe-wrap"><canvas id="gc"></canvas></div>
 <canvas id="beam-canvas"></canvas>
 <div id="hero-mask"></div>
@@ -879,14 +837,14 @@ function drawBeam(x1,y1,x2,y2,color1,color2){
 const g = ctx.createLinearGradient(x1,y1,x2,y2);
 g.addColorStop(0,   color1);
 g.addColorStop(0.5, color2);
-g.addColorStop(1,   'rgba(180,130,0,0.85)');
+g.addColorStop(1,   'rgba(80,160,255,0.85)');
 ctx.save();
 ctx.beginPath();
 ctx.moveTo(x1,y1);
 ctx.lineTo(x2,y2);
 ctx.strokeStyle = g;
 ctx.lineWidth   = 2.5;
-ctx.shadowColor = '#ffd700';
+ctx.shadowColor = '#60a5fa';
 ctx.shadowBlur  = 28;
 ctx.globalAlpha = 0.75;
 ctx.stroke();
@@ -910,9 +868,9 @@ ctx.arc(x, y, p.size, 0, Math.PI*2);
 const g = ctx.createRadialGradient(x,y,0,x,y,p.size*3);
 g.addColorStop(0,   `rgba(180,220,255,${alpha})`);
 g.addColorStop(0.5, `rgba(96,165,250,${alpha*0.6})`);
-g.addColorStop(1,   'rgba(180,120,0,0)');
+g.addColorStop(1,   'rgba(59,130,246,0)');
 ctx.fillStyle = g;
-ctx.shadowColor='#ffd700';
+ctx.shadowColor='#a5d8ff';
 ctx.shadowBlur=12;
 ctx.fill();
 ctx.restore();
@@ -920,9 +878,9 @@ ctx.restore();
 }
 function drawHandGlow(x,y){
 const g = ctx.createRadialGradient(x,y,0,x,y,38);
-g.addColorStop(0,   'rgba(255,200,50,0.65)');
-g.addColorStop(0.4, 'rgba(220,160,30,0.30)');
-g.addColorStop(1,   'rgba(180,120,0,0)');
+g.addColorStop(0,   'rgba(148,200,255,0.65)');
+g.addColorStop(0.4, 'rgba(96,165,250,0.30)');
+g.addColorStop(1,   'rgba(59,130,246,0)');
 ctx.save();
 ctx.beginPath();
 ctx.arc(x,y,38,0,Math.PI*2);
@@ -938,8 +896,8 @@ const {lx,ly,rx,ry,gx,gy} = getPoints();
 drawHandGlow(lx, ly);
 drawHandGlow(rx, ry);
 // 光线主体
-drawBeam(lx, ly, gx, gy, 'rgba(255,180,0,0.0)', 'rgba(255,200,50,0.9)');
-drawBeam(rx, ry, gx, gy, 'rgba(255,180,0,0.0)', 'rgba(255,200,50,0.9)');
+drawBeam(lx, ly, gx, gy, 'rgba(100,180,255,0.0)', 'rgba(120,190,255,0.9)');
+drawBeam(rx, ry, gx, gy, 'rgba(100,180,255,0.0)', 'rgba(120,190,255,0.9)');
 // 流动粒子
 drawParticles(leftP,  lx, ly, gx, gy);
 drawParticles(rightP, rx, ry, gx, gy);
@@ -983,9 +941,9 @@ ctx.save();
 ctx.beginPath();
 ctx.moveTo(pts[0][0],pts[0][1]);
 for(let i=1;i<pts.length;i++) ctx.lineTo(pts[i][0],pts[i][1]);
-ctx.strokeStyle = `rgba(200,140,0,${alpha*0.15})`;
+ctx.strokeStyle = `rgba(80,160,255,${alpha*0.15})`;
 ctx.lineWidth   = 12;
-ctx.shadowColor = '#b8860b';
+ctx.shadowColor = '#3b82f6';
 ctx.shadowBlur  = 30;
 ctx.lineCap     = 'round';
 ctx.lineJoin    = 'round';
@@ -996,9 +954,9 @@ ctx.save();
 ctx.beginPath();
 ctx.moveTo(pts[0][0],pts[0][1]);
 for(let i=1;i<pts.length;i++) ctx.lineTo(pts[i][0],pts[i][1]);
-ctx.strokeStyle = `rgba(255,200,50,${alpha*0.45})`;
+ctx.strokeStyle = `rgba(100,200,255,${alpha*0.45})`;
 ctx.lineWidth   = 3.5;
-ctx.shadowColor = '#ffd700';
+ctx.shadowColor = '#60c8ff';
 ctx.shadowBlur  = 18;
 ctx.lineCap     = 'round';
 ctx.lineJoin    = 'round';
@@ -1009,7 +967,7 @@ ctx.save();
 ctx.beginPath();
 ctx.moveTo(pts[0][0],pts[0][1]);
 for(let i=1;i<pts.length;i++) ctx.lineTo(pts[i][0],pts[i][1]);
-ctx.strokeStyle = `rgba(255,240,180,${alpha*0.95})`;
+ctx.strokeStyle = `rgba(220,240,255,${alpha*0.95})`;
 ctx.lineWidth   = 1.2;
 ctx.shadowColor = '#ffffff';
 ctx.shadowBlur  = 8;
@@ -1030,9 +988,9 @@ ctx.save();
 ctx.beginPath();
 ctx.moveTo(bp[0][0],bp[0][1]);
 for(let j=1;j<bp.length;j++) ctx.lineTo(bp[j][0],bp[j][1]);
-ctx.strokeStyle = `rgba(255,210,80,${alpha*0.5})`;
+ctx.strokeStyle = `rgba(150,210,255,${alpha*0.5})`;
 ctx.lineWidth   = 0.8;
-ctx.shadowColor = '#ffd700';
+ctx.shadowColor = '#60c8ff';
 ctx.shadowBlur  = 10;
 ctx.lineCap     = 'round';
 ctx.lineJoin    = 'round';
@@ -1074,9 +1032,9 @@ nextFlick = 40 + Math.random()*120;
 flickerT  = 0;
 }
 // 地球辉光
-drawGlow(gx,gy,80,'180,130,0', 0.18*flicker);
-drawGlow(gx,gy,36,'220,170,30',0.40*flicker);
-drawGlow(gx,gy,15,'255,230,120',0.80*flicker);
+drawGlow(gx,gy,80,'80,160,255', 0.18*flicker);
+drawGlow(gx,gy,36,'140,210,255',0.40*flicker);
+drawGlow(gx,gy,15,'220,240,255',0.80*flicker);
 // 左闪电 (左手 → 地球左侧)  斜向下
 const lpts = lightning(lx,ly,glx,gly, H*0.10, 6);
 drawLightning(lpts, flicker);
@@ -1358,189 +1316,5 @@ attempt();
   dividers.forEach(d=>io.observe(d));
 })();
 </script>
-
-<script>
-(function(){
-  const canvas = document.getElementById('laser-canvas');
-  const ctx = canvas.getContext('2d');
-  let W, H, imgRect;
-
-  function resize(){
-    W = canvas.width  = canvas.offsetWidth;
-    H = canvas.height = canvas.offsetHeight;
-  }
-  window.addEventListener('resize', resize);
-  resize();
-
-  // 眼睛在图片中的相对位置（根据 hero.webp 实测调整）
-  // 图片 height=90vh, bottom=12vh, left≈49% center
-  const EYE_Y_PCT = 0.215;   // 眼睛距图片顶端的百分比
-  const EYE_LX_PCT = 0.415;  // 左眼 X（图片宽度百分比）
-  const EYE_RX_PCT = 0.565;  // 右眼 X
-
-  function getEyes(){
-    const img = document.getElementById('person-img');
-    if(!img) return null;
-    const r = img.getBoundingClientRect();
-    const heroR = canvas.getBoundingClientRect();
-    const ox = r.left - heroR.left;
-    const oy = r.top  - heroR.top;
-    return {
-      lx: ox + r.width  * EYE_LX_PCT,
-      rx: ox + r.width  * EYE_RX_PCT,
-      ly: oy + r.height * EYE_Y_PCT,
-      ry: oy + r.height * EYE_Y_PCT
-    };
-  }
-
-  let t = 0;
-  function draw(){
-    ctx.clearRect(0,0,W,H);
-    resize();
-    const eyes = getEyes();
-    if(!eyes) { requestAnimationFrame(draw); return; }
-
-    // 扫射角度：左右来回 -25° ~ +25°
-    const sweep = Math.sin(t * 0.018) * 0.44;   // radians ≈ ±25°
-
-    const beams = [
-      { ox: eyes.lx, oy: eyes.ly },
-      { ox: eyes.rx, oy: eyes.ry }
-    ];
-
-    beams.forEach(({ox, oy}) => {
-      const dx = Math.cos(sweep + Math.PI * 0.02);   // 微偏，两束略分叉
-      const dy = Math.sin(sweep + 0.08);
-
-      // 射线终点延长到屏幕外
-      const len = Math.max(W, H) * 2;
-      const ex = ox + dx * len;
-      const ey = oy + dy * len;
-
-      // 外层宽光晕（蓝/白）
-      const gOuter = ctx.createLinearGradient(ox, oy, ox + dx*600, oy + dy*600);
-      gOuter.addColorStop(0, 'rgba(255,200,50,0.55)');
-      gOuter.addColorStop(0.4,'rgba(180,130,0,0.18)');
-      gOuter.addColorStop(1, 'rgba(180,130,0,0)');
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(ox, oy);
-      ctx.lineTo(ex, ey);
-      ctx.strokeStyle = gOuter;
-      ctx.lineWidth = 18;
-      ctx.shadowBlur = 40;
-      ctx.shadowColor = 'rgba(255,180,0,0.8)';
-      ctx.stroke();
-
-      // 中层光束（白蓝）
-      const gMid = ctx.createLinearGradient(ox, oy, ox + dx*500, oy + dy*500);
-      gMid.addColorStop(0, 'rgba(255,230,100,0.9)');
-      gMid.addColorStop(0.5,'rgba(220,170,30,0.4)');
-      gMid.addColorStop(1, 'rgba(180,130,0,0)');
-      ctx.beginPath();
-      ctx.moveTo(ox, oy);
-      ctx.lineTo(ex, ey);
-      ctx.strokeStyle = gMid;
-      ctx.lineWidth = 6;
-      ctx.shadowBlur = 20;
-      ctx.shadowColor = 'rgba(255,210,50,0.9)';
-      ctx.stroke();
-
-      // 内核高亮（纯白）
-      const gCore = ctx.createLinearGradient(ox, oy, ox + dx*200, oy + dy*200);
-      gCore.addColorStop(0, 'rgba(255,255,255,1)');
-      gCore.addColorStop(0.3,'rgba(255,230,120,0.8)');
-      gCore.addColorStop(1, 'rgba(255,210,100,0)');
-      ctx.beginPath();
-      ctx.moveTo(ox, oy);
-      ctx.lineTo(ex, ey);
-      ctx.strokeStyle = gCore;
-      ctx.lineWidth = 2;
-      ctx.shadowBlur = 10;
-      ctx.shadowColor = '#fff';
-      ctx.stroke();
-
-      // 眼睛起点发光点
-      ctx.beginPath();
-      ctx.arc(ox, oy, 5, 0, Math.PI*2);
-      ctx.fillStyle = 'rgba(255,255,255,0.95)';
-      ctx.shadowBlur = 25;
-      ctx.shadowColor = 'rgba(100,200,255,1)';
-      ctx.fill();
-
-      ctx.restore();
-    });
-
-    t++;
-    requestAnimationFrame(draw);
-  }
-
-  // 图片加载完再开始
-  const img = document.getElementById('person-img');
-  if(img && img.complete) draw();
-  else if(img) img.addEventListener('load', draw);
-  else draw();
-})();
-</script>
-
-
-<script>
-/* ── EMPIRE Gold Particles ── */
-(function(){
-  const hero = document.getElementById('hero');
-  const cvs  = document.createElement('canvas');
-  cvs.id = 'gold-particles';
-  cvs.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;z-index:3;pointer-events:none';
-  hero.appendChild(cvs);
-  const ctx = cvs.getContext('2d');
-  let W, H;
-  function resize(){ W=cvs.width=cvs.offsetWidth; H=cvs.height=cvs.offsetHeight; }
-  window.addEventListener('resize', resize); resize();
-
-  const COLORS = ['rgba(255,215,0,', 'rgba(255,180,30,', 'rgba(255,200,80,', 'rgba(200,150,20,'];
-  const N = 80;
-  const pts = Array.from({length:N}, ()=>({
-    x: Math.random()*100,
-    y: Math.random()*100,
-    vy: 0.04 + Math.random()*0.12,
-    vx: (Math.random()-0.5)*0.04,
-    r:  0.5 + Math.random()*2.5,
-    a:  Math.random(),
-    color: COLORS[Math.floor(Math.random()*COLORS.length)],
-    flicker: Math.random()*Math.PI*2
-  }));
-
-  function frame(){
-    resize();
-    ctx.clearRect(0,0,W,H);
-    const now = Date.now()/1000;
-    pts.forEach(p => {
-      p.y -= p.vy;
-      p.x += p.vx + Math.sin(now*0.5 + p.flicker)*0.03;
-      if(p.y < -2) { p.y=102; p.x=Math.random()*100; }
-      const alpha = p.a * (0.5 + 0.5*Math.sin(now*2+p.flicker));
-      const px = p.x/100*W, py = p.y/100*H;
-      // 菱形粒子
-      ctx.save();
-      ctx.translate(px, py);
-      ctx.rotate(now*0.8 + p.flicker);
-      ctx.beginPath();
-      ctx.moveTo(0, -p.r*2);
-      ctx.lineTo(p.r, 0);
-      ctx.lineTo(0,  p.r*2);
-      ctx.lineTo(-p.r, 0);
-      ctx.closePath();
-      ctx.fillStyle = p.color + alpha + ')';
-      ctx.shadowColor = '#ffd700';
-      ctx.shadowBlur = 8;
-      ctx.fill();
-      ctx.restore();
-    });
-    requestAnimationFrame(frame);
-  }
-  frame();
-})();
-</script>
-
 </body>
 </html>
