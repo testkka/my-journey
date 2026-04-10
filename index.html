@@ -1177,6 +1177,13 @@ setupPadding2(); goToIndex2(0); currentX2 = targetX2; setPos2(currentX2); update
 </script>
 <div id="google_translate_element" style="display:none"></div>
 <script type="text/javascript">
+// 每次页面加载时清除 Google Translate cookie，防止刷新后自动翻译
+(function(){
+  var exp = 'expires=Thu, 01 Jan 1970 00:00:00 GMT';
+  document.cookie = 'googtrans=; ' + exp + '; path=/';
+  document.cookie = 'googtrans=; ' + exp + '; path=/; domain=' + location.hostname;
+  document.cookie = 'googtrans=; ' + exp + '; path=/; domain=.' + location.hostname;
+})();
 function googleTranslateElementInit() {
 new google.translate.TranslateElement({
 pageLanguage: 'en',
