@@ -29,7 +29,9 @@ linear-gradient(to right,rgba(0,0,0,.78) 0%,transparent 12%,transparent 88%,rgba
 .hero-eyebrow{font-size:.65rem;letter-spacing:5px;text-transform:uppercase;color:var(--blue);margin-bottom:20px;display:flex;align-items:center;gap:12px}
 .hero-eyebrow::before,.hero-eyebrow::after{content:"";display:block;width:28px;height:1px}
 .hero-eyebrow::before{background:linear-gradient(to right,transparent,#3b82f6)}.hero-eyebrow::after{background:linear-gradient(to left,transparent,#3b82f6)}
-.hero-h1{font-size:clamp(2.4rem,6vw,5rem);font-weight:900;line-height:1.05;letter-spacing:-1px;margin-bottom:18px;background:linear-gradient(160deg,#fff 0%,#a8c8ff 55%,var(--blue) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero-h1{font-weight:900;line-height:1.08;letter-spacing:-1px;margin-bottom:18px;background:linear-gradient(160deg,#fff 0%,#a8c8ff 55%,var(--blue) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.h1-l1{display:block;font-size:var(--h1-fs1,clamp(2.4rem,6vw,5rem))}
+.h1-l2{display:block;font-size:var(--h1-fs2,clamp(1.2rem,3.5vw,2.8rem));letter-spacing:0px}
 .hero-sub{font-size:.95rem;color:var(--muted);max-width:360px;line-height:1.7;margin-bottom:24px}
 .hero-stats{display:flex;gap:1px;background:rgba(59,130,246,.18);border:1px solid rgba(59,130,246,.18);border-radius:14px;overflow:hidden;backdrop-filter:blur(16px)}
 .stat-item{background:rgba(0,0,0,.8);padding:13px 26px;text-align:center}
@@ -286,7 +288,7 @@ body{top:0!important}
 <div id="hero-mask"></div>
 <div class="hero-content">
 <div class="hero-eyebrow">NEXUS · VERIFIABLE · Finance </div>
-<h1 class="hero-h1">DANIEL MARIN Empire </h1>
+<h1 class="hero-h1" style="--h1-fs1:clamp(2.4rem,6vw,5rem);--h1-fs2:clamp(1.2rem,3.5vw,2.8rem)"><span class="h1-l1">DANIEL MARIN</span><span class="h1-l2">Empire</span></h1>
 <p class="hero-sub">Building a future of mathematical truth<br>Nexus runs on proof</p>
 <div class="hero-stats"><div class="stat-item"><div class="stat-num">3.2M</div><div class="stat-label">Accounts</div></div><div class="stat-item"><div class="stat-num">10.1M</div><div class="stat-label">Nodes</div></div><div class="stat-item"><div class="stat-num">$25M</div><div class="stat-label">Series A</div></div></div>
 </div>
