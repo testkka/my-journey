@@ -450,7 +450,40 @@
           </div>
         </div>
 
-        <!-- ⑥ 页脚 -->
+        <!-- ⑥ 背景音乐 -->
+        <div class="section open" id="sec-music">
+          <div class="section-header" onclick="toggleSection('music')">
+            <div>
+              <div class="section-title">🎵 背景音乐 <span class="chevron">▼</span></div>
+              <div class="section-sub">上传替换背景音乐文件，编辑歌曲名称</div>
+            </div>
+          </div>
+          <div class="section-body" id="body-music">
+            <div class="grid-2" style="margin-bottom:14px">
+              <div class="field">
+                <label>歌曲名称（显示在按钮悬停提示）</label>
+                <input type="text" id="musicTitle" oninput="markChanged()" placeholder="Artist – Song Name">
+              </div>
+              <div class="field">
+                <label>当前音频文件</label>
+                <div id="musicCurrentSrc" style="font-size:.72rem;color:var(--muted2);padding:8px 10px;background:var(--panel2);border:1.5px solid var(--border);border-radius:7px;word-break:break-all;line-height:1.5">加载中…</div>
+              </div>
+            </div>
+            <div class="field">
+              <label>上传新音频文件</label>
+              <img class="tl-img-preview" id="musicWavePreview" style="display:none">
+              <div class="img-upload" id="musicUploadArea" onclick="document.getElementById('musicFileInput').click()" style="padding:20px">
+                <input type="file" id="musicFileInput" accept="audio/*,.mp3,.wav,.ogg,.m4a,.flac" style="display:none" onchange="handleMusicUpload(this)">
+                <div style="font-size:1.4rem;margin-bottom:6px">🎵</div>
+                <div>点击选择音频文件</div>
+                <div style="font-size:.66rem;margin-top:4px">支持 MP3 / WAV / OGG / M4A · 推荐 MP3，文件不宜过大</div>
+              </div>
+              <div id="musicFileInfo" style="font-size:.72rem;color:var(--muted2);margin-top:6px"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ⑦ 页脚 -->
         <div class="section open" id="sec-footer">
           <div class="section-header" onclick="toggleSection('footer')">
             <div>
@@ -533,6 +566,7 @@ let currentHTML='',currentSHA='',hasChanges=false;
 let imageUploads={},tl2ImageUploads={};
 let tlUidCounter=0,tl2UidCounter=0,statCount=0;
 let previewOpen=false;
+let musicUpload=null;
 
 // ── Preview ────────────────────────────────────────────────────
 const PREVIEW_URL='https://testkka.github.io/my-journey/';
@@ -826,6 +860,17 @@ function parseAndRender(){
 
   const tl2Match=html.match(/const TL2=(\[[\s\S]*?\]);\s*\/\/ Render TL2/);
   if(tl2Match){try{renderTL2Items((new Function('return '+tl2Match[1]))());}catch(e){console.error('TL2 parse',e);}}
+
+  // 背景音乐
+  const musicTitleM=html.match(/id="music-btn"[^>]*title="([^"]*)"/);
+  if(musicTitleM)document.getElementById('musicTitle').value=musicTitleM[1];
+  const musicSrcM=html.match(/<source\s+src="([^"]+)"\s+type="audio/);
+  const musicSrc=musicSrcM?musicSrcM[1]:'';
+  document.getElementById('musicCurrentSrc').textContent=musicSrc||'未找到音频源';
+  musicUpload=null;
+  document.getElementById('musicFileInfo').textContent='';
+  document.getElementById('musicUploadArea').className='img-upload';
+  document.getElementById('musicUploadArea').innerHTML=`<input type="file" id="musicFileInput" accept="audio/*,.mp3,.wav,.ogg,.m4a,.flac" style="display:none" onchange="handleMusicUpload(this)"><div style="font-size:1.4rem;margin-bottom:6px">🎵</div><div>点击选择音频文件</div><div style="font-size:.66rem;margin-top:4px">支持 MP3 / WAV / OGG / M4A · 推荐 MP3，文件不宜过大</div>`;
 }
 
 // ── Stats ──────────────────────────────────────────────────────
@@ -1031,6 +1076,27 @@ function handleTL2ImgUpload(uid,input){
   });
 }
 
+// ── Music Upload ───────────────────────────────────────────────
+function handleMusicUpload(input){
+  const file=input.files[0];if(!file)return;
+  const sizeMB=(file.size/1024/1024).toFixed(1);
+  const reader=new FileReader();
+  reader.onload=e=>{
+    musicUpload={
+      base64:e.target.result.split(',')[1],
+      filename:'bg-music.mp3',
+      mimeType:file.type||'audio/mpeg',
+      originalName:file.name
+    };
+    const area=document.getElementById('musicUploadArea');
+    area.className='img-upload has-img';
+    area.innerHTML=`<input type="file" id="musicFileInput" accept="audio/*,.mp3,.wav,.ogg,.m4a,.flac" style="display:none" onchange="handleMusicUpload(this)"><span style="color:var(--yellow)">⏳ 待上传：${file.name}</span><br><span style="font-size:.66rem;color:var(--muted2)">大小：${sizeMB}MB · 点击重新选择</span>`;
+    document.getElementById('musicFileInfo').innerHTML=`<span style="color:var(--yellow);font-weight:600">⚠ 文件已选择，点击"推送 GitHub"后正式上传替换</span>`;
+    markChanged();
+  };
+  reader.readAsDataURL(file);
+}
+
 // ── Base64 ─────────────────────────────────────────────────────
 function b64ToUtf8(b64){
   const binary=atob(b64),bytes=new Uint8Array(binary.length);
@@ -1077,6 +1143,7 @@ function collectData(){
   });
   const dividerLabel=document.getElementById('dividerLabel')?.value||'';
   const dividerSub=document.getElementById('dividerSub')?.value||'';
+  const musicTitle=document.getElementById('musicTitle')?.value||'';
   const heroTop=document.getElementById('heroTop')?.value||'58';
   const heroLeft=document.getElementById('heroLeft')?.value||'50';
   const personBottom=document.getElementById('personBottom')?.value||'12';
@@ -1086,7 +1153,7 @@ function collectData(){
   const tl1PadBot=document.getElementById('tl1PadBot')?.value||'60';
   const tl2PadTop=document.getElementById('tl2PadTop')?.value||'100';
   const tl2PadBot=document.getElementById('tl2PadBot')?.value||'120';
-  return{navBrand,navLinkRaw,heroEyebrow,heroSub,heroH1,heroH1Fs1,heroH1Fs2,tlSectionTitle,stats,tlEyebrow,footerText,tlItems,tl2Eyebrow,tl2TitleVal,tl2Items,dividerLabel,dividerSub,heroTop,heroLeft,personBottom,personLeft,personHeight,tl1PadTop,tl1PadBot,tl2PadTop,tl2PadBot};
+  return{navBrand,navLinkRaw,heroEyebrow,heroSub,heroH1,heroH1Fs1,heroH1Fs2,tlSectionTitle,stats,tlEyebrow,footerText,tlItems,tl2Eyebrow,tl2TitleVal,tl2Items,dividerLabel,dividerSub,musicTitle,heroTop,heroLeft,personBottom,personLeft,personHeight,tl1PadTop,tl1PadBot,tl2PadTop,tl2PadBot};
 }
 
 // ── Rebuild HTML ───────────────────────────────────────────────
@@ -1122,6 +1189,9 @@ function rebuildHTML(data,imgMap){
   // 时间线间距
   html=html.replace(/(id="timeline-section")[^>]*(>)/,`$1 style="padding-top:${data.tl1PadTop}px;padding-bottom:${data.tl1PadBot}px"$2`);
   html=html.replace(/(id="timeline-section-2")[^>]*(>)/,`$1 style="padding-top:${data.tl2PadTop}px;padding-bottom:${data.tl2PadBot}px"$2`);
+  // 音乐
+  if(data.musicTitle)html=html.replace(/(id="music-btn"[^>]*title=")[^"]*(")/,`$1${data.musicTitle}$2`);
+  if(data._newMusicSrc)html=html.replace(/(<source\s+src=")[^"]+("\s+type="audio)/,`$1${data._newMusicSrc}$2`);
   if(data.dividerLabel)html=html.replace(/(class="divider-label">)[^<]+(<\/span>)/,`$1${data.dividerLabel}$2`);
   if(data.dividerSub)html=html.replace(/(class="divider-sub">)[^<]+(<\/p>)/,`$1${data.dividerSub}$2`);
   html=html.replace(/<footer><p>[^<]+<\/p><\/footer>/,`<footer><p>${data.footerText}</p></footer>`);
@@ -1168,8 +1238,27 @@ async function pushToGitHub(){
       if(a)a.innerHTML=`<input type="file" id="tl2ImgFile${uid}" accept="image/*" onchange="handleTL2ImgUpload('${uid}',this)"><span style="color:var(--green)">✓ 已上传</span>`;
     }
     tl2ImageUploads={};
+    // 上传音乐文件
+    let newMusicSrc='';
+    if(musicUpload){
+      showLoading(true,'上传音乐文件…');
+      toast('上传音乐文件…','loading');
+      try{
+        let existingSHA=null;
+        try{const e=await ghGet(musicUpload.filename);existingSHA=e.sha;}catch(e){}
+        await ghPut(musicUpload.filename,musicUpload.base64,existingSHA,`🎵 替换背景音乐: ${musicUpload.originalName}`);
+        newMusicSrc=`https://cdn.jsdelivr.net/gh/${repo()}@${branch()}/${musicUpload.filename}?v=${Date.now()}`;
+        const area=document.getElementById('musicUploadArea');
+        area.className='img-upload has-img';
+        area.innerHTML=`<input type="file" id="musicFileInput" accept="audio/*" style="display:none" onchange="handleMusicUpload(this)"><span style="color:var(--green)">✓ 已上传 · 点击重新选择</span>`;
+        document.getElementById('musicFileInfo').textContent='';
+        document.getElementById('musicCurrentSrc').textContent=newMusicSrc;
+        musicUpload=null;
+      }catch(e){toast('音乐上传失败: '+e.message,'error');showLoading(false);return;}
+    }
     showLoading(true,'推送内容到 GitHub…');
     const data=collectData();
+    if(newMusicSrc)data._newMusicSrc=newMusicSrc;
     const newHTML=rebuildHTML(data,imgMap);
     const b64=utf8ToB64(newHTML);
     const res=await ghPut('index.html',b64,currentSHA,'✏️ 后台管理更新内容');
