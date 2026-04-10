@@ -881,7 +881,7 @@ function parseAndRender(){
   const html=currentHTML;
   tlUidCounter=0;tl2UidCounter=0;
 
-  const navLogoStyle=html.match(/id="nav-logo-img"[^>]*style="([^"]*)"/);const nlTop=(navLogoStyle&&navLogoStyle[1].match(/top:(-?[\d.]+)px/))||[,0];const nlBottom=(navLogoStyle&&navLogoStyle[1].match(/bottom:(-?[\d.]+)px/))||[,0];const nlLeft=(navLogoStyle&&navLogoStyle[1].match(/left:(-?[\d.]+)px/))||[,0];const nlRight=(navLogoStyle&&navLogoStyle[1].match(/right:(-?[\d.]+)px/))||[,0];const nlH=(navLogoStyle&&navLogoStyle[1].match(/height:([\d.]+)px/))||[,36];document.getElementById('logoTop').value=nlTop[1];document.getElementById('logoBottom').value=nlBottom[1];document.getElementById('logoLeft').value=nlLeft[1];document.getElementById('logoRight').value=nlRight[1];document.getElementById('logoHeight').value=nlH[1];
+  const navLogoSrc=html.match(/id="nav-logo-img"[^>]*src="([^"]*)"/);window._logoSrc=navLogoSrc?navLogoSrc[1]:'';const navLogoStyle=html.match(/id="nav-logo-img"[^>]*style="([^"]*)"/);const nlTop=(navLogoStyle&&navLogoStyle[1].match(/top:(-?[\d.]+)px/))||[,0];const nlBottom=(navLogoStyle&&navLogoStyle[1].match(/bottom:(-?[\d.]+)px/))||[,0];const nlLeft=(navLogoStyle&&navLogoStyle[1].match(/left:(-?[\d.]+)px/))||[,0];const nlRight=(navLogoStyle&&navLogoStyle[1].match(/right:(-?[\d.]+)px/))||[,0];const nlH=(navLogoStyle&&navLogoStyle[1].match(/height:([\d.]+)px/))||[,36];document.getElementById('logoTop').value=nlTop[1];document.getElementById('logoBottom').value=nlBottom[1];document.getElementById('logoLeft').value=nlLeft[1];document.getElementById('logoRight').value=nlRight[1];document.getElementById('logoHeight').value=nlH[1];
 
   const eyebrow=html.match(/class="hero-eyebrow">([^<]+)<\/div>/);
   if(eyebrow)document.getElementById('heroEyebrow').value=eyebrow[1];
@@ -1166,7 +1166,7 @@ function collectData(){
 // ── Rebuild HTML ───────────────────────────────────────────────
 function rebuildHTML(data,imgMap){
   let html=currentHTML;
-  const logoTopVal=parseInt(data.logoTop)||0;const logoBottomVal=parseInt(data.logoBottom)||0;const logoLeftVal=parseInt(data.logoLeft)||0;const logoRightVal=parseInt(data.logoRight)||0;const logoH=parseInt(data.logoHeight)||36;const finalTop=logoTopVal-logoBottomVal;const finalLeft=logoLeftVal-logoRightVal;  html=html.replace(/(id="nav-logo-img")[^>]*(\/?>)/,`$1 src="https://raw.githubusercontent.com/testkka/my-journey/main/images/nexus-logo.png" alt="Nexus" style="height:${logoH}px;object-fit:contain;position:relative;top:${finalTop}px;left:${finalLeft}px;" />`);
+  const logoTopVal=parseInt(data.logoTop)||0;const logoBottomVal=parseInt(data.logoBottom)||0;const logoLeftVal=parseInt(data.logoLeft)||0;const logoRightVal=parseInt(data.logoRight)||0;const logoH=parseInt(data.logoHeight)||36;const finalTop=logoTopVal-logoBottomVal;const finalLeft=logoLeftVal-logoRightVal;  html=html.replace(/(id="nav-logo-img")[^>]*(\/?>)/,`$1 src="${window._logoSrc||''}" alt="Nexus" style="height:${logoH}px;object-fit:contain;position:relative;top:${finalTop}px;left:${finalLeft}px;" />`);
   html=html.replace(/(class="hero-eyebrow">)[^<]+(<\/div>)/,`$1${data.heroEyebrow}$2`);
   if(data.heroH1){const newStyle=`--h1-fs1:${data.heroH1Fs1};--h1-fs2:${data.heroH1Fs2}`;html=html.replace(/<h1 class="hero-h1"[^>]*>([\s\S]*?)<\/h1>/,`<h1 class="hero-h1" style="${newStyle}">${data.heroH1}</h1>`);}
   html=html.replace(/(class="hero-sub">)[\s\S]*?(<\/p>)/,`$1${data.heroSub}$2`);
