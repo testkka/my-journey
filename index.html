@@ -245,6 +245,16 @@ body{top:0!important}
 /* ── Section 1 & 2 title accent — unified silver/white ── */
 #timeline-section .sec-eyebrow,#timeline-section-2 .sec-eyebrow{color:rgba(255,255,255,.7)}
 #timeline-section .sec-title,#timeline-section-2 .sec-title{background:linear-gradient(135deg,#fff 0%,#c8d8f0 60%,#8aa8cc 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+
+/* ── Laser Eyes Canvas ── */
+#laser-canvas{
+  position:absolute;
+  inset:0;
+  z-index:6;
+  pointer-events:none;
+  width:100%;
+  height:100%;
+}
 </style>
 </head>
 <body>
@@ -267,6 +277,7 @@ body{top:0!important}
 <div id="person-wrap" style="bottom:12vh;left:49%">
 <img id="person-img" style="height:90vh" src="https://raw.githubusercontent.com/testkka/my-journey/main/images/hero.webp" alt="person" />
 </div>
+<canvas id="laser-canvas"></canvas>
 <div id="globe-wrap"><canvas id="gc"></canvas></div>
 <canvas id="beam-canvas"></canvas>
 <div id="hero-mask"></div>
@@ -1316,5 +1327,130 @@ attempt();
   dividers.forEach(d=>io.observe(d));
 })();
 </script>
+
+<script>
+(function(){
+  const canvas = document.getElementById('laser-canvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, imgRect;
+
+  function resize(){
+    W = canvas.width  = canvas.offsetWidth;
+    H = canvas.height = canvas.offsetHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  // 眼睛在图片中的相对位置（根据 hero.webp 实测调整）
+  // 图片 height=90vh, bottom=12vh, left≈49% center
+  const EYE_Y_PCT = 0.215;   // 眼睛距图片顶端的百分比
+  const EYE_LX_PCT = 0.415;  // 左眼 X（图片宽度百分比）
+  const EYE_RX_PCT = 0.565;  // 右眼 X
+
+  function getEyes(){
+    const img = document.getElementById('person-img');
+    if(!img) return null;
+    const r = img.getBoundingClientRect();
+    const heroR = canvas.getBoundingClientRect();
+    const ox = r.left - heroR.left;
+    const oy = r.top  - heroR.top;
+    return {
+      lx: ox + r.width  * EYE_LX_PCT,
+      rx: ox + r.width  * EYE_RX_PCT,
+      ly: oy + r.height * EYE_Y_PCT,
+      ry: oy + r.height * EYE_Y_PCT
+    };
+  }
+
+  let t = 0;
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    resize();
+    const eyes = getEyes();
+    if(!eyes) { requestAnimationFrame(draw); return; }
+
+    // 扫射角度：左右来回 -25° ~ +25°
+    const sweep = Math.sin(t * 0.018) * 0.44;   // radians ≈ ±25°
+
+    const beams = [
+      { ox: eyes.lx, oy: eyes.ly },
+      { ox: eyes.rx, oy: eyes.ry }
+    ];
+
+    beams.forEach(({ox, oy}) => {
+      const dx = Math.cos(sweep + Math.PI * 0.02);   // 微偏，两束略分叉
+      const dy = Math.sin(sweep + 0.08);
+
+      // 射线终点延长到屏幕外
+      const len = Math.max(W, H) * 2;
+      const ex = ox + dx * len;
+      const ey = oy + dy * len;
+
+      // 外层宽光晕（蓝/白）
+      const gOuter = ctx.createLinearGradient(ox, oy, ox + dx*600, oy + dy*600);
+      gOuter.addColorStop(0, 'rgba(120,200,255,0.55)');
+      gOuter.addColorStop(0.4,'rgba(80,160,255,0.18)');
+      gOuter.addColorStop(1, 'rgba(80,160,255,0)');
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(ox, oy);
+      ctx.lineTo(ex, ey);
+      ctx.strokeStyle = gOuter;
+      ctx.lineWidth = 18;
+      ctx.shadowBlur = 40;
+      ctx.shadowColor = 'rgba(100,180,255,0.6)';
+      ctx.stroke();
+
+      // 中层光束（白蓝）
+      const gMid = ctx.createLinearGradient(ox, oy, ox + dx*500, oy + dy*500);
+      gMid.addColorStop(0, 'rgba(200,230,255,0.9)');
+      gMid.addColorStop(0.5,'rgba(140,200,255,0.4)');
+      gMid.addColorStop(1, 'rgba(100,180,255,0)');
+      ctx.beginPath();
+      ctx.moveTo(ox, oy);
+      ctx.lineTo(ex, ey);
+      ctx.strokeStyle = gMid;
+      ctx.lineWidth = 6;
+      ctx.shadowBlur = 20;
+      ctx.shadowColor = 'rgba(150,210,255,0.8)';
+      ctx.stroke();
+
+      // 内核高亮（纯白）
+      const gCore = ctx.createLinearGradient(ox, oy, ox + dx*200, oy + dy*200);
+      gCore.addColorStop(0, 'rgba(255,255,255,1)');
+      gCore.addColorStop(0.3,'rgba(220,240,255,0.8)');
+      gCore.addColorStop(1, 'rgba(180,220,255,0)');
+      ctx.beginPath();
+      ctx.moveTo(ox, oy);
+      ctx.lineTo(ex, ey);
+      ctx.strokeStyle = gCore;
+      ctx.lineWidth = 2;
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = '#fff';
+      ctx.stroke();
+
+      // 眼睛起点发光点
+      ctx.beginPath();
+      ctx.arc(ox, oy, 5, 0, Math.PI*2);
+      ctx.fillStyle = 'rgba(255,255,255,0.95)';
+      ctx.shadowBlur = 25;
+      ctx.shadowColor = 'rgba(100,200,255,1)';
+      ctx.fill();
+
+      ctx.restore();
+    });
+
+    t++;
+    requestAnimationFrame(draw);
+  }
+
+  // 图片加载完再开始
+  const img = document.getElementById('person-img');
+  if(img && img.complete) draw();
+  else if(img) img.addEventListener('load', draw);
+  else draw();
+})();
+</script>
+
 </body>
 </html>
