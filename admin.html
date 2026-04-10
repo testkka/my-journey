@@ -699,23 +699,54 @@ function clearTL2Img(uid){
   markChanged();
 }
 
+
+// ── Auto WebP Conversion (Canvas API, quality 0.82) ──────────────────
+function convertToWebP(file, quality=0.82){
+  return new Promise((resolve)=>{
+    // If already webp, pass through
+    if(file.type === 'image/webp'){ 
+      const r = new FileReader();
+      r.onload = e => resolve({ dataUrl: e.target.result, mimeType:'image/webp' });
+      r.readAsDataURL(file); return;
+    }
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = ()=>{
+      const canvas = document.createElement('canvas');
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      const ctx = canvas.getContext('2d');
+      // White background for PNGs with transparency
+      ctx.fillStyle = '#000000';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0);
+      URL.revokeObjectURL(url);
+      const dataUrl = canvas.toDataURL('image/webp', quality);
+      resolve({ dataUrl, mimeType:'image/webp' });
+    };
+    img.onerror = ()=>{
+      // Fallback: use original
+      const r = new FileReader();
+      r.onload = e => resolve({ dataUrl: e.target.result, mimeType: file.type });
+      r.readAsDataURL(file);
+    };
+    img.src = url;
+  });
+}
 function handleTL2ImgUpload(uid, input){
   const file = input.files[0];
   if(!file) return;
-  const ext = file.name.split('.').pop().toLowerCase();
-  const filename = `images/tl2-${uid}-${Date.now()}.${ext}`;
-  const reader = new FileReader();
-  reader.onload = e => {
-    const b64 = e.target.result.split(',')[1];
-    tl2ImageUploads[uid] = { filename, base64: b64, mimeType: file.type };
+  const filename = `images/tl2-${uid}-${Date.now()}.webp`;
+  convertToWebP(file).then(({dataUrl, mimeType})=>{
+    const b64 = dataUrl.split(',')[1];
+    tl2ImageUploads[uid] = { filename, base64: b64, mimeType };
     const preview = document.getElementById('tl2ImgPreview'+uid);
-    preview.src = e.target.result; preview.classList.add('show');
+    preview.src = dataUrl; preview.classList.add('show');
     document.getElementById('tl2ImgArea'+uid).className = 'img-upload-area has-img';
     document.getElementById('tl2ImgArea'+uid).innerHTML = `<input type="file" id="tl2ImgFile${uid}" accept="image/*" onchange="handleTL2ImgUpload('${uid}',this)"><span style="color:var(--yellow)">⏳ 待上传: ${file.name}</span>`;
     document.getElementById('tl2ImgSrc'+uid).value = '__TL2PENDING__'+uid;
     markChanged();
-  };
-  reader.readAsDataURL(file);
+  });
 }
 
 // ─── Drag-to-reorder TL2 ──────────────────────────────────
@@ -780,20 +811,17 @@ function initDragSort(){
 function handleImgUpload(uid, input){
   const file = input.files[0];
   if(!file) return;
-  const ext = file.name.split('.').pop().toLowerCase();
-  const filename = `images/tl-${uid}-${Date.now()}.${ext}`;
-  const reader = new FileReader();
-  reader.onload = e => {
-    const b64 = e.target.result.split(',')[1];
-    imageUploads[uid] = { filename, base64: b64, mimeType: file.type };
+  const filename = `images/tl-${uid}-${Date.now()}.webp`;
+  convertToWebP(file).then(({dataUrl, mimeType})=>{
+    const b64 = dataUrl.split(',')[1];
+    imageUploads[uid] = { filename, base64: b64, mimeType };
     const preview = document.getElementById('tlImgPreview'+uid);
-    preview.src = e.target.result; preview.classList.add('show');
+    preview.src = dataUrl; preview.classList.add('show');
     document.getElementById('tlImgArea'+uid).className = 'img-upload-area has-img';
     document.getElementById('tlImgArea'+uid).innerHTML = `<input type="file" id="tlImgFile${uid}" accept="image/*" onchange="handleImgUpload('${uid}',this)"><span style="color:var(--yellow)">⏳ 待上传: ${file.name}</span>`;
     document.getElementById('tlImgSrc'+uid).value = '__PENDING__'+uid;
     markChanged();
-  };
-  reader.readAsDataURL(file);
+  });
 }
 
 // ─── UTF-8 safe base64 ───────────────────────────────────
