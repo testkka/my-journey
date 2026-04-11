@@ -669,6 +669,13 @@ let _wheelAccum = 0, _wheelLastEvt = 0, _wheelLastJump = 0;
 w.addEventListener('wheel', e => {
 const delta = Math.abs(e.deltaY) >= Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
 const list = items();
+const rect = w.getBoundingClientRect();
+const vh = window.innerHeight;
+// 当向下滚动网页时，如果卡片区域还没有到达屏幕的中上部，则不接管滚动
+if (delta > 0 && rect.top > vh * 0.3) return;
+// 当向上滚动网页时，如果卡片区域的底部还没有到达屏幕的中下部，则不接管滚动
+if (delta < 0 && rect.bottom < vh * 0.7) return;
+
 if ((currentIndex === 0 && delta < 0) || (currentIndex === list.length - 1 && delta > 0)) {
 return;
 }
@@ -1218,6 +1225,11 @@ let _wheelAccum2 = 0, _wheelLastEvt2 = 0, _wheelLastJump2 = 0;
 w.addEventListener('wheel', e => {
 const delta = Math.abs(e.deltaY) >= Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
 const list = items2();
+const rect = w.getBoundingClientRect();
+const vh = window.innerHeight;
+if (delta > 0 && rect.top > vh * 0.3) return;
+if (delta < 0 && rect.bottom < vh * 0.7) return;
+
 if ((currentIndex2 === 0 && delta < 0) || (currentIndex2 === list.length - 1 && delta > 0)) {
 return;
 }
