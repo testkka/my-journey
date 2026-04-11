@@ -14,7 +14,7 @@
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{background:#000;color:#e2e8f0;font-family:"Inter",-apple-system,sans-serif;overflow-x:hidden}
+body{background:#000;color:#e2e8f0;font-family:"Inter",-apple-system,sans-serif;overflow-x:hidden;overscroll-behavior-y:none}
 :root{--blue:#60a5fa;--blue-dim:#1d4ed8;--blue-glow:rgba(59,130,246,.35);--muted:#4e6080;--border:rgba(59,130,246,.18);--border-hover:rgba(59,130,246,.5);--card-bg:rgba(8,14,28,.92);--tl:#e2e8f0;--tl-dim:rgba(255,255,255,.55);--tl-glow:rgba(226,232,240,.28);--tl-border:rgba(255,255,255,.12);--tl-bh:rgba(255,255,255,.35);--tl-bg:rgba(12,14,18,.94)}
 nav{position:fixed;top:0;left:0;right:0;z-index:300;display:flex;align-items:center;justify-content:space-between;padding:18px 48px;background:linear-gradient(to bottom,rgba(0,0,0,.9),transparent)}
 .nav-logo{display:flex;align-items:center;position:relative}.nav-logo::after{content:"";position:absolute;inset:0;z-index:1}#nav-logo-img{height:36px;object-fit:contain;position:relative;top:0px;left:0px;pointer-events:none;}
@@ -606,7 +606,7 @@ const el=document.createElement('div');el.className='tl-item';
 el.className='tl-item'+(i.img?' has-img':'');
 const cardCls = i.img ? 'tl-card has-img-card' : 'tl-card';
 const inner = i.img
-? `<div class="tl-img-wrap"><img class="tl-card-img" src="${i.img}" alt="" loading="lazy"></div><div class="tl-card-body"><div class="tl-card-title">${i.title}</div>${i.tag?`<span class="tl-tag">${i.tag}</span>`:''}<div class="tl-card-desc">${i.desc}</div></div>`
+? `<div class="tl-img-wrap"><img class="tl-card-img" src="${i.img}" alt="" loading="lazy" decoding="async"></div><div class="tl-card-body"><div class="tl-card-title">${i.title}</div>${i.tag?`<span class="tl-tag">${i.tag}</span>`:''}<div class="tl-card-desc">${i.desc}</div></div>`
 : `<div class="tl-card-title">${i.title}</div>${i.tag?`<span class="tl-tag">${i.tag}</span>`:''}<div class="tl-card-desc">${i.desc}</div>`;
 el.innerHTML=`<div class="tl-year">${i.year}</div><div class="tl-dot"></div><div class="${cardCls}">${inner}</div>`;
 s.appendChild(el);
@@ -658,9 +658,12 @@ const dt = Math.min(ts - lastTime, 64);
 lastTime = ts;
 if(!isDragging){
 const factor = 1 - Math.exp(-dt / 160);
-currentX += (targetX - currentX) * factor;
-if(Math.abs(currentX - targetX) < 0.3) currentX = targetX;
+let nextX = currentX + (targetX - currentX) * factor;
+if(Math.abs(nextX - targetX) < 0.3) nextX = targetX;
+if(Math.abs(currentX - nextX) > 0.01) {
+currentX = nextX;
 setPos(currentX);
+}
 }
 }
 requestAnimationFrame(loop);
@@ -1150,7 +1153,7 @@ const el = document.createElement('div');
 el.className = 'tl-item' + (i.img ? ' has-img' : '');
 const cardCls = i.img ? 'tl-card has-img-card' : 'tl-card';
 const inner = i.img
-? `<div class="tl-img-wrap"><img class="tl-card-img" src="${i.img}" alt="" loading="lazy"></div><div class="tl-card-body"><div class="tl-card-title">${i.title}</div>${i.tag ? `<span class="tl-tag">${i.tag}</span>` : ''}<div class="tl-card-desc">${i.desc}</div></div>`
+? `<div class="tl-img-wrap"><img class="tl-card-img" src="${i.img}" alt="" loading="lazy" decoding="async"></div><div class="tl-card-body"><div class="tl-card-title">${i.title}</div>${i.tag ? `<span class="tl-tag">${i.tag}</span>` : ''}<div class="tl-card-desc">${i.desc}</div></div>`
 : `<div class="tl-card-title">${i.title}</div>${i.tag ? `<span class="tl-tag">${i.tag}</span>` : ''}<div class="tl-card-desc">${i.desc}</div>`;
 el.innerHTML = `<div class="tl-year">${i.year}</div><div class="tl-dot"></div><div class="${cardCls}">${inner}</div>`;
 s.appendChild(el);
@@ -1213,9 +1216,12 @@ const dt = Math.min(ts - lastTime2, 64);
 lastTime2 = ts;
 if(!isDragging2){
 const factor = 1 - Math.exp(-dt / 160);
-currentX2 += (targetX2 - currentX2) * factor;
-if(Math.abs(currentX2 - targetX2) < 0.3) currentX2 = targetX2;
+let nextX2 = currentX2 + (targetX2 - currentX2) * factor;
+if(Math.abs(nextX2 - targetX2) < 0.3) nextX2 = targetX2;
+if(Math.abs(currentX2 - nextX2) > 0.01) {
+currentX2 = nextX2;
 setPos2(currentX2);
+}
 }
 }
 requestAnimationFrame(loop2);
