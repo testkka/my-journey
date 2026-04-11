@@ -256,23 +256,22 @@ img {
     -moz-user-drag: none;
     -o-user-drag: none;
     user-drag: none;
+    pointer-events: none; /* 防止图片在移动端被长按选中 */
 }
 body {
-    -webkit-user-select: none;
-    user-select: none;
-    -webkit-touch-callout: none;
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none;   /* Safari */
+    -khtml-user-select: none;    /* Konqueror HTML */
+    -moz-user-select: none;      /* Old versions of Firefox */
+    -ms-user-select: none;       /* Internet Explorer/Edge */
+    user-select: none;           /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
 }
 </style>
 <script>
-document.addEventListener("contextmenu", function(e){
-    e.preventDefault();
-});
-document.addEventListener("selectstart", function(e){
-    e.preventDefault();
-});
-document.addEventListener("dragstart", function(e){
-    e.preventDefault();
-});
+document.addEventListener("contextmenu", function(e){ e.preventDefault(); });
+document.addEventListener("selectstart", function(e){ e.preventDefault(); });
+document.addEventListener("dragstart", function(e){ e.preventDefault(); });
+document.addEventListener("copy", function(e){ e.preventDefault(); });
 </script>
 </head>
 <body>
