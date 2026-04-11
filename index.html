@@ -667,6 +667,11 @@ requestAnimationFrame(loop);
 // ── 滚轮：累积触发（即时响应鼠标滚轮 + 防止触控板误跳多卡）──
 let _wheelAccum = 0, _wheelLastEvt = 0, _wheelCooldown = 0;
 w.addEventListener('wheel', e => {
+const delta = Math.abs(e.deltaY) >= Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
+const list = items();
+if ((currentIndex === 0 && delta < 0) || (currentIndex === list.length - 1 && delta > 0)) {
+return;
+}
 e.preventDefault();
 const now = Date.now();
 // 间隔 >200ms 视为新手势，重置累积量
@@ -674,7 +679,6 @@ if(now - _wheelLastEvt > 200) _wheelAccum = 0;
 _wheelLastEvt = now;
 // 触发后冷却期内忽略，防止一次手势跳多卡
 if(now < _wheelCooldown) return;
-const delta = Math.abs(e.deltaY) >= Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
 _wheelAccum += delta;
 // 累积超过 50px 才触发（鼠标一格 ~100 即时响应，触控板需轻推一下）
 if(Math.abs(_wheelAccum) >= 50) {
@@ -1214,12 +1218,16 @@ requestAnimationFrame(loop2);
 // ── 第二时间线滚轮：累积触发 ──
 let _wheelAccum2 = 0, _wheelLastEvt2 = 0, _wheelCooldown2 = 0;
 w.addEventListener('wheel', e => {
+const delta = Math.abs(e.deltaY) >= Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
+const list = items2();
+if ((currentIndex2 === 0 && delta < 0) || (currentIndex2 === list.length - 1 && delta > 0)) {
+return;
+}
 e.preventDefault();
 const now = Date.now();
 if(now - _wheelLastEvt2 > 200) _wheelAccum2 = 0;
 _wheelLastEvt2 = now;
 if(now < _wheelCooldown2) return;
-const delta = Math.abs(e.deltaY) >= Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
 _wheelAccum2 += delta;
 if(Math.abs(_wheelAccum2) >= 50) {
 const dir = _wheelAccum2 > 0 ? 1 : -1;
