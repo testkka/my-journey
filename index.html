@@ -771,6 +771,28 @@ currentX = targetX;
 setPos(currentX);
 updateNav();
 }, 120);
+// ── 卡片点击跳转 + 鼠标悬停高亮 ──
+setTimeout(()=>{
+const list = items();
+list.forEach((el, i) => {
+el.style.cursor = 'pointer';
+// 点击：平滑跳到对应卡片
+el.addEventListener('click', (e) => {
+// 如果是拖拽结束后的误触，忽略（位移超过 5px 的不算点击）
+if(Math.abs(_lastDragX - e.clientX) > 5) return;
+goToIndex(i);
+updateNav();
+});
+// 悬停进入：临时高亮当前悬停卡片
+el.addEventListener('mouseenter', () => {
+list.forEach((it, j) => it.classList.toggle('tl-active', j === i));
+});
+// 悬停离开：恢复真实激活卡片
+el.addEventListener('mouseleave', () => {
+list.forEach((it, j) => it.classList.toggle('tl-active', j === currentIndex));
+});
+});
+}, 200);
 })();
 </script>
 <script>
@@ -1242,6 +1264,26 @@ setupPadding2(); goToIndex2(currentIndex2); currentX2 = targetX2; setPos2(curren
 setTimeout(() => {
 setupPadding2(); goToIndex2(0); currentX2 = targetX2; setPos2(currentX2); updateNav2();
 }, 150);
+// ── 第二时间线：卡片点击跳转 + 鼠标悬停高亮 ──
+setTimeout(() => {
+const list2 = items2();
+list2.forEach((el, i) => {
+el.style.cursor = 'pointer';
+// 点击：平滑跳到对应卡片
+el.addEventListener('click', (e) => {
+if(Math.abs(_lastDragX2 - e.clientX) > 5) return;
+goToIndex2(i);
+});
+// 悬停进入：临时高亮当前悬停卡片
+el.addEventListener('mouseenter', () => {
+list2.forEach((it, j) => it.classList.toggle('tl-active', j === i));
+});
+// 悬停离开：恢复真实激活卡片
+el.addEventListener('mouseleave', () => {
+list2.forEach((it, j) => it.classList.toggle('tl-active', j === currentIndex2));
+});
+});
+}, 220);
 })();
 </script>
 <div id="google_translate_element" style="display:none"></div>
