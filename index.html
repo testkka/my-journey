@@ -248,6 +248,32 @@ body{top:0!important}
 #timeline-section .sec-eyebrow,#timeline-section-2 .sec-eyebrow{color:rgba(255,255,255,.7)}
 #timeline-section .sec-title,#timeline-section-2 .sec-title{background:linear-gradient(135deg,#fff 0%,#c8d8f0 60%,#8aa8cc 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 </style>
+
+<style>
+img {
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
+    user-drag: none;
+}
+body {
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+}
+</style>
+<script>
+document.addEventListener("contextmenu", function(e){
+    e.preventDefault();
+});
+document.addEventListener("selectstart", function(e){
+    e.preventDefault();
+});
+document.addEventListener("dragstart", function(e){
+    e.preventDefault();
+});
+</script>
 </head>
 <body>
 <nav>
