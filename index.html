@@ -656,32 +656,41 @@ requestAnimationFrame(loop);
 const dt = Math.min(ts - lastTime, 64);
 lastTime = ts;
 if(!isDragging){
-const factor = 1 - Math.exp(-dt / 160);
+const factor = 1 - Math.exp(-dt / 70);
 currentX += (targetX - currentX) * factor;
 if(Math.abs(currentX - targetX) < 0.3) currentX = targetX;
 setPos(currentX);
 }
 }
 requestAnimationFrame(loop);
-// ── 滚轮：累积触发（即时响应鼠标滚轮 + 防止触控板误跳多卡）──
-let _wheelAccum = 0, _wheelLastEvt = 0, _wheelCooldown = 0;
+// ── 滚轮：鼠标/触控板双模式 ──
+let _wheelCooldown = 0, _wheelSnapTimer = null;
 w.addEventListener('wheel', e => {
 e.preventDefault();
 const now = Date.now();
-// 间隔 >200ms 视为新手势，重置累积量
-if(now - _wheelLastEvt > 200) _wheelAccum = 0;
-_wheelLastEvt = now;
-// 触发后冷却期内忽略，防止一次手势跳多卡
+const raw = Math.abs(e.deltaY) >= Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
+const px = e.deltaMode === 1 ? raw * 40 : raw; // lines→px 换算
+if(Math.abs(px) >= 40) {
+// 🖱️ 鼠标滚轮：一格跳一卡，250ms 短冷却
 if(now < _wheelCooldown) return;
-const delta = Math.abs(e.deltaY) >= Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
-_wheelAccum += delta;
-// 累积超过 50px 才触发（鼠标一格 ~100 即时响应，触控板需轻推一下）
-if(Math.abs(_wheelAccum) >= 50) {
-const dir = _wheelAccum > 0 ? 1 : -1;
-_wheelAccum = 0;
-_wheelCooldown = now + 350; // 350ms 冷却防连跳
-goToIndex(currentIndex + dir);
+_wheelCooldown = now + 250;
+goToIndex(currentIndex + (px > 0 ? 1 : -1));
 updateNav();
+} else {
+// 💻 触控板：自由推动位置，停手 150ms 后 snap 到最近卡片
+targetX = clamp(targetX + px * 1.8, 0, maxScroll());
+clearTimeout(_wheelSnapTimer);
+_wheelSnapTimer = setTimeout(() => {
+const list = items();
+let best = 0, bestDist = Infinity;
+list.forEach((el, i) => {
+const cx = clamp(el.offsetLeft + el.offsetWidth / 2 - w.clientWidth / 2, 0, maxScroll());
+const d = Math.abs(cx - targetX);
+if(d < bestDist){ bestDist = d; best = i; }
+});
+goToIndex(best);
+updateNav();
+}, 150);
 }
 }, {passive:false});
 // ── 拖拽（增量式 · 两方向均可 · 带惯性）──
@@ -1204,29 +1213,39 @@ requestAnimationFrame(loop2);
 const dt = Math.min(ts - lastTime2, 64);
 lastTime2 = ts;
 if(!isDragging2){
-const factor = 1 - Math.exp(-dt / 160);
+const factor = 1 - Math.exp(-dt / 70);
 currentX2 += (targetX2 - currentX2) * factor;
 if(Math.abs(currentX2 - targetX2) < 0.3) currentX2 = targetX2;
 setPos2(currentX2);
 }
 }
 requestAnimationFrame(loop2);
-// Wheel
-// ── 第二时间线滚轮：累积触发 ──
-let _wheelAccum2 = 0, _wheelLastEvt2 = 0, _wheelCooldown2 = 0;
+// ── 第二时间线滚轮：鼠标/触控板双模式 ──
+let _wheelCooldown2 = 0, _wheelSnapTimer2 = null;
 w.addEventListener('wheel', e => {
 e.preventDefault();
 const now = Date.now();
-if(now - _wheelLastEvt2 > 200) _wheelAccum2 = 0;
-_wheelLastEvt2 = now;
+const raw = Math.abs(e.deltaY) >= Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
+const px = e.deltaMode === 1 ? raw * 40 : raw;
+if(Math.abs(px) >= 40) {
+// 🖱️ 鼠标滚轮：一格跳一卡
 if(now < _wheelCooldown2) return;
-const delta = Math.abs(e.deltaY) >= Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
-_wheelAccum2 += delta;
-if(Math.abs(_wheelAccum2) >= 50) {
-const dir = _wheelAccum2 > 0 ? 1 : -1;
-_wheelAccum2 = 0;
-_wheelCooldown2 = now + 350;
-goToIndex2(currentIndex2 + dir);
+_wheelCooldown2 = now + 250;
+goToIndex2(currentIndex2 + (px > 0 ? 1 : -1));
+} else {
+// 💻 触控板：自由推动，停手 150ms 后 snap
+targetX2 = clamp2(targetX2 + px * 1.8, 0, maxScroll2());
+clearTimeout(_wheelSnapTimer2);
+_wheelSnapTimer2 = setTimeout(() => {
+const list = items2();
+let best = 0, bestDist = Infinity;
+list.forEach((el, i) => {
+const cx = clamp2(el.offsetLeft + el.offsetWidth / 2 - w.clientWidth / 2, 0, maxScroll2());
+const d = Math.abs(cx - targetX2);
+if(d < bestDist){ bestDist = d; best = i; }
+});
+goToIndex2(best);
+}, 150);
 }
 }, {passive:false});
 // Drag
