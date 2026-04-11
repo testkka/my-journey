@@ -665,32 +665,27 @@ setPos(currentX);
 }
 requestAnimationFrame(loop);
 // ── 滚轮：累积触发（即时响应鼠标滚轮 + 防止触控板误跳多卡）──
-let _wheelTimeout;
+let _wheelAccum = 0, _wheelLastEvt = 0, _wheelLastJump = 0;
 w.addEventListener('wheel', e => {
 const delta = Math.abs(e.deltaY) >= Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
 const list = items();
-const mScroll = maxScroll();
-if ((targetX <= 0 && delta < 0) || (targetX >= mScroll && delta > 0)) {
+if ((currentIndex === 0 && delta < 0) || (currentIndex === list.length - 1 && delta > 0)) {
 return;
 }
 e.preventDefault();
-targetX = clamp(targetX + delta * 1.5, 0, mScroll);
-let best = 0, bestDist = Infinity;
-list.forEach((el, i) => {
-const cx = clamp(el.offsetLeft + el.offsetWidth / 2 - w.clientWidth / 2, 0, mScroll);
-const dist = Math.abs(cx - targetX);
-if (dist < bestDist) { bestDist = dist; best = i; }
-});
-if (currentIndex !== best) {
-currentIndex = best;
-list.forEach((it, i) => it.classList.toggle('tl-active', i === currentIndex));
+const now = Date.now();
+if (now - _wheelLastEvt > 100) _wheelAccum = 0;
+_wheelLastEvt = now;
+_wheelAccum += delta;
+if (Math.abs(_wheelAccum) >= 60) {
+const dir = _wheelAccum > 0 ? 1 : -1;
+_wheelAccum = 0;
+if (now - _wheelLastJump > 80) {
+_wheelLastJump = now;
+goToIndex(currentIndex + dir);
 if (typeof updateNav === 'function') updateNav();
 }
-clearTimeout(_wheelTimeout);
-_wheelTimeout = setTimeout(() => {
-goToIndex(currentIndex);
-if (typeof updateNav === 'function') updateNav();
-}, 150);
+}
 }, {passive:false});
 // ── 拖拽（增量式 · 两方向均可 · 带惯性）──
 let _lastDragX = 0, _lastDragTime = 0, _dragVelocity = 0;
@@ -1219,32 +1214,27 @@ setPos2(currentX2);
 requestAnimationFrame(loop2);
 // Wheel
 // ── 第二时间线滚轮：累积触发 ──
-let _wheelTimeout2;
+let _wheelAccum2 = 0, _wheelLastEvt2 = 0, _wheelLastJump2 = 0;
 w.addEventListener('wheel', e => {
 const delta = Math.abs(e.deltaY) >= Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
 const list = items2();
-const mScroll = maxScroll2();
-if ((targetX2 <= 0 && delta < 0) || (targetX2 >= mScroll && delta > 0)) {
+if ((currentIndex2 === 0 && delta < 0) || (currentIndex2 === list.length - 1 && delta > 0)) {
 return;
 }
 e.preventDefault();
-targetX2 = clamp2(targetX2 + delta * 1.5, 0, mScroll);
-let best = 0, bestDist = Infinity;
-list.forEach((el, i) => {
-const cx = clamp2(el.offsetLeft + el.offsetWidth / 2 - w.clientWidth / 2, 0, mScroll);
-const dist = Math.abs(cx - targetX2);
-if (dist < bestDist) { bestDist = dist; best = i; }
-});
-if (currentIndex2 !== best) {
-currentIndex2 = best;
-list.forEach((it, i) => it.classList.toggle('tl-active', i === currentIndex2));
+const now = Date.now();
+if (now - _wheelLastEvt2 > 100) _wheelAccum2 = 0;
+_wheelLastEvt2 = now;
+_wheelAccum2 += delta;
+if (Math.abs(_wheelAccum2) >= 60) {
+const dir = _wheelAccum2 > 0 ? 1 : -1;
+_wheelAccum2 = 0;
+if (now - _wheelLastJump2 > 80) {
+_wheelLastJump2 = now;
+goToIndex2(currentIndex2 + dir);
 if (typeof updateNav2 === 'function') updateNav2();
 }
-clearTimeout(_wheelTimeout2);
-_wheelTimeout2 = setTimeout(() => {
-goToIndex2(currentIndex2);
-if (typeof updateNav2 === 'function') updateNav2();
-}, 150);
+}
 }, {passive:false});
 // Drag
 let _lastDragX2 = 0, _lastDragTime2 = 0, _dragVelocity2 = 0;
