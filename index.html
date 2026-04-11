@@ -247,6 +247,14 @@ body{top:0!important}
 /* ── Section 1 & 2 title accent — unified silver/white ── */
 #timeline-section .sec-eyebrow,#timeline-section-2 .sec-eyebrow{color:rgba(255,255,255,.7)}
 #timeline-section .sec-title,#timeline-section-2 .sec-title{background:linear-gradient(135deg,#fff 0%,#c8d8f0 60%,#8aa8cc 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+
+.sec-eyebrow, .sec-title, .tl-card-title, .tl-card-desc, .tl-tag, .tl-year {
+    -webkit-user-select: text !important;
+    -moz-user-select: text !important;
+    -ms-user-select: text !important;
+    user-select: text !important;
+    cursor: text !important;
+}
 </style>
 
 <style>
@@ -265,6 +273,14 @@ body {
     -moz-user-select: none;      /* Old versions of Firefox */
     -ms-user-select: none;       /* Internet Explorer/Edge */
     user-select: none;           /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
+}
+
+.sec-eyebrow, .sec-title, .tl-card-title, .tl-card-desc, .tl-tag, .tl-year {
+    -webkit-user-select: text !important;
+    -moz-user-select: text !important;
+    -ms-user-select: text !important;
+    user-select: text !important;
+    cursor: text !important;
 }
 </style>
 <script>
@@ -761,7 +777,7 @@ goToIndex(best);
 updateNav();
 }
 // 阻止图片/文字的原生拖拽
-w.addEventListener('mousedown', e => { e.preventDefault(); startDrag(e.clientX); });
+w.addEventListener('mousedown', e => { if(e.target.closest('.tl-card-title, .tl-card-desc, .tl-tag, .tl-year')) return; e.preventDefault(); startDrag(e.clientX); });
 w.addEventListener('dragstart', e => e.preventDefault());
 window.addEventListener('mousemove', e => moveDrag(e.clientX));
 window.addEventListener('mouseup', endDrag);
@@ -1300,7 +1316,7 @@ if(Math.abs(cx - targetX2) < bestDist){ bestDist = Math.abs(cx - targetX2); best
 });
 goToIndex2(best);
 }
-w.addEventListener('mousedown', e => { e.preventDefault(); startDrag2(e.clientX); });
+w.addEventListener('mousedown', e => { if(e.target.closest('.tl-card-title, .tl-card-desc, .tl-tag, .tl-year')) return; e.preventDefault(); startDrag2(e.clientX); });
 w.addEventListener('dragstart', e => e.preventDefault());
 window.addEventListener('mousemove', e => moveDrag2(e.clientX));
 window.addEventListener('mouseup', endDrag2);
